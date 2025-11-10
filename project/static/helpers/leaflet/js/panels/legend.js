@@ -906,7 +906,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 className: 'bi-eye-slash me-1 mb-2',
                 parent: legendDetails,
                 peNone: false,
-                title: 'Beyond visible range',
+                title: 'Beyond visible scale range. You can change this in the layer properties.',
             })
         }
         
@@ -915,7 +915,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 className: 'bi-bug me-1 mb-2',
                 parent: legendDetails,
                 peNone: false,
-                title: 'Data source error',
+                title: error.message ?? 'Data source error.',
             })
 
         }
@@ -1130,9 +1130,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                         legendMenu.insertBefore(titleToTooltip(customCreateElement({
                             tag:'i', 
                             className:'bi bi-filter text-primary', 
-                            attrs: {title: `Feature count is limited to ${
-                                formatNumberWithCommas(layer._properties.limits.max)
-                            }. You can change this in the layer properties.`}
+                            attrs: {title: `Feature count limit is active. You can change this in the layer properties.`}
                         })), legendMenu.querySelector('.bi-globe'))
                     }
                     
@@ -1145,9 +1143,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     }
                 })
                 
-                layer.on('dataerror', () => {
+                layer.on('dataerror', (e) => {
                     layer.clearLayers()
-                    clearLegend(container, {error: true})
+                    clearLegend(container, {error: e.error})
                 })
             }
         }
@@ -1189,58 +1187,67 @@ const handleLeafletLegendPanel = async (map, parent) => {
         }
     })
 
-    map.on('initComplete', async () => {
-        if (!Object.keys(map._handlers.getStoredLegendLayers()).length) return
-
-        const storedBbox = localStorage.getItem(`map-bbox-${map.getContainer().id}`)
-        
-        const alertPromise = new Promise((resolve, reject) => {
-            const alert = createModal({
-                titleText: 'Restore map state?',
-                parent: document.body,
-                show: true,
-                static: true,
-                closeBtn: false,
-                centered: true,
-                contentBody: customCreateElement({
-                    className: 'p-3',
-                    innerHTML: `Do you want to restore the previous map extent and layers?`
-                }),
-                footerBtns: {
-                    no: createButton({
-                        className: `btn-danger ms-auto`,
-                        innerText: 'No',
-                        attrs: {'data-bs-dismiss': 'modal', 'tabindex': '-1'},
-                        events: {click: (e) => {
-                            alert.remove()
-                            resolve(false)
-                        }},
+    map.on('initComplete', async (event) => {
+        const path = window.location.pathname
+        const mapId = map.getContainer().id
+        if (path === '/' && mapId === 'main-index-map') {
+            // escape if there are no stored legend layers for the map
+            if (!Object.keys(map._handlers.getStoredLegendLayers()).length) return
+    
+            // modal prompt asking user if they want to resume previos map session
+            const restoreMap = await (new Promise((resolve, reject) => {
+                const alert = createModal({
+                    titleText: 'Restore map state?',
+                    parent: document.body,
+                    show: true,
+                    static: true,
+                    closeBtn: false,
+                    centered: true,
+                    contentBody: customCreateElement({
+                        className: 'p-3',
+                        innerHTML: `Do you want to resume the previous map session in this browser?`
                     }),
-                    yes: createButton({
-                        className: `btn-success`,
-                        innerText: 'Yes',
-                        attrs: {'data-bs-dismiss': 'modal', autofocus: true},
-                        events: {click: (e) => {
-                            alert.remove()
-                            resolve(true)
-                        }},
-                    }),
-                }
-            })
-        })
-
-        const restoreMap = await alertPromise
-        if (restoreMap) {
-            if (storedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(storedBbox))).getBounds())
-        
-            map._handlers.addStoredLegendLayers().then(() => {
-                toggleLayersVisibility()
-            })
+                    footerBtns: {
+                        no: createButton({
+                            className: `btn-danger ms-auto`,
+                            innerText: 'No',
+                            attrs: {'data-bs-dismiss': 'modal', 'tabindex': '-1'},
+                            events: {click: (e) => {
+                                alert.remove()
+                                resolve(false)
+                            }},
+                        }),
+                        yes: createButton({
+                            className: `btn-success`,
+                            innerText: 'Yes',
+                            attrs: {'data-bs-dismiss': 'modal', autofocus: true},
+                            events: {click: (e) => {
+                                alert.remove()
+                                resolve(true)
+                            }},
+                        }),
+                    }
+                })
+            }))
+    
+            if (restoreMap) {
+                // zoom in to stored bbox, if any
+                const storedBbox = localStorage.getItem(`map-bbox-${mapId}`)
+                if (storedBbox) map.fitBounds(L.geoJSON(turf.bboxPolygon(JSON.parse(storedBbox))).getBounds())
+            
+                // add stored legend layers to map
+                map._handlers.addStoredLegendLayers()
+                // hide layer legend container if all layer legends are hidden
+                .then(() => toggleLayersVisibility())
+            } else {
+                // remove all current map related localStorage data i.e. bbox and legend layers
+                Object.keys(localStorage).forEach(i => {
+                    if (!i.includes(map.getContainer().id)) return
+                    localStorage.removeItem(i)
+                })
+            }
         } else {
-            Object.keys(localStorage).forEach(i => {
-                if (!i.includes(map.getContainer().id)) return
-                localStorage.removeItem(i)
-            })
+            console.log('handle none main-index-map', path, mapId)
         }
     })
 }

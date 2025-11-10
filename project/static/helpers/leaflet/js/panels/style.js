@@ -467,7 +467,6 @@ const handleLeafletStylePanel = (map, parent) => {
                 ...(() => Object.fromEntries(['blur', 'add', 'remove', 'edit'].map(i => [i, (e) => {
                     const tagify = e.detail.tagify
                     let values = tagify.value.map(i => i.value)
-                    console.log(tagify, values)
                    
                     if (values.every(i => styleParams.iconSpecs.includes(i))
                         && styleParams.iconSpecs.every(i => values.includes(i))
@@ -629,7 +628,7 @@ const handleLeafletStylePanel = (map, parent) => {
         })
 
         const iconCheckboxes = customCreateElement({
-            className:'d-flex flex-column justify-content-center border px-3 rounded pt-1 flex-grow-1', 
+            className:'d-flex flex-column flex-wrap justify-content-center border px-2 rounded pt-1 flex-grow-1', 
             style: {maxHeight:'58px'},
             parent:iconFields3
         })
@@ -665,7 +664,51 @@ const handleLeafletStylePanel = (map, parent) => {
                 }
             }
         })
-     
+
+        const iconPulse = createFormCheck({
+            parent:iconCheckboxes,
+            labelInnerText: 'Pulse effect',
+            checked: styleParams.iconPulse,
+            labelClass: 'text-nowrap',
+            events: {
+                click: (e) => {
+                    const value = e.target.checked
+                    if (value === styleParams.iconPulse) return
+
+                    pulseDuration.disabled = !value
+
+                    styleParams.iconPulse = value
+                    update()
+                }
+            }
+        })
+
+        const pulseDuration = customCreateElement({
+            parent: iconCheckboxes,
+            className: 'rounded border-0 small px-2',
+            tag: 'input',
+            attrs: {
+                type: 'number',
+                min: 1,
+                step: 1,
+                placeholder: 'Pulse duration',
+                value: styleParams.pulseDuration ?? 2,
+                ...(styleParams.iconPulse ? {} : {disabled: true})
+            },
+            events: {
+                change: (e) => {
+                    const value = e.target.value
+                    if (value === '' || isNaN(value)) {
+                        e.target.value = styleParams.pulseDuration ?? 2
+                        return
+                    }
+
+                    styleParams.pulseDuration = Number(value)
+                    update()
+                }
+            }
+        })
+
         const textCheckboxes = customCreateElement({
             className:'d-flex flex-column flex-wrap justify-content-center border px-2 rounded pt-1 flex-grow-1', 
             style: {maxHeight:'58px'},

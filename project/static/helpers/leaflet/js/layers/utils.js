@@ -12,7 +12,10 @@ const getLeafletStyleParams = ({
 
     iconShadow=false,
     iconGlow=false,
+    iconPulse=false,
+    pulseDuration=2,
     textShadow=null,
+    animation=null,
 
     textWrap=false,
     boldFont=false,
@@ -39,6 +42,8 @@ const getLeafletStyleParams = ({
     
     dashArray,
     dashOffset,
+
+    selected=false,
 } = {}) => {
     const hslaColor = manageHSLAColor(fillColor)
     fillColor = hslaColor.toString()
@@ -59,6 +64,8 @@ const getLeafletStyleParams = ({
         iconSize,
         iconShadow,
         iconGlow,
+        iconPulse,
+        pulseDuration,
         dashArray,
         dashOffset,
         lineCap,
@@ -78,6 +85,8 @@ const getLeafletStyleParams = ({
         fontSerif,
         lineBreak,
         textShadow,
+        animation,
+        selected,
     }     
 }
 
@@ -102,6 +111,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         iconSize,
         iconShadow,
         iconGlow,
+        iconPulse,
+        pulseDuration,
         dashArray,
         dashOffset,
         lineCap,
@@ -121,6 +132,8 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         fontSerif,
         lineBreak,
         textShadow,
+        animation,
+        selected,
     } = getLeafletStyleParams(styleParams)
     const hslaColor = manageHSLAColor(fillColor)
 
@@ -135,6 +148,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
     //     && iconSpecs[0] === 'circle-fill'
     //     && !iconShadow
     //     && !iconGlow
+    //     && !iconPulse
     //     && !boldFont
     //     && !italicFont
     //     && !textAlignment
@@ -145,7 +159,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
         let element
 
         const svg = document.querySelector(`svg#${fillPatternId}-svg`)
-        if (forLegend || !svg || Array('html', 'property').includes(iconType) || (textWrap && Array('text').includes(iconType))) {
+        if (forLegend || selected || !svg || Array('html', 'property').includes(iconType) || (textWrap && Array('text').includes(iconType))) {
             element = Array('html', 'svg').includes(iconType)
             ? customCreateElement({innerHTML:iconSpecs[0]}).firstChild 
             : iconType === 'img' ? customCreateElement({
@@ -165,8 +179,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                         fontSerif ? 'Georgia, "Times New Roman", Times, serif' : 
                         'default'
                     ),
-                    color: iconFill ? iconGlow ? `hsla(0, 0%, 100%, ${fillOpacity})` : hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent',
-                    // color: iconFill ? hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent',
+                    color: iconFill ? iconGlow || iconPulse ? `hsla(0, 0%, 100%, ${fillOpacity})` : hslaColor?.toString({a:fillOpacity}) || fillColor : 'transparent',
                     ...(textWrap ? {maxWidth:`${iconSize}px`} : {})
                 },
                 className:removeWhitespace(`
@@ -185,8 +198,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     if (iconType === 'svg') {
                         element.setAttribute('fill', (() => {
                             if (iconFill) element.setAttribute('fill-opacity', fillOpacity)
-                            return iconFill ? iconGlow ? 'white' : fillColor : 'none'
-                            // return iconFill ? fillColor : 'none'
+                            return iconFill ? fillColor : 'none'
                         })())
                         element.setAttribute('stroke', (() => {
                             if (iconStroke) {
@@ -211,6 +223,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                 element.style.transformOrigin = `50% 50%`
                 element.style.WebkitTextStroke = iconStroke ? `${strokeWidth}px ${manageHSLAColor(strokeColor)?.toString({a:strokeOpacity}) || strokeColor}` : ''
                 element.style.textShadow = textShadow
+                element.style.animation = animation
             }    
         } else {
             element = svg.cloneNode(true)
@@ -236,7 +249,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
 
         if (isPoint) {
             params.radius = iconSize/2
-            params.fillColor = iconFill ? iconGlow ? 'white' : fillColor : 'none'
+            params.fillColor = iconFill ? fillColor : 'none'
             params.fillOpacity = iconFill ? fillOpacity : 0
         }
 
@@ -256,7 +269,7 @@ const getLeafletLayerStyle = (feature, styleParams={}, {
                     return `url(#${fillPatternId}-pattern)`
                 }
                 return bgColor 
-            })() : fillPattern === 'solid' ? iconGlow ? 'white' : fillColor : 'transparent'
+            })() : fillPattern === 'solid' ? fillColor : 'transparent'
         }
 
         return params
@@ -353,7 +366,7 @@ const leafletLayerStyleToHTML = (style, type) => {
                 symbol.setAttribute('height', height)
             }
 
-            symbol.setAttribute('fill', style.iconGlow ? 'white' : style.fillColor)
+            symbol.setAttribute('fill', style.fillColor)
             symbol.setAttribute('fill-opacity', style.fillOpacity)
             symbol.setAttribute('fill-rule', 'evenodd')
         }
@@ -420,6 +433,8 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             iconSize,
             iconShadow,
             iconGlow,
+            iconPulse,
+            pulseDuration,
             dashArray,
             dashOffset,
             lineCap,
@@ -437,33 +452,23 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             fontSerif,
             lineBreak,
             textShadow,
+            animation,
         } = styleParams
         
         const hslaColor = manageHSLAColor(fillColor)
-        const l = hslaColor.l
-        const h = hslaColor.h
-        const hCooler = 180-((180-h)/2)
-        const hWarmer = h-((180-h)/2)
 
+        animation = styleParams.animation = Array(
+            iconPulse ? `${createPulseAnimation(fillColor, iconSize).id}Def ${pulseDuration ?? 2}s infinite ease-in-out` : ''
+        ).filter(i => i !== '').join(',')
+        
         textShadow = styleParams.textShadow = Array(
             iconShadow ? removeWhitespace(`
                 ${iconSize*0.1}px 
                 ${iconSize*0.1}px 
                 ${iconSize*0.2}px 
-                ${hslaColor.toString({l:l/10,a:fillOpacity})}
+                ${hslaColor.toString({l:hslaColor.l/10,a:fillOpacity})}
             `) : '',
-            iconGlow ? removeWhitespace(`
-                0 0 ${iconSize*0.5}px ${hslaColor.toString({h:hCooler, l:((100-l)/4*3)+l, a:1})}, 
-                0 0 ${iconSize*1}px ${hslaColor.toString({h:hCooler, l:((100-l)/4*2)+l, a:0.9})}, 
-                0 0 ${iconSize*1.5}px ${hslaColor.toString({h:hCooler, l:((100-l)/4*1)+l, a:0.8})}, 
-                0 0 ${iconSize*2}px ${hslaColor.toString({a:0.7})}, 
-                0 0 ${iconSize*2.5}px ${hslaColor.toString({a:0.6})}, 
-                0 0 ${iconSize*3}px ${hslaColor.toString({a:0.5})}, 
-                0 0 ${iconSize*3.5}px ${hslaColor.toString({a:0.4})}, 
-                0 0 ${iconSize*4}px ${hslaColor.toString({h:hWarmer, l:l/4*3, a:0.3})}, 
-                0 0 ${iconSize*4.5}px ${hslaColor.toString({h:hWarmer, l:l/4*2, a:0.2})},
-                0 0 ${iconSize*5}px ${hslaColor.toString({h:hWarmer, l:l/4*1, a:0.1})}
-            `) : ''
+            iconGlow ? constructTextGlowDef(fillColor, iconSize) : ''
         ).filter(i => i !== '').join(',')
 
         const svgFillDefs = document.querySelector(`svg#svgFillDefs`)
@@ -494,8 +499,8 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
 
         const buffer = (iconType === 'img' || !iconStroke ? 0 : (strokeWidth*2)) + (Array('bi', 'text', 'emoji', 'html', 'property').includes(iconType) ? 
             Math.max(
-                (iconGlow ? iconSize*6 : 0),
-                (iconShadow ? iconSize*0.2 : 0),
+                (iconGlow || iconPulse ? iconSize*6 : 0),
+                (iconShadow ? iconSize*0.3 : 0),
                 (iconType !== 'html' && italicFont ? iconSize*0.5 : 0),
             )                
         : 0)
@@ -540,8 +545,8 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
             return [bounds.width, bounds.height, tempElement.outerHTML]
         })()
 
-        const svgWidth = width + buffer
-        const svgHeight = height + buffer
+        const svgWidth = width*(iconGlow || iconPulse ? 2 : 1) + buffer
+        const svgHeight = height*(iconGlow || iconPulse ? 2 : 1) + buffer
         const patternGap = iconType === 'img' ? 0 : iconSize
         const patternWidth = svgWidth + patternGap
         const patternHeight = svgHeight + patternGap
@@ -621,6 +626,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
 
             icon.id = `${id}-icon`
             icon.style.textShadow = textShadow
+            icon.style.animation = animation
             
             if (Array('emoji', 'img', 'html').includes(iconType)) {
                 icon.style.opacity = fillOpacity
@@ -628,7 +634,7 @@ const handleStyleParams = async (styleParams, {controller}={}) => {
 
             icon.setAttribute('fill', (() => {
                 if (iconFill) icon.setAttribute('fill-opacity', fillOpacity)
-                return iconFill ? iconGlow ? 'white' : fillColor : 'none'
+                return iconFill ? iconGlow || iconPulse ? 'white' : fillColor : 'none'
             })())
             icon.setAttribute('stroke', (() => {
                 if (iconStroke) {

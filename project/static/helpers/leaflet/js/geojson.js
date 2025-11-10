@@ -163,25 +163,36 @@ const getLeafletGeoJSONLayer = async ({
             const styleParams = geojsonLayer._handlers.getFeatureStyleParams(feature)
             const iconType = styleParams.iconType
             
-            const style = getLeafletLayerStyle(feature, {
-                    ...styleParams,
-                    strokeColor: 'hsla(53, 100%, 54%, 1.00)',
-                    strokeWidth: 3,
-                    ...(Array('emoji').includes(iconType) ? {
-                        textShadow: 'yellow 3px 3px 6px'
-                    }: {}),
-                }, {renderer: geojsonLayer.options.renderer}
-            )
+            const seletedStyleParams = {
+                ...styleParams,
+                iconStroke: true,
+                strokeColor: 'hsla(53, 100%, 54%, 1.00)',
+                strokeWidth: 3,
+                strokeOpacity: 1,
+                selected: true,
+                ...(Array('emoji').includes(iconType) ? {
+                    textShadow: 'yellow 3px 3px 6px'
+                }: {}),
+            }
+
+            const style = getLeafletLayerStyle(feature, seletedStyleParams, {
+                renderer: geojsonLayer.options.renderer
+            })
             
-            if ( Array('img', 'svg', 'html').includes(iconType)) {
+            if ( Array('img', 'svg', 'html').includes(iconType) && style?.options?.html) {
+                console.log(style)
                 const el = customCreateElement({innerHTML:style.options.html}).firstChild
                 if (el) {
                     el.style.border = '3px solid yellow'
                     style.options.html = el
                 }
             }
-            
-            layer[handler](style)
+
+            if (layer.eachLayer) {
+                layer.eachLayer(l => l[handler](style))
+            } else {
+                layer[handler](style)
+            }
 
             if (!geojsonLayer._selectedFeatures.includes(gslId)) {
                 geojsonLayer._selectedFeatures.push(gslId)
@@ -193,10 +204,16 @@ const getLeafletGeoJSONLayer = async ({
             if (!geojsonLayer._selectedFeatures.includes(gslId)) return
 
             const handler = feature.geometry.type.includes('Point') ? 'setIcon' : 'setStyle'
-            layer[handler](getLeafletLayerStyle(feature, {
+            const style = getLeafletLayerStyle(feature, {
                     ...geojsonLayer._handlers.getFeatureStyleParams(feature),
                 }, {renderer: geojsonLayer.options.renderer}
-            ))
+            )
+            
+            if (layer.eachLayer) {
+                layer.eachLayer(l => l[handler](style))
+            } else {
+                layer[handler](style)
+            }
 
             geojsonLayer._selectedFeatures = geojsonLayer._selectedFeatures.filter(i => i !== gslId)
         },
@@ -642,9 +659,10 @@ const getLeafletGeoJSONData = async (layer, {
     if (controller?.signal.aborted) return
     
     if (data instanceof Error) {
-        layer.fire('dataerror')
+        layer.fire('dataerror', { error: data })
         return
     }
+
     
     data = turf.clone(data)
 

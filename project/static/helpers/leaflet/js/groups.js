@@ -162,6 +162,9 @@ const handleLeafletLayerGroups = async (map) => {
         storedLegendLayersKey: `legend-layers-${map.getContainer().id}`,
         getStoredLegendLayers: () => JSON.parse(localStorage.getItem(map._handlers.storedLegendLayersKey) ?? '{}'),
         updateStoredLegendLayers: ({handler, layer}={}) => {
+            console.log('updates for main-index-map go to localStorage')
+            console.log('updates for saved/published maps go to database/server... maps have published version and edit version')
+
             const storedData = map._handlers.getStoredLegendLayers()
 
             const updateStoredLayerData = (layer) => {
@@ -190,12 +193,16 @@ const handleLeafletLayerGroups = async (map) => {
             localStorage.setItem(map._handlers.storedLegendLayersKey, JSON.stringify(storedData))
         },
         addStoredLegendLayers: async () => {
+            // get stored legend layers
             const storedData = map._handlers.getStoredLegendLayers()
 
+            // remove existing stored layers
             localStorage.removeItem(map._handlers.storedLegendLayersKey)
-            const cachedLayers = Object.values(storedData).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
-            for (i of cachedLayers) {
-                await map._handlers.addLegendLayer(i)
+
+            // sort stored layers based on zIndex properties
+            const storedLayers = Object.values(storedData).sort((a, b) => Number(a.zIndex) - Number(b.zIndex))
+            for (const layerData of storedLayers) {
+                await map._handlers.addLegendLayer(layerData)
             }
         },
         addLegendLayer: async (layerData) => {

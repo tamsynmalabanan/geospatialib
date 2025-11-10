@@ -822,3 +822,74 @@ const getSpinnerHTML = ({text='Loading...'} = {}) => {
         </div>
     `)
 }
+
+const constructTextGlowDef = (color, size) => {
+    const hslaColor = manageHSLAColor(color)
+    
+    const l = hslaColor.l
+    const lLighter = (p) => Math.round(((100-l)*p)+l)
+    const lDarker = (p) => Math.round(l*(1-p))
+
+    const hNormal = hslaColor.h % 360
+    const hCooler = (p) => Math.round(
+        hNormal < 180 
+        ? hNormal*(1+p) > 180 ? 180 : hNormal*(1+p)
+        : ((hNormal-180)*(1-p))+180 < 180 ? 180 : ((hNormal-180)*(1-p))+180
+    )
+    const hWarmer = (p) => Math.round(
+        hNormal < 180
+        ? hNormal*(1-p) < 0 ? 0 : hNormal*(1-p) 
+        : (hNormal-180)*(1+p)+180 > 360 ? 360 : (hNormal-180)*(1+p)+180
+    )
+
+    const def = removeWhitespace(`
+        0 0 ${size*0.5}px ${hslaColor.toString({h:hCooler(0.6), l:lLighter(0.75), a:1})}, 
+        0 0 ${size*1}px ${hslaColor.toString({h:hCooler(0.3), l:lLighter(0.5), a:0.9})}, 
+        0 0 ${size*1.5}px ${hslaColor.toString({h:hCooler(0.1), l:lLighter(0.25), a:0.8})}, 
+        0 0 ${size*2}px ${hslaColor.toString({a:0.7})}, 
+        0 0 ${size*2.5}px ${hslaColor.toString({a:0.6})}, 
+        0 0 ${size*3}px ${hslaColor.toString({a:0.5})}, 
+        0 0 ${size*3.5}px ${hslaColor.toString({a:0.4})}, 
+        0 0 ${size*4}px ${hslaColor.toString({h:hWarmer(0.1), l:lDarker(0.25), a:0.3})}, 
+        0 0 ${size*4.5}px ${hslaColor.toString({h:hWarmer(0.3), l:lDarker(0.5), a:0.2})},
+        0 0 ${size*5}px ${hslaColor.toString({h:hWarmer(0.6), l:lDarker(0.75), a:0.1})}
+    `)
+
+    return def
+}
+
+const createPulseAnimation = (color, size, {
+    sizeAlt=Math.round(size*0.5),
+}={}) => {
+    const hslaColor = manageHSLAColor(color)
+    const {h,s,l,a} = hslaColor
+    const id = `pulseAnimation${Array(h,s,l,a*100,size).map(i => Math.round(i)).join('')}`
+    
+    let style = document.head.querySelector(`#${id}`)
+    if (style && style.innerHTML !== '') return style
+
+    const glowDef1 = constructTextGlowDef(color, size)
+    const glowDef2 = constructTextGlowDef(color, sizeAlt)
+
+    const keyframes = `
+        @keyframes ${id}Def {
+            0% {
+                text-shadow: ${glowDef1};
+            }
+            50% {
+                text-shadow: ${glowDef2};
+            }
+            100% {
+                text-shadow: ${glowDef1};
+            }
+        }
+    `;
+
+    style = document.createElement('style')
+    style.id = id
+    style.setAttribute('type', 'text/css')
+    style.innerHTML = keyframes
+    document.head.appendChild(style)
+    
+    return style
+}
