@@ -209,9 +209,11 @@ const handleLeafletLayerGroups = async (map) => {
             let {indexedDBKey, params, properties, isHidden, data, editable} = layerData
             const group = map._handlers.getLayerGroups()[(indexedDBKey.startsWith('local') ? 'local' : 'library')]
 
-            for (const i of Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))) {
-                if (i?.styleParams?.fillPattern !== 'icon') continue
-                await handleStyleParams(i.styleParams)
+            const symbologyGroups = Array(properties.symbology?.default, ...Object.values(properties.symbology?.groups ?? {}))
+            for (const i of symbologyGroups) {
+                const styleParams = i?.styleParams
+                if (!styleParams || (styleParams.fillPattern !== 'icon' && !styleParams.iconPulse)) continue
+                await handleStyleParams(styleParams)
             }
 
             if (data) {
