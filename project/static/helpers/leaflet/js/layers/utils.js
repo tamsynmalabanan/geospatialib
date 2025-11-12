@@ -896,7 +896,7 @@ const createLeafletLayer = async (params, {
 
     let layer
 
-    if (Array(format, type).some(i => Array('geojson', 'csv', 'gpx', 'kml', 'shp', 'wfs', 'osm', 'overpass', 'unknown', 'json', 'gpkg', 'sqlite').includes(i))) {
+    if (Array(format, type).some(i => Array('geojson', 'csv', 'gpx', 'kml', 'shp', 'dxf', 'wfs', 'osm', 'overpass', 'unknown', 'json', 'gpkg', 'sqlite').includes(i))) {
         layer = await getLeafletGeoJSONLayer({
             indexedDBKey,
             geojson: data,

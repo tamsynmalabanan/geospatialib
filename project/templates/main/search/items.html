@@ -42,31 +42,34 @@
                 </div>
             {% endif %}
             <div class="card-body w-100 d-flex flex-column">
+                {% variable 360|divided_by:11 as color_section %}
                 <div class='card-type'>
                     <span
                         class="badge font-monospace align-top user-select-none fs-10"
                         title="{{type}}" 
                         style="background-color:hsla(
                             {% if type == 'wms' %}
-                                0
+                                {{0|multiplied_by:color_section}}
                             {% elif type == 'wfs' %}
-                                36
+                                {{1|multiplied_by:color_section}}
                             {% elif type == 'geojson' %}
-                                72
+                                {{2|multiplied_by:color_section}}
                             {% elif type == 'csv' %}
-                                108
+                                {{3|multiplied_by:color_section}}
                             {% elif type == 'gpx' %}
-                                144
+                                {{4|multiplied_by:color_section}}
                             {% elif type == 'xyz' %}
-                                180
+                                {{5|multiplied_by:color_section}}
                             {% elif type == 'osm' or type == 'overpass' or type == 'json' %}
-                                216
+                                {{6|multiplied_by:color_section}}
                             {% elif type == 'kml' or type == 'kmz' %}
-                                252
+                                {{7|multiplied_by:color_section}}
                             {% elif type == 'shp' or type == 'dbf' or type == 'cpg' or type == 'prj' or type == 'shx' %}
-                                288
+                                {{8|multiplied_by:color_section}}
+                            {% elif type == 'dxf' %}
+                                {{9|multiplied_by:color_section}}
                             {% else %}
-                                324
+                                {{10|multiplied_by:color_section}}
                             {% endif %}
                         , 100%, 25%, 1);"
                     >{{type}}</span>

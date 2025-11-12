@@ -84,3 +84,17 @@ def endswith(value, suffix):
 @register.filter
 def fillers_range(count):
     return range(find_nearest_divisible(count, [2,3,4,5])-count)
+
+@register.filter
+def divided_by(dividend, divisor):
+    try:
+        return dividend / divisor
+    except Exception as e:
+        return 0
+
+@register.filter
+def multiplied_by(num1, num2):
+    try:
+        return num1 * num2
+    except Exception as e:
+        return 0

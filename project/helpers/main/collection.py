@@ -52,6 +52,8 @@ def guess_format_from_url(url):
         if not decoded_response:
             if filename.endswith('.shp'):
                 return 'shp'
+            if filename.endswith('.dxf'):
+                return 'dxf'
             if filename.endswith('.kmz'):
                 return 'kmz'
             if filename.endswith('.gpkg'):
@@ -113,6 +115,10 @@ def guess_format_from_url(url):
         'shp': [
             'shapefile',
         ],
+        'dxf': [
+            'drawing',
+            'autocad',
+        ],
     })
 
 def get_layers(url, format):
@@ -134,7 +140,7 @@ def get_layers(url, format):
 
             url = unquote(url)
 
-            if format in ['geojson', 'csv', 'gpx', 'kml', 'shp', 'osm']:
+            if format in ['geojson', 'csv', 'gpx', 'kml', 'shp', 'osm', 'dxf']:
                 name = get_filename_from_response(response, os.path.normpath(clean_url).split(os.sep)[-1])
                 layers = {name: {
                     'title': '.'.join(name.split('.')[:-1]) if name.endswith(f'.{format}') else name,
@@ -233,7 +239,7 @@ def get_collection_data(url, format=None):
         data.update({'layers': layers, 'collection': collection})
         return data
 
-    if cached_layers_count > 0 and format not in ['file', 'gpkg', 'sqlite']:
+    if cached_layers_count > 0 and format not in ['dxf', 'file']:
         data['layers'] = cached_layers
         return data
     

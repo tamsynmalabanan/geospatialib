@@ -29,6 +29,9 @@ import sqlite3
 import shapely.wkb
 import shapely.wkt
 from pyproj import CRS
+import ezdxf
+from shapely.geometry import LineString, Point, Polygon as Poly, mapping
+
 
 
 from main.models import SpatialRefSys, Layer
@@ -167,21 +170,24 @@ def features_to_geometries(features, srid=4326):
         geometries.append(geometry)
     return geometries
 
-def get_geojson_bbox_polygon(geojson, srid=4326):
-    geometries = features_to_geometries(geojson.get("features", []), srid)
-    w, s, e, n = float("inf"), float("inf"), float("-inf"), float("-inf")
-    for geom in geometries:
-        bbox = geom.extent
-        w = min(w, bbox[0])
-        s = min(s, bbox[1])
-        e = max(e, bbox[2])
-        n = max(n, bbox[3])
-
-    geojson_bbox = Polygon(((w, s), (e, s), (e, n), (w, n), (w, s)))
-    if geojson_bbox.within(WORLD_GEOM):
-        return geojson_bbox
-    else: 
-        raise Exception('Failed to get bbox.')
+def get_geojson_bbox_polygon(fc, srid=4326):
+    try:
+        geometries = features_to_geometries(fc.get("features", []), srid)
+        w, s, e, n = float("inf"), float("inf"), float("-inf"), float("-inf")
+        for geom in geometries:
+            bbox = geom.extent
+            w = min(w, bbox[0])
+            s = min(s, bbox[1])
+            e = max(e, bbox[2])
+            n = max(n, bbox[3])
+        geojson_bbox = Polygon(((w, s), (e, s), (e, n), (w, n), (w, s)))
+        if geojson_bbox.within(WORLD_GEOM):
+            return geojson_bbox
+        else: 
+            raise Exception('Failed to get bbox.')
+    except Exception as e:
+        logger.error(f'get_geojson_bbox_polygon, {e}')
+        raise e
 
 def csv_to_geojson(file, params):
     try:
@@ -227,10 +233,75 @@ def shp_to_geojson(files, shp_filename):
         logger.error(f'shp_to_geojson, {e}')
         return None, None
 
+def dxf_to_geojson(file):
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".dxf") as tmp:
+            tmp.write(file.getvalue())
+            doc = ezdxf.readfile(tmp.name)
+            msp = doc.modelspace()
+            
+            features = []
+
+            for entity in msp:
+                try:
+                    entityType = entity.dxftype()
+                    if entityType not in ['LWPOLYLINE', 'LINE', 'POINT', 'CIRCLE', 'INSERT', 'HATCH']:
+                        if hasattr(entity, 'get_points'):
+                            entityType = 'LWPOLYLINE'
+                        elif hasattr(entity.dxf, 'start') and hasattr(entity.dxf, 'end'):
+                            entityType = 'LINE'
+                        elif hasattr(entity.dxf, 'center'):
+                            entityType = 'CIRCLE'
+                        elif hasattr(entity.dxf, 'location'): # or hasattr(entity.dxf, 'position'):
+                            entityType = 'POINT'
+
+                    if entityType == 'LINE':
+                        start = entity.dxf.start
+                        end = entity.dxf.end
+                        geom = LineString([start[:2], end[:2]])
+                        features.append(geojson.Feature(geometry=mapping(geom)))
+                    elif entityType == 'LWPOLYLINE':
+                        points = [(float(pt[0]), float(pt[1])) for pt in entity.get_points()]
+                        geom = Poly(points) if entity.closed else LineString(points)
+                        features.append(geojson.Feature(geometry=mapping(geom)))
+                    elif entityType == 'CIRCLE':
+                        center = entity.dxf.center
+                        geom = Point(center[:2])
+                        features.append(geojson.Feature(geometry=mapping(geom)))
+                    elif entityType == 'POINT':
+                        coords = entity.dxf.location
+                        geom = Point([coords.x, coords.y])
+                        features.append(geojson.Feature(geometry=mapping(geom)))
+                    elif entityType == 'INSERT':
+                        coords = entity.dxf.insert
+                        geom = Point([coords.x, coords.y])
+                        features.append(geojson.Feature(geometry=mapping(geom)))
+                    elif entityType == 'HATCH':
+                        paths = entity.paths
+                        for path in paths:
+                            geom = LineString(path.vertices)
+                            features.append(geojson.Feature(geometry=mapping(geom)))
+                    else:
+                        logger.info('NO MATCH')
+                        logger.info(entity.dxftype())
+                        logger.info(vars(entity))
+                        logger.info(vars(entity.dxf))
+                except Exception as e:
+                    logger.error('ERROR')
+                    logger.info(entity.dxftype())
+                    logger.info(vars(entity))
+                    logger.info(vars(entity.dxf))
+                    logger.error(e)
+
+            geojson_obj = geojson.FeatureCollection(features)
+            return geojson_obj
+    except Exception as e:
+        logger.error(f'dxf_to_geojson, {e}')
+
 def sqlite_to_geojson(file, params):
     try:
         table_name = params.get('title', '')
-        geojson = {
+        fc = {
             "type": "FeatureCollection",
             "features": []
         }
@@ -253,7 +324,7 @@ def sqlite_to_geojson(file, params):
                         },
                         "properties": dict(properties)
                     }
-                    geojson["features"].append(feature)
+                    fc["features"].append(feature)
 
                 try:
                     crs_wkt = src.crs_wkt
@@ -305,7 +376,7 @@ def sqlite_to_geojson(file, params):
                     "geometry": geometry,
                     "properties": row_dict
                 }
-                geojson["features"].append(feature)
+                fc["features"].append(feature)
 
             try:
                 cursor.execute(f"SELECT srid FROM geometry_columns WHERE f_table_name = ?", (table_name,))
@@ -317,7 +388,7 @@ def sqlite_to_geojson(file, params):
 
             conn.close()
         
-        return geojson, srid
+        return fc, srid
     except Exception as e:
         logger.error(f'sqlite_to_geojson, {e}')
         return None, None
@@ -364,7 +435,7 @@ def kml_to_geojson(file, params):
             raise RuntimeError("Failed to open KML data")
 
         layer = datasource.GetLayer()
-        geojson = {
+        fc = {
             "type": "FeatureCollection",
             "features": []
         }
@@ -381,9 +452,9 @@ def kml_to_geojson(file, params):
                 field_name = feature.GetFieldDefnRef(i).GetName()
                 geojson_feature["properties"][field_name] = feature.GetField(i)
             
-            geojson["features"].append(geojson_feature)
+            fc["features"].append(geojson_feature)
 
-        return geojson, params
+        return fc, params
     except Exception as e:
         logger.error(f'kml_to_geojson, {e}')
         return None, None
@@ -511,6 +582,17 @@ def validate_shp(url, name, params):
     except Exception as e:
         logger.error(f'validate_shp, {e}')
 
+def validate_dxf(url, name, params):
+    try:
+        response = get_response(url, raise_for_status=True)
+        geojson_obj = dxf_to_geojson(io.BytesIO(response.content))
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_dxf, {e}')
+
 def validate_file(url, name, params):
     try:
         file_details = get_response_file(url)
@@ -543,6 +625,9 @@ def validate_file(url, name, params):
 
         if name.endswith('.shp'):
             geojson_obj, srid = shp_to_geojson(files, normpath)
+
+        if name.endswith('.dxf'):
+            geojson_obj = dxf_to_geojson(file)
 
         if name.endswith('.geojson'):
             geojson_obj, srid = get_geojson_metadata(file)
@@ -598,6 +683,7 @@ LAYER_VALIDATORS = {
     'gpx': validate_gpx,
     'kml': validate_kml,
     'shp': validate_shp,
+    'dxf': validate_dxf,
     'file': validate_file,
     'kmz': validate_file,
     'gpkg': validate_file,

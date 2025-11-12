@@ -135,9 +135,12 @@ const transformGeoJSONCoordinates = async (coordinates, source, target) => {
 
     if (proj4.defs(source_text) && proj4.defs(target_text)) {
         loopThroughCoordinates(coordinates, (coords) => {
-            const projectedCoord = proj4(source_text, target_text, [coords[0], coords[1]])
+            const projectedCoord = proj4(source_text, target_text, coords.slice(0,3))
             coords[0] = projectedCoord[0]
             coords[1] = projectedCoord[1]
+            if (projectedCoord.length > 2) {
+                coords[3] = projectedCoord[3]
+            }
         })
     }
 
@@ -429,6 +432,7 @@ const fetchGeoJSONHandlers = (name) => {
         gpx: fetchGPX,
         kml: fetchKML,
         shp: fetchSHP,
+        dxf: fetchDXF,
         'ogc-wms': fetchWMSData,
         'ogc-wfs': fetchWFSData,
     }[name]
@@ -442,6 +446,7 @@ const staticVectorFormats = [
     'gpx',
     'kml',
     'shp',
+    'dxf',
     'osm',
     'kmz',
     'gpkg',

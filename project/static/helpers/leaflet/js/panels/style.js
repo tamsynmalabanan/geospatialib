@@ -7,6 +7,7 @@ const COLLECTION_FORMATS = {
     'kml': 'Keyhole Markup Language (KML)',
     'kmz': 'Keyhole Markup Language Zipped (KMZ)',
     'shp': 'Shapefile',
+    'dxf': 'AutoCAD DXF',
     'gpkg': 'GeoPackage',
     'sqlite': 'SQLite or Spatialite',
     'file': 'Attached file or zipped file',

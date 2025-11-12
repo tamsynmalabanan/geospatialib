@@ -61,16 +61,17 @@
                         <input id="{{id}}" type="text" name='yField' class='form-control form-control-sm' value="{{value}}">
                         <label for="{{id}}">Y Field</label>
                     </div>
+                {% endif %}
+
+                {% if params.type == 'csv' or params.type == 'dxf' %}
                     <div class="form-floating ms-2">
                         {% random_string as id %}
                         {% variable params.srid as value %}
                         <input id="{{id}}" type="number" name='srid' class='form-control form-control-sm' value="{% if value %}{{value}}{% else %}4326{% endif %}">
                         <label for="{{id}}">SRID</label>
                     </div>
-                {% else %}
-                    {% if params.srid %}
-                        <input type="number" name='srid' value="{{params.srid}}" hidden>
-                    {% endif %}
+                {% elif params.srid %}
+                    <input type="number" name='srid' value="{{params.srid}}" hidden>
                 {% endif %}
             </div>
         {% endfor %}

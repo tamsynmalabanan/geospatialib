@@ -200,6 +200,127 @@ const fetchSHP = async (params, {abortBtns, controller} = {}) => {
     })
 }
 
+const isBinaryDXF = (arrayBuffer) => {
+    const header = new TextDecoder('utf-8').decode(arrayBuffer.slice(0, 22))
+    return header.includes('AutoCAD Binary DXF')
+}
+
+const dxfGeomHandlers = {
+    'LINE': (entity) => {
+        if (!entity.start || !entity.end) return
+        return {
+            type: 'LineString',
+            coordinates: [
+                [entity.start.x, entity.start.y, entity.start.z ?? 0],
+                [entity.end.x, entity.end.y, entity.end.z ?? 0]
+            ]
+        }
+    },
+    'CIRCLE': (entity) => {
+        if (!entity.center) return
+        return {
+            type: 'Point',
+            coordinates: [entity.center.x, entity.center.y, entity.center.z ?? 0]
+        }
+    },
+    'POINT': (entity) => {
+        if (!entity.position) return
+        return {
+            type: 'Point',
+            coordinates: [entity.position.x, entity.position.y, , entity.position.z ?? 0]
+        }
+    },
+    'LWPOLYLINE': (entity) => {
+        if (!entity.vertices) return
+        const isClosed = (
+            entity.vertices.length > 2 
+            && entity.vertices[0].x === entity.vertices.at(-1).x 
+            && entity.vertices[0].y === entity.vertices.at(-1).y
+        )
+        const vertices = entity.vertices.map(v => [v.x, v.y, v.z ?? 0])
+        return {
+            type: isClosed ? 'Polygon' : 'LineString',
+            coordinates: isClosed ? [vertices] : vertices
+        }
+    },
+    'ARC': null,
+    'INSERT': null,
+    'ELLIPSE': null,
+    'POLYLINE': null,
+    'SPLINE': null,
+    'TEXT': null,
+    'MTEXT': null,
+    'HATCH': null,
+    'SOLID': null,
+    '3DFACE': null,
+    'IMAGE': null,
+    'WIPEOUT': null,
+    'SHAPE': null,
+    'RAY': null,
+    'XLINE': null,
+}
+
+const dxfToGeoJSON = (dxf, params) => {
+    const entities = dxf.entities
+    if (!entities) return
+
+    const features = entities.map(entity => {
+        let handler = dxfGeomHandlers[entity.type]
+        if (!handler) {
+            if (entity.vertices) {
+                handler = dxfGeomHandlers.LWPOLYLINE
+            } else if (entity.start && entity.end) {
+                handler = dxfGeomHandlers.LINE
+            } else if (entity.position) {
+                handler = dxfGeomHandlers.POINT
+            } else if (entity.center) {
+                handler = dxfGeomHandlers.CIRCLE
+            }
+        }
+        const geometry = handler(entity)
+
+        if (!geometry || !turf.booleanValid(geometry)) {
+            console.log('Invalid geometry', geometry, entity)
+            return
+        }
+
+        return {
+            type: 'Feature',
+            geometry,
+            properties: {...entity, vertices: null}
+        }
+    }).filter(feature => feature)
+
+    const geojson = turf.featureCollection(features)
+
+    const srid = params.srid
+    if (srid && srid !== 4326) {
+        geojson.crs = {properties:{name:`EPSG::${srid}`}}
+    }
+
+    return geojson
+}
+
+const fetchDXF = async (params, {abortBtns, controller} = {}) => {
+    return await fetchTimeout(params.url, {
+        abortBtns,
+        controller,
+        callback: async (response) => {
+            const buffer = await response.arrayBuffer()
+            console.log(buffer)
+            if (isBinaryDXF(buffer)) return
+
+            const text = new TextDecoder('utf-8').decode(buffer)
+            const parser = new DxfParser()
+            const dxfParsed = parser.parseSync(text)
+            const geojson = dxfToGeoJSON(dxfParsed, params)
+            return geojson
+        }
+    }).catch(error => {
+        console.log(error)
+    })
+}
+
 const rawDataToLayerData = async (rawData, params, {
     filesArray=[]
 }) => {
@@ -234,6 +355,13 @@ const rawDataToLayerData = async (rawData, params, {
             }
             
             const geojson = await shp(shpFiles)
+            return geojson
+        }
+
+        if (params.type === 'dxf') {
+            const parser = new DxfParser()
+            const dxfParsed = parser.parseSync(rawData)
+            const geojson = dxfToGeoJSON(dxfParsed, params)
             return geojson
         }
 
