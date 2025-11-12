@@ -1137,7 +1137,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     if (Object.values(layer._properties.transformations).some(i => i.inEffect)) {
                         legendMenu.insertBefore(titleToTooltip(customCreateElement({
                             tag:'i', 
-                            className:'bi bi-circle-square text-secondary', 
+                            className:'bi bi-circle-square text-primary', 
                             attrs: {title: `Feature geometry is transformed. You can change this in the layer properties.`}
                         })), legendMenu.querySelector('.bi-globe'))
                     }
