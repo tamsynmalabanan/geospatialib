@@ -1,5 +1,10 @@
 {% include "helpers/partials/resources/styles.html" %}
 
-hello
+<div 
+    id="{{container_id}}" 
+    x-data 
+    x-init="initMapLibreMap($el)"
+    class="vh-100 position-relative {{container_class}}"
+></div>
 
 {% include "helpers/partials/resources/scripts.html" %}

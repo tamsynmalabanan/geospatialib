@@ -16,7 +16,10 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 def index_maplibre(request):
-    return render(request, 'helpers/partials/maps/maplibre_map.html')
+    return render(request, 'helpers/partials/maps/maplibre_map.html', context={
+        'container_id': 'map',
+        'ml_style': 'https://demotiles.maplibre.org/style.json',
+    })
 
 def redirect_to_index(request, exception=None):
     return redirect('/')
