@@ -1088,6 +1088,9 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
             if (layer instanceof L.GeoJSON) deleteLeafletLayerFillPatterns(layer)
 
+            // const isMapDrawControlLayer = layer._indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey
+            // console.log(isMapDrawControlLayer)
+
             map._handlers.updateStoredLegendLayers({handler: (i) => delete i[layer._leaflet_id]})
         }
     })

@@ -1,15 +1,9 @@
 self.importScripts('https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js')
 self.importScripts('https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js')
 
-const cleanFeatureProperties = (properties) => {
-    return Object.fromEntries(Object.entries(properties).filter(([key]) => {
-        return !(key.startsWith('__') && key.endsWith('__'))
-    }))
-}
-
 const featuresAreSimilar = (feature1, feature2) => {
     if (!turf.booleanEqual(feature1.geometry, feature2.geometry)) return false
-    if (!_.isEqual(...[feature1, feature2].map(i => cleanFeatureProperties(i.properties)))) return false
+    if (!_.isEqual(feature1.properties, feature2.properties)) return false
     return true
 }
 

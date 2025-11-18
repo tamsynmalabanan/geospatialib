@@ -143,7 +143,7 @@ const getLeafletGeoJSONLayer = async ({
     geojsonLayer._handlers = {
         getFeatureStyleParams: (feature) => {
             const symbology = geojsonLayer._properties?.symbology
-            return (symbology?.groups)?.[feature.properties.__groupId__]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
+            return (symbology?.groups)?.[feature.metadata.groupId]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
         },
         isPatternFilledPolygonInCanvas: (feature) => {
             const styleParams = geojsonLayer._handlers.getFeatureStyleParams(feature)
@@ -156,7 +156,7 @@ const getLeafletGeoJSONLayer = async ({
         },
         selectFeatureLayer: (layer, {updated=false}={}) => {
             const feature = layer.feature
-            const gslId = feature.properties.__gsl_id__
+            const gslId = feature.metadata.gsl_id
             if (geojsonLayer._selectedFeatures.includes(gslId) && !updated) return
 
             const handler = feature.geometry.type.includes('Point') ? 'setIcon' : 'setStyle'
@@ -200,7 +200,7 @@ const getLeafletGeoJSONLayer = async ({
         },
         deselectFeatureLayer: (layer) => {
             const feature = layer.feature
-            const gslId = feature.properties.__gsl_id__
+            const gslId = feature.metadata.gsl_id
             if (!geojsonLayer._selectedFeatures.includes(gslId)) return
 
             const handler = feature.geometry.type.includes('Point') ? 'setIcon' : 'setStyle'
@@ -220,7 +220,7 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
-        const gslId = feature.properties.__gsl_id__
+        const gslId = feature.metadata.gsl_id
         const styleParams = geojsonLayer._handlers.getFeatureStyleParams(feature)
 
         const handler = (layer) => {
@@ -230,14 +230,15 @@ const getLeafletGeoJSONLayer = async ({
             const isMapDrawControlLayer = group._name === 'local' && geojsonLayer._indexedDBKey === group._map._drawControl?._targetLayer?._indexedDBKey
             
             const properties = feature.properties
+            const metadata = feature.metadata
 
             const info = geojsonLayer._properties.info
-            info.attributes = Array.from(new Set([...Object.keys(properties), ...(info.attributes ?? [])]))
+            info.attributes = Array.from(new Set([...Object.keys(properties), ...Object.keys(metadata), ...(info.attributes ?? [])]))
             
             const tooltip = info.tooltip
             layer._params.title = tooltip.properties.length ? (() => {
                 const values = tooltip.properties.map(i => {
-                    let value = properties[i]
+                    let value = properties[i] ?? metadata[i]
                     
                     if (!isNaN(value)) return formatNumberWithCommas(Number(value))
 
@@ -253,10 +254,10 @@ const getLeafletGeoJSONLayer = async ({
                 let popupProperties = {}
                 if (popup.properties.length && !isMapDrawControlLayer) {
                     for (const i of popup.properties) {
-                        popupProperties[i] = properties[i]
+                        popupProperties[i] = properties[i] ?? metadata[i]
                     }
                 } else {
-                    popupProperties = properties
+                    popupProperties = {...properties, ...getCleanFeatureMetadata(feature)}
                 }
 
                 const getPopupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
@@ -299,8 +300,8 @@ const getLeafletGeoJSONLayer = async ({
 
                     Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
                         const propertyName = row.firstChild.innerText
-                        if (propertyName.startsWith('__') && propertyName.endsWith('__')) return
-
+                        if (!Object.keys(properties).includes(propertyName)) return
+                        
                         const propertyValue = row.firstChild.nextElementSibling.innerText
                         
                         Array.from(row.children).forEach(i => i.innerHTML = '')
@@ -462,7 +463,7 @@ const getLeafletGeoJSONLayer = async ({
 
                                 const {gisData, queryExtent} = await getFromGISDB(geojsonLayer._indexedDBKey)
                                 gisData.features = [
-                                    ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                                    ...gisData.features.filter(i => i.metadata.gsl_id !== gslId),
                                     newFeature
                                 ]
 
@@ -582,6 +583,19 @@ const getLeafletGeoJSONLayer = async ({
     return geojsonLayer
 }
 
+const getCleanFeatureMetadata = (feature) => {
+    const propertyKeys = Object.keys(feature.properties)
+    const metadata = feature.metadata
+    
+    const includedMetadata = {}
+    Object.keys(metadata).forEach(i => {
+        if (Object.keys(propertyKeys).includes(i)) return
+        includedMetadata[i] = metadata[i]
+    })
+    
+    return includedMetadata
+}
+
 const getFeatureTitle = (properties) => {
     let title
 
@@ -686,9 +700,9 @@ const getLeafletGeoJSONData = async (layer, {
                 const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
             
                 if (valid) {
-                    const properties = feature.properties
-                    properties.__groupId__ = ''
-                    properties.__groupRank__ = groups.length + 1
+                    const metadata = feature.metadata
+                    metadata.groupId = ''
+                    metadata.groupRank = groups.length + 1
         
                     if (hasActiveGroups) {
                         for (const [id, group] of groups) {
@@ -696,8 +710,8 @@ const getLeafletGeoJSONData = async (layer, {
             
                             if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
                             
-                            properties.__groupId__ = id
-                            properties.__groupRank__ = group.rank
+                            metadata.groupId = id
+                            metadata.groupRank = group.rank
                             break
                         }
                     }
@@ -880,7 +894,7 @@ const getGeoJSONLayerStyles = (layer) => {
     layer.eachLayer(featureLayer => {
         const feature = featureLayer.feature
         const featureType = feature.geometry.type.toLowerCase()
-        const groupId = feature.properties.__groupId__ ?? ""
+        const groupId = feature.metadata.groupId ?? ''
         const style = styles[groupId] ?? styles['']
         
         if (featureType === 'geometrycollection') {

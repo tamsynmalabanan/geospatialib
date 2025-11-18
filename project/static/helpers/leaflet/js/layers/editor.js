@@ -24,7 +24,9 @@ const toggleLeafletLayerEditor = async (layer, {
     
             localLayers.forEach(i => {
                 const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
-                Array.from(legend.querySelectorAll(`.bi.bi-pencil-square`)).forEach(i => i.remove())
+                if (legend) {
+                    Array.from(legend.querySelectorAll(`.bi.bi-pencil-square`)).forEach(i => i.remove())
+                }
 
                 if (!i._indexedDBKey.startsWith(id)) return
                 i._indexedDBKey = indexedDBKey

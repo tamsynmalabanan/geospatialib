@@ -28,71 +28,85 @@ const normalizeGeoJSONFeature = async (feature, {
     defaultGeom,
     crs,
 }={}) => {
-    const assignGeom = !feature.geometry && defaultGeom
-    if (assignGeom) feature.geometry = defaultGeom
-
-    turf.truncate(feature, {mutate: true})
-    turf.cleanCoords(feature, {mutate: true})
-    
-    if (crs && crs !== 4326 && !assignGeom) {
+    const useDefaultGeom = !feature.geometry && defaultGeom
+    if (useDefaultGeom) {
+        feature.geometry = defaultGeom
+    } else if (crs && crs !== 4326) {
         await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
     }
     
-    feature.properties = normalizeFeatureProperties(feature.properties)
+    turf.truncate(feature, {mutate: true})
+    turf.cleanCoords(feature, {mutate: true})
 
-    if (feature.id) feature.properties.__source_id__ = feature.id
+    feature.properties = normalizeFeatureProperties(feature.properties)
+    
+    feature.metadata = feature.metadata ?? {}
+    if (feature.id) {
+        feature.metadata.feature_id = feature.id
+    }
     
     const geomType = feature.geometry?.type
-    feature.properties.__geom_type__ = geomType
-
+    
     if (geomType) {
+        feature.metadata.geom_type = geomType
+        
         try {        
-            const [x,y] = geomType === 'Point' ? feature.geometry.coordinates : turf.centroid(feature).geometry.coordinates
-            feature.properties.__x__ = x
-            feature.properties.__y__ = y
+            const [x,y] = (
+                geomType === 'Point' 
+                ? feature.geometry.coordinates 
+                : turf.truncate(turf.centroid(feature).geometry).coordinates
+            )
+            feature.metadata.x = x
+            feature.metadata.y = y
         } catch {}
 
         if (geomType.includes('Polygon')) {
             try {
-                feature.properties.__area_sqm__ = turf.area(feature)
+                feature.metadata.area_sqm = turf.area(feature).toFixed(3)
             } catch {}
             
             try {
-                feature.properties.__perimeter_km__ = turf.length(turf.polygonToLine(feature))
+                feature.metadata.perimeter_m = (turf.length(turf.polygonToLine(feature))*1000).toFixed(3)
             } catch {}
         }
     
         if (geomType.includes('LineString')) {
             try {
-                feature.properties.__length_km__ = turf.length(feature)
+                feature.metadata.length_m = (turf.length(feature)*1000).toFixed(3)
             } catch {}
         }
-    
-        if (geomType !== 'Point') {
-            try {
-                feature.properties.__bbox_wsen__ = turf.bbox(feature).join(', ')
-            } catch {}
-        }
+
+        try {
+            feature.metadata.bbox = turf.bbox(feature)
+        } catch {}
     }
 
-    if (!feature.properties.__gsl_id__) {
-        feature.properties.__gsl_id__ = await hashJSON(feature.properties)
+    if (!feature.metadata.gsl_id) {
+        await generateFeatureMetadataId(feature)
     }
+}
+
+const generateFeatureMetadataId = async (feature) => {
+    feature.metadata.gsl_id = await hashJSON({...feature.properties, ...feature.metadata})
+    return feature
 }
 
 const normalizeFeatureProperties = (properties) => {
     const normalProperties = {}
 
-    const handler = (properties) => {
-        Object.keys(properties).forEach(property => {
-            const value = properties[property]
+    const handler = (properties, prefix='') => {
+        prefix = prefix.trim()
 
+        Object.keys(properties).forEach(property => {
+            const name = prefix ? `${prefix}_${property}` : property
+            const value = properties[property]
+            
             if (Array.isArray(value) && value.every(i => typeof i !== 'object')) {
-                normalProperties[property] = value.join(', ')
+                normalProperties[name] = value.map(i => String(i)).join(', ')
             } else if (value && typeof value === 'object') {
-                handler(value)
+                handler(value, prefix=name)
             } else {
-                normalProperties[property] = value
+                normalProperties[name] = value
             }
 
         })
@@ -116,7 +130,7 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
             "MultiPolygon",
         ]
         const typeComparison = featureOrder.indexOf(a.geometry?.type) - featureOrder.indexOf(b.geometry?.type)
-        const rankComparison = (a.properties.__groupRank__ ?? 0) - (b.properties.__groupRank__ ?? 0)
+        const rankComparison = (a.metadata.groupRank ?? 0) - (b.metadata.groupRank ?? 0)
 
         const comparison = (
             typeComparison !== 0 ? typeComparison : 
@@ -413,7 +427,7 @@ const createFeaturePropertiesTable = (properties, {
         
         const value = document.createElement('td')
         value.className = 'text-wrap'
-        value.innerHTML = data
+        value.innerHTML = isNaN(data) ? data : formatNumberWithCommas(Number(data))
         tr.appendChild(value)
     })
 
