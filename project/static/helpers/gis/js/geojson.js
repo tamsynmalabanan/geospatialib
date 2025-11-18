@@ -30,6 +30,9 @@ const normalizeGeoJSONFeature = async (feature, {
 }={}) => {
     const assignGeom = !feature.geometry && defaultGeom
     if (assignGeom) feature.geometry = defaultGeom
+
+    turf.truncate(feature, {mutate: true})
+    turf.cleanCoords(feature, {mutate: true})
     
     if (crs && crs !== 4326 && !assignGeom) {
         await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
@@ -71,7 +74,6 @@ const normalizeGeoJSONFeature = async (feature, {
             } catch {}
         }
     }
-
 
     if (!feature.properties.__gsl_id__) {
         feature.properties.__gsl_id__ = await hashJSON(feature.properties)
@@ -503,7 +505,9 @@ const getGeoJSON = async (dbKey, {
         
                 if (queryExtent && cachedGeoJSON.features.length) {
                     if (isStatic) {
-                        if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) return turf.featureCollection([])
+                        if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) {
+                            return turf.featureCollection([])
+                        }
                     } else {
                         try {
                             const equalBounds = turf.booleanEqual(queryExtent, cachedQueryExtent)
