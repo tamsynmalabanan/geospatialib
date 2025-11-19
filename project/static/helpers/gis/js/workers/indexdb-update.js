@@ -27,7 +27,7 @@ self.onmessage = (e) => {
                 return countA - countB
             })
         
-            let filteredFeatures = []
+            let filteredFeatures = fewerData.features
             if (turf.booleanIntersects(currentQueryExtent, newQueryExtent)) {
                 const intersection = turf.intersect(extents)
                 if (intersection) {
