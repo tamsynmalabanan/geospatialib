@@ -757,12 +757,12 @@ const getLeafletGeoJSONData = async (layer, {
     return data
 }
 
-const isUnderenderedLayer = (layer) => {
+const isUnrenderedLayer = (layer) => {
     return layer._group._map._handlers.hasHiddenLegendLayer(layer) || layer._group._map._handlers.hasHiddenLegendGroupLayer(layer) || !leafletLayerIsVisible(layer)
 }
 
 const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns, updateLocalStorage=true} = {}) => {
-    if (!layer || !layer._map || isUnderenderedLayer(layer)) return
+    if (!layer || !layer._map || isUnrenderedLayer(layer)) return
 
     const map = layer._map ?? layer._group?._map
     if (!map) return

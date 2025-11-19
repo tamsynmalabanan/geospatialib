@@ -1118,7 +1118,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
 
                 layer.on('dataupdate', () => {
                     legendDetails.innerHTML = ''
-                    if (isUnderenderedLayer(layer)) return
+                    if (isUnrenderedLayer(layer)) return
 
                     createGeoJSONLayerLegend(layer, legendDetails)
 
