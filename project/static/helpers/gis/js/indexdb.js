@@ -56,7 +56,7 @@ const saveToGISDB = async (gisData, {
     }
 
     if (!queryExtent && gisData.type === 'FeatureCollection') {
-        queryExtent = turf.bboxPolygon(turf.bbox(gisData)).geometry
+        queryExtent = turf.envelope(gisData).geometry
     }
 
     const expirationTime = Date.now() + (expirationDays*1000*60*60*24)

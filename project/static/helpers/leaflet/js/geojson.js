@@ -446,6 +446,7 @@ const getLeafletGeoJSONLayer = async ({
                         innerHTML: 'Save',
                         events: {
                             click: async (e) => {
+                                const dbKey = geojsonLayer._indexedDBKey
                                 const newProperties = {}
                                 Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
                                     if (row.lastChild.firstChild.checked) {
@@ -461,19 +462,16 @@ const getLeafletGeoJSONLayer = async ({
                                 newFeature.properties = newProperties
                                 newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
 
-                                const {gisData, queryExtent} = await getFromGISDB(geojsonLayer._indexedDBKey)
+                                const {gisData, queryExtent} = await getFromGISDB(dbKey)
                                 gisData.features = [
                                     ...gisData.features.filter(i => i.metadata.gsl_id !== gslId),
                                     newFeature
                                 ]
 
-                                await saveToGISDB(turf.clone(gisData), {
-                                    id: geojsonLayer._indexedDBKey,
-                                    queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                                })
+                                await saveToGISDB(turf.clone(gisData), {id: dbKey})
 
                                 group.getLayers().forEach(i => {
-                                    if (i._indexedDBKey !== geojsonLayer._indexedDBKey) return
+                                    if (i._indexedDBKey !== dbKey) return
                                     updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
                                 })
 

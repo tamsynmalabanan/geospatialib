@@ -198,10 +198,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                         newFeature
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {
-                        id: indexedDBKey,
-                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                    })
+                    await saveToGISDB(turf.clone(gisData), {id: indexedDBKey})
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return
@@ -244,10 +241,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                         newFeature
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {
-                        id: indexedDBKey,
-                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                    })
+                    await saveToGISDB(turf.clone(gisData), {id: indexedDBKey})
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return
@@ -275,7 +269,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 try {
                     let newGeom = JSON.parse(text)
                     if (newGeom.type === 'Feature') newGeom = newGeom.geometry
-                    if (!newGeom || !newGeom.coordinates || !newGeom.type) return
+                    if (!newGeom || !newGeom.coordinates || !newGeom.type || !turf.booleanValid(newGeom)) return
 
 
                     let newFeature = structuredClone(feature)
@@ -290,10 +284,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                         newFeature
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {
-                        id: indexedDBKey,
-                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                    })
+                    await saveToGISDB(turf.clone(gisData), {id: indexedDBKey})
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return

@@ -586,7 +586,7 @@ const getGeoJSON = async (dbKey, {
                             await updateGISDB(
                                 dbKey, 
                                 turf.clone(geojson),
-                                isStatic ? turf.bboxPolygon(turf.bbox(geojson)).geometry : queryExtent,
+                                isStatic ? turf.envelope(geojson).geometry : queryExtent,
                             )
                         }
                         

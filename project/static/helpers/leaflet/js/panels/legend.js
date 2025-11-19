@@ -1018,7 +1018,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                     const mapScale = getLeafletMeterScale(map)
     
                     const geojson = (
-                        !legend.querySelector('.bi-bug')
+                        !legend.querySelector('.bi-bug, .spinner-border')
                         && turf.booleanWithin(newBbox, previousBbox)
                         && layer.getLayers().length === layer._properties.limits.totalCount
                         && Object.values(layer._properties.transformations).every(i => 
