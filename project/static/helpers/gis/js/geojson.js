@@ -11,7 +11,9 @@ const normalizeGeoJSON = async (geojson, {
         delete geojson.crs   
     }
 
-    geojson.features = geojson.features.filter(f => f.geometry || defaultGeom)
+    if (!defaultGeom || !turf.booleanValid(defaultGeom)) {
+        geojson.features = geojson.features.filter(f => f.geometry)
+    }
 
     for (const feature of geojson.features) {
         if (controller?.signal.aborted) return
@@ -28,27 +30,34 @@ const normalizeGeoJSONFeature = async (feature, {
     defaultGeom,
     crs,
 }={}) => {
-    const useDefaultGeom = !feature.geometry && defaultGeom
-    if (useDefaultGeom) {
-        feature.geometry = defaultGeom
-    } else if (crs && crs !== 4326) {
+    const geomIsValid = feature.geometry && turf.booleanValid(feature.geometry)
+
+    if (geomIsValid && crs && crs !== 4326) {
         await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
+    }
+
+    if (!geomIsValid && defaultGeom) {
+        feature.geometry = defaultGeom
     }
     
     turf.truncate(feature, {mutate: true})
     turf.cleanCoords(feature, {mutate: true})
 
-    feature.properties = normalizeFeatureProperties(feature.properties)
-    
-    feature.metadata = feature.metadata ?? {}
+    normalizeFeatureProperties(feature)
+    await updateFeatureMetadata(feature)
+}
+
+const updateFeatureMetadata = async (feature) => {
+    const metadata = feature.metadata = feature.metadata ?? {}
+
     if (feature.id) {
-        feature.metadata.feature_id = feature.id
+        metadata.feature_id = feature.id
     }
-    
+
     const geomType = feature.geometry?.type
     
     if (geomType) {
-        feature.metadata.geom_type = geomType
+        metadata.geom_type = geomType
         
         try {        
             const [x,y] = (
@@ -56,32 +65,32 @@ const normalizeGeoJSONFeature = async (feature, {
                 ? feature.geometry.coordinates 
                 : turf.truncate(turf.centroid(feature).geometry).coordinates
             )
-            feature.metadata.x = x
-            feature.metadata.y = y
+            metadata.x = x
+            metadata.y = y
         } catch {}
 
         if (geomType.includes('Polygon')) {
             try {
-                feature.metadata.area_sqm = turf.area(feature).toFixed(3)
+                metadata.area_sqm = turf.area(feature).toFixed(3)
             } catch {}
             
             try {
-                feature.metadata.perimeter_m = (turf.length(turf.polygonToLine(feature))*1000).toFixed(3)
+                metadata.perimeter_m = (turf.length(turf.polygonToLine(feature))*1000).toFixed(3)
             } catch {}
         }
     
         if (geomType.includes('LineString')) {
             try {
-                feature.metadata.length_m = (turf.length(feature)*1000).toFixed(3)
+                metadata.length_m = (turf.length(feature)*1000).toFixed(3)
             } catch {}
         }
 
         try {
-            feature.metadata.bbox = turf.bbox(feature)
+            metadata.bbox = turf.bbox(feature)
         } catch {}
     }
 
-    if (!feature.metadata.gsl_id) {
+    if (!metadata.gsl_id) {
         await generateFeatureMetadataId(feature)
     }
 }
@@ -91,7 +100,8 @@ const generateFeatureMetadataId = async (feature) => {
     return feature
 }
 
-const normalizeFeatureProperties = (properties) => {
+const normalizeFeatureProperties = (feature) => {
+    const properties = feature.properties ?? {}
     const normalProperties = {}
 
     const handler = (properties, prefix='') => {
@@ -114,7 +124,7 @@ const normalizeFeatureProperties = (properties) => {
 
     handler(properties)    
 
-    return normalProperties
+    feature.properties = normalProperties
 }
 
 const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
