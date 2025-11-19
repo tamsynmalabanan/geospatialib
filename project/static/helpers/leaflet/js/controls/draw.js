@@ -280,8 +280,8 @@ const handleLeafletDrawBtns = (map, {
         }
 
         if (lastChange.type === 'restore') {
-            const [id, version] = targetLayer._indexedDBKey.split('--version')
-            gisData.features = (await getFromGISDB(`${id}--version${lastChange.features[0].old}`)).gisData.features
+            const properties = getDBKeyProperties(targetLayer._indexedDBKey)
+            gisData.features = (await getFromGISDB(createLocalLayerDBKey({...properties, version: lastChange.features[0].old}))).gisData.features
         }
         
         await saveToGISDB(turf.clone(gisData), {
@@ -319,27 +319,40 @@ const handleLeafletDrawBtns = (map, {
         parent: bar,
         attrs: {
             href:'#', 
-            'data-indexeddbkey-version': Number(targetLayer._indexedDBKey.split('--version')[1])-1
+            'data-indexeddbkey-version': getDBKeyProperties(targetLayer._indexedDBKey).version - 1
         },
         className: 'leaflet-draw-misc-restore bi bi-skip-backward',
         events: {
             mouseover: async (e) => {
-                const [id, version] = targetLayer._indexedDBKey.split('--version')
+                const properties = getDBKeyProperties(targetLayer._indexedDBKey)
                 const currentVersion = Number(e.target.getAttribute('data-indexeddbkey-version'))
-                const previousVersion = (await getAllGISDBKeys()).filter(i => i.startsWith(id)).map(i => Number(i.split('--version')[1])).filter(i => i < currentVersion).sort((a, b) => a - b).pop()
+                const previousVersion = (
+                    (await getAllGISDBKeys())
+                    .filter(i => i.includes(properties.id))
+                    .map(i => getDBKeyProperties(i).version)
+                    .filter(i => i < currentVersion)
+                    .sort((a, b) => a - b)
+                    .pop()
+                )
                 e.target.setAttribute('title', previousVersion ? `Restore to version ${previousVersion}` : `No older version to restore`)
 
             },
             click: async (e) => {
                 const handler = async () => {
-                    const [id, version] = targetLayer._indexedDBKey.split('--version')
+                    const properties = getDBKeyProperties(targetLayer._indexedDBKey)
                     const currentVersion = Number(e.target.getAttribute('data-indexeddbkey-version'))
-                    const previousVersion = (await getAllGISDBKeys()).filter(i => i.startsWith(id)).map(i => Number(i.split('--version')[1])).filter(i => i < currentVersion).sort((a, b) => a - b).pop()
-                    
+                    const previousVersion = (
+                        (await getAllGISDBKeys())
+                        .filter(i => i.includes(properties.id))
+                        .map(i => getDBKeyProperties(i).version)
+                        .filter(i => i < currentVersion)
+                        .sort((a, b) => a - b)
+                        .pop()
+                    )
                     if (!previousVersion) return
                     
                     e.target.setAttribute('data-indexeddbkey-version', previousVersion)
-                    const {gisData, queryExtent} = await getFromGISDB(`${id}--version${previousVersion}`)
+                    const {gisData, queryExtent} = await getFromGISDB(createLocalLayerDBKey({...properties, version: previousVersion}))
 
                     await saveToGISDB(turf.clone(gisData), {
                         id: targetLayer._indexedDBKey,
@@ -390,15 +403,15 @@ const handleLeafletDrawBtns = (map, {
                 const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
                 if (!changes.length) return
 
-                const [id, version] = targetLayer._indexedDBKey.split('--version')
+                const properties = getDBKeyProperties(targetLayer._indexedDBKey)
                 const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
                 const newIndexedDBKey = await saveToGISDB(gisData, {
-                    id: `${id}--version${Number(version ?? 1)+1}`,
+                    id: createLocalLayerDBKey({...properties, version: Number(properties.version ?? 1)+1}),
                     queryExtent,
                 })
 
                 targetLayer._group._handlers.getAllLayers().forEach(i => {
-                    if (!i._indexedDBKey.startsWith(id)) return
+                    if (!i._indexedDBKey.includes(properties.id)) return
                     i._indexedDBKey = newIndexedDBKey
                 })
 
@@ -406,7 +419,7 @@ const handleLeafletDrawBtns = (map, {
 
                 localStorage.removeItem(drawControlChangesKey)
 
-                restoreBtn.setAttribute('data-indexeddbkey-version', targetLayer._indexedDBKey.split('--version')[1]-1)
+                restoreBtn.setAttribute('data-indexeddbkey-version', properties.version)
             }
         }
     })

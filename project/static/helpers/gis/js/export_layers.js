@@ -103,8 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (layer.editable) {
                     layer.editable = false
                     
-                    const [id, version] = currentKey.split('--version')
-                    currentKey = `${id}--version${Number(version ?? 2)-1}`
+                    const properties = getDBKeyProperties(currentKey)
+                    currentKey = createLocalLayerDBKey({...properties, version: Number(properties.version ?? 2)-1})
                 }
                 
                 layer.indexedDBKey = currentKey

@@ -187,7 +187,8 @@ const handleLeafletToolboxPanel = (map, parent) => {
                         })
 
                         geojson.features = (() => {
-                            const id = JSON.parse(inputLayer._indexedDBKey.split(';')[1].split('--')[0]).id
+                            const properties = getDBKeyProperties(inputLayer._indexedDBKey)
+                            const id = properties.id
                             const features = {}
 
                             for (const i of ['MultiPoint', 'MultiLineString', 'MultiPolygon']) {

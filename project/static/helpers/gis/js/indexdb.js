@@ -32,8 +32,12 @@ const createLocalLayerDBKey = ({
     name = 'new layer',
     version = 1
 }={}) => {
-    const params = canonicalize({id, name})
-    return `local;${params}--version${version}`
+    const params = canonicalize({id, name, version})
+    return `local;${params}`
+}
+
+const getDBKeyProperties = (indexedDBKey) => {
+    return JSON.parse(indexedDBKey.split(';', 2).pop())
 }
 
 const saveToGISDB = async (gisData, {
