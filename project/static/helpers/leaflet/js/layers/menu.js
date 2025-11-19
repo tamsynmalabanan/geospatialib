@@ -198,7 +198,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                         newFeature
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {id: indexedDBKey})
+                    await saveToGISDB(gisData, {id: indexedDBKey})
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return
@@ -241,7 +241,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                         newFeature
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {id: indexedDBKey})
+                    await saveToGISDB(gisData, {id: indexedDBKey})
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return
@@ -284,7 +284,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
                         newFeature
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {id: indexedDBKey})
+                    await saveToGISDB(gisData, {id: indexedDBKey})
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return

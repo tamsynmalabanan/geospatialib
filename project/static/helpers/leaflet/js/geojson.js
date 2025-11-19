@@ -468,7 +468,7 @@ const getLeafletGeoJSONLayer = async ({
                                     newFeature
                                 ]
 
-                                await saveToGISDB(turf.clone(gisData), {id: dbKey})
+                                await saveToGISDB(gisData, {id: dbKey})
 
                                 group.getLayers().forEach(i => {
                                     if (i._indexedDBKey !== dbKey) return

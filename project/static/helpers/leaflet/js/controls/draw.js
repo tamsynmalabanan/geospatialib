@@ -150,7 +150,7 @@ const handleLeafletDrawBtns = (map, {
                 ...newFeatures
             ]
     
-            await saveToGISDB(turf.clone(gisData), {id: dbKey})
+            await saveToGISDB(gisData, {id: dbKey})
     
             targetLayer._group.getLayers().forEach(i => {
                 if (i._indexedDBKey !== dbKey) return
@@ -225,7 +225,7 @@ const handleLeafletDrawBtns = (map, {
                         ...newFeatures
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {id: dbKey})
+                    await saveToGISDB(gisData, {id: dbKey})
 
                     targetLayer._group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== dbKey) return
@@ -284,7 +284,7 @@ const handleLeafletDrawBtns = (map, {
             gisData.features = (await getFromGISDB(createLocalLayerDBKey({...properties, version: lastChange.features[0].old}))).gisData.features
         }
         
-        await saveToGISDB(turf.clone(gisData), {id: dbKey})
+        await saveToGISDB(gisData, {id: dbKey})
 
         targetLayer._group.getLayers().forEach(i => {
             if (i._indexedDBKey !== dbKey) return
@@ -351,7 +351,7 @@ const handleLeafletDrawBtns = (map, {
                     e.target.setAttribute('data-indexeddbkey-version', previousVersion)
                     const {gisData, queryExtent} = await getFromGISDB(createLocalLayerDBKey({...properties, version: previousVersion}))
 
-                    await saveToGISDB(turf.clone(gisData), {
+                    await saveToGISDB(gisData, {
                         id: targetLayer._indexedDBKey,
                         queryExtent,
                     })
@@ -471,7 +471,7 @@ const handleLeafletDrawBtns = (map, {
             const {gisData, queryExtent} = await getFromGISDB(dbKey)
             gisData.features.push(geojson.features[0])
             
-            await saveToGISDB(turf.clone(gisData), {id: dbKey})
+            await saveToGISDB(gisData, {id: dbKey})
 
             targetLayer._group.getLayers().forEach(i => {
                 if (i._indexedDBKey !== dbKey) return
@@ -495,7 +495,7 @@ const handleLeafletDrawBtns = (map, {
             const {gisData, queryExtent} = await getFromGISDB(dbKey)
             gisData.features = gisData.features.filter(i => !gslIds.includes(i.metadata.gsl_id))
             
-            await saveToGISDB(turf.clone(gisData), {id: dbKey})
+            await saveToGISDB(gisData, {id: dbKey})
 
             targetLayer._group.getLayers().forEach(i => {
                 if (i._indexedDBKey !== dbKey) return
@@ -527,7 +527,7 @@ const handleLeafletDrawBtns = (map, {
                 ...features.map(i => i.new)
             ]
             
-            await saveToGISDB(turf.clone(gisData), {id: dbKey})
+            await saveToGISDB(gisData, {id: dbKey})
     
             targetLayer._group.getLayers().forEach(i => {
                 if (i._indexedDBKey !== dbKey) return

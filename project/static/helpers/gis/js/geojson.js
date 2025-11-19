@@ -506,9 +506,9 @@ const getGeoJSON = async (dbKey, {
             const isLocal = handlerName === 'local'
             const isStatic = staticVectorFormats.includes(handlerName)
             
-            const queryExtent = queryGeom ? turf.getType(queryGeom) === 'Point' ? turf.buffer(
+            const queryExtent = queryGeom ? turf.getType(queryGeom).includes('Polygon') ? queryGeom : turf.buffer(
                 queryGeom, leafletZoomToMeter(zoom)/2/1000
-            ).geometry : queryGeom : null
+            ).geometry : null
             
             let geojson
         
@@ -526,7 +526,7 @@ const getGeoJSON = async (dbKey, {
         
                 const cachedGeoJSON = cachedData.gisData
                 const cachedQueryExtent = cachedData.queryExtent
-        
+
                 if (queryExtent && cachedGeoJSON.features.length) {
                     if (isStatic) {
                         if (!turf.booleanIntersects(queryExtent, cachedQueryExtent)) {
@@ -556,7 +556,7 @@ const getGeoJSON = async (dbKey, {
                         return intersects
                     })
                 }
-                
+
                 return cachedGeoJSON
             })()
             

@@ -47,6 +47,7 @@ const saveToGISDB = async (gisData, {
     expirationDays=7,
 }={}) => {
     if (!gisData) return
+    gisData = structuredClone(gisData)
 
     if (!id) {
         const currentIds = await getAllGISDBKeys()
@@ -80,8 +81,8 @@ const updateGISDB = async (id, newGISData, newQueryExtent) => {
             resolve(id)
         }
         
-        const cachedData = await getFromGISDB(id, {save:false})
-        if (!cachedData) {
+        const cachedData = await getFromGISDB(id)
+        if (!cachedData || turf.flatten(cachedData.queryExtent).features.every(f => turf.booleanContains(newQueryExtent, f))) {
             await save({
                 gisData: newGISData, 
                 queryExtent: newQueryExtent,
@@ -109,7 +110,7 @@ const updateGISDB = async (id, newGISData, newQueryExtent) => {
     })
 }
 
-const getFromGISDB = async (id, {save=true}={}) => {
+const getFromGISDB = async (id) => {
     return new Promise((resolve, reject) => {
         const request = requestGISDB()
   
@@ -124,7 +125,6 @@ const getFromGISDB = async (id, {save=true}={}) => {
                 if (!result) return resolve(null)
                 
                 const {gisData, queryExtent} = result
-                if (save) await saveToGISDB(gisData, {id, queryExtent})
                 resolve({gisData:structuredClone(gisData), queryExtent})
             }
     
