@@ -1049,7 +1049,7 @@ const handleLeafletLegendPanel = async (map, parent) => {
                 map._previousBbox = newBbox
                 map._featureSelectorLayer.clearLayers()
             })
-        }, 500)
+        }, 1000)
     })
 
     const toggleLayersVisibility = () => {
