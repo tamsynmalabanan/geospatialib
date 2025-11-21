@@ -1,27 +1,12 @@
-const getLeafletGeoJSONLayer = async ({
-    geojson,
-    group,
-    pane = 'overlayPane',
-    indexedDBKey,
-    properties = {},
-    customStyleParams = {},
-    params = {},
-} = {}) => {
-    const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
-        pane,
-        renderer: new L.SVG({pane}),
-        markersInheritOptions: true,
-    })
-
-    geojsonLayer._group = group
-    geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
-    
+const normalizeLayerParams = (params) => {
     params.name = params.name ?? params.title
     params.title = params.title ?? params.name
-    geojsonLayer._params = params
-    
-    properties = geojsonLayer._properties = properties ?? {}
+    return params
+}
 
+const normalizeLayerProperties = (properties, {
+    styleParams = {},
+}={}) => {
     properties.info = properties.info ?? {
         showLegend: true,
         showAttribution: true,
@@ -37,6 +22,7 @@ const getLeafletGeoJSONLayer = async ({
             properties: [],
         },
     }
+
     properties.symbology = properties.symbology ?? {
         default: {
             active: true,
@@ -44,12 +30,13 @@ const getLeafletGeoJSONLayer = async ({
             rank: 1,
             showCount: true,
             showLabel: true,
-            styleParams: getLeafletStyleParams(customStyleParams),
+            styleParams,
         },
         case: false,
         method: 'single',
         groupBy: [],
     }
+
     properties.visibility = properties.visibility ?? {
         active: false,
         min: 10,
@@ -71,12 +58,8 @@ const getLeafletGeoJSONLayer = async ({
                 max: 5000000,
             },
             values: {
-                'None': {
-                    active: true,
-                    fn: null,
-                },
                 'Centroid': {
-                    active: false,
+                    active: true,
                     fn: 'centroid',
                 },
                 'Bounding box': {
@@ -94,11 +77,12 @@ const getLeafletGeoJSONLayer = async ({
         },
         // clustering: {
         //     active: false,
-        //     method: {
-        //         'None': {
-        //             active: true,
-        //             fn: null,
-        //         },
+        //     scale: {
+        //         active: false,
+        //         min: 10,
+        //         max: 5000000,
+        //     },
+        //     values: {
         //         'Density-based clustering': {
         //             active: false,
         //             fn: 'clustersDbscan',
@@ -138,6 +122,30 @@ const getLeafletGeoJSONLayer = async ({
         },
     }
 
+    return properties
+}
+
+const getLeafletGeoJSONLayer = async ({
+    geojson,
+    group,
+    pane = 'overlayPane',
+    indexedDBKey,
+    properties = {},
+    customStyleParams = {},
+    params = {},
+} = {}) => {
+    const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
+        pane,
+        renderer: new L.SVG({pane}),
+        markersInheritOptions: true,
+    })
+
+    geojsonLayer._group = group
+    geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
+    geojsonLayer._params = normalizeLayerParams(params)
+    geojsonLayer._properties = normalizeLayerProperties(properties, {
+        styleParams: getLeafletStyleParams(customStyleParams)
+    })
     geojsonLayer._selectedFeatures = []
 
     geojsonLayer._handlers = {
@@ -579,6 +587,120 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     return geojsonLayer
+}
+
+const getLeafletVectorGridLayer = async ({
+    geojson,
+    group,
+    pane = 'overlayPane',
+    indexedDBKey,
+    properties = {},
+    customStyleParams = {},
+    params = {},
+}={}) => {
+    // L.GridLayer and L.Layer options
+    const gridLayerOptions = {
+        // attribution: null,
+        // tileSize: 256,
+        // opacity: 1.0,
+        // updateWhenIdle: true,
+        // updateWhenZooming: true,
+        // updateInterval: 200,
+        // zIndex: 1,
+        // bounds: udnefined,
+        // minZoom: 0,
+        // maxZoom: undefined,
+        // maxNativeZoom: undefined,
+        // minNativeZoom: undefined,
+        // noWrap: false,
+        // className: '',
+        // keepBuffer: 2,
+        // opacity: 1.0,
+        pane,
+    }
+
+    // geojsoon-vt options
+    const geoJSONVTOptions = {
+        // maxZoom: 14,  // max zoom to preserve detail on; can't be higher than 24
+        // tolerance: 3, // simplification tolerance (higher means simpler)
+        // extent: 4096, // tile extent (both width and height)
+        // buffer: 64,   // tile buffer on each side
+        // debug: 0,     // logging level (0 to disable, 1 or 2)
+        // lineMetrics: false, // whether to enable line metrics tracking for LineString/MultiLineString features
+        // promoteId: null,    // name of a feature property to promote to feature.id. Cannot be used with `generateId`
+        // generateId: false,  // whether to generate feature ids. Cannot be used with `promoteId`
+        // indexMaxZoom: 5,       // max zoom in the initial tile index
+        // indexMaxPoints: 100000, // max number of points per tile in the index
+    }
+
+    // L.path options
+    const pathOptions = {
+        // stroke: true,
+        // color: '',
+        // weight: 3,
+        // opacity: 1.0,
+        // lineCap: 'round',
+        // lineJoin: 'round',
+        // dashArray: null,
+        // dashOffset: null,
+        // fill: true,
+        // fillColor: '',
+        // fillOpacity: 0.5,
+        // fillRule: 'evenodd',
+        // bubblingPointerEvents: true,
+        // renderer: null,
+        // className: '',
+        // interactive: true,
+        // pane: pane,
+        // attribution: null,
+    }
+
+    // L.Icon options
+    const iconOptions = {
+        // iconUrl,
+        // iconRetinaUrl,
+        // iconSize,
+        // iconAnchor,
+        // popupAnchor,
+        // tooltipAnchor,
+        // shadowUrl,
+        // shadowRetinaUrl,
+        // shadowSize,
+        // shadowAnchor,
+        // className,
+        // crossOrigin,
+    }
+
+    const vectorGrid = L.vectorGrid.slicer(geojson, {
+        ...gridLayerOptions,
+        ...geoJSONVTOptions,
+        // vectorTileLayerName: 'sliced',
+        // rendererFactory: L.svg.tile || L.canvas.tile,
+        interactive: true,
+        getFeatureId: (f) => f.metadata.gsl_id,
+        vectorTileLayerStyles: {
+            sliced: (properties, zoom, geometryDimension) => {
+                // geometryDimension: 1 === 'point', 2 === 'line', 3 === 'polygon'
+                return (
+                    (pathOptions, pathOptions) 
+                    || new L.icon(iconOptions) 
+                    || new L.circleMarker({...pathOptions, radius: 10})
+                )
+            }
+        },
+    })
+
+    vectorGrid._group = group
+    vectorGrid._params = normalizeLayerParams(params)
+    vectorGrid._properties = normalizeLayerProperties(properties, {
+        styleParams: customStyleParams
+    })
+    vectorGrid._selectedFeatures = []
+
+    // vectorGrid.setFeatureStyle(id, style)
+    // vectorGrid.resetFeatureStyle(id)
+
+    return vectorGrid
 }
 
 const getCleanFeatureMetadata = (feature) => {
