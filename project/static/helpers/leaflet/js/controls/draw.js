@@ -116,45 +116,44 @@ const handleLeafletDrawBtns = (map, {
     
     drawControl._explodeFeatureGeometry = async (feature) => {
         try {
-            let newGeoJSON = turf.featureCollection([feature])
+            const dbKey = targetLayer._indexedDBKey
+
+            let newGeoJSON = turf.featureCollection([turf.clone(feature)])
             for (const handler of Array('flatten', 'unkinkPolygon')) {
                 newGeoJSON = turf[handler](newGeoJSON)
             }
-            
+
             const newFeatures = (await normalizeGeoJSON(newGeoJSON)).features
             if (newFeatures.length > 1) {
                 for (const index in newFeatures) {
-                    const properties = newFeatures[index].properties
+                    const newFeature = newFeatures[index]
+                    const metadata = newFeature.metadata = newFeature.metadata ?? {}
                     
                     const prefix = `explode_index`
-                    let propKey = `__${prefix}__`
+                    let propKey = prefix
                     let count = 0
-                    while (Object.keys(properties).includes(propKey)) {
+                    while (Object.keys(metadata).includes(propKey)) {
                         count +=1
-                        propKey = `__${prefix}_${count}__`
+                        propKey = `${prefix}_${count}`
                     }
-
-                    properties[`${propKey}`] = index
-                    properties[`__exploded_feature${count ? `_${count}` : ''}__`] = properties.__gsl_id__
-
-                    delete properties.__gsl_id__
-                    newFeatures[index].properties.__gsl_id__ = await hashJSON(properties)
+                    
+                    metadata[propKey] = index
+                    metadata[`exploded_feature${count ? `_${count}` : ''}`] = feature.metadata.gsl_id
+                    
+                    await generateFeatureMetadataId(newFeature)
                 }
             }
             
-            const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
+            const {gisData, queryExtent} = await getFromGISDB(dbKey)
             gisData.features = [
-                ...gisData.features.filter(i => i.properties.__gsl_id__ !== feature.properties.__gsl_id__),
+                ...gisData.features.filter(i => i.metadata.gsl_id !== feature.metadata.gsl_id),
                 ...newFeatures
             ]
     
-            await saveToGISDB(turf.clone(gisData), {
-                id: targetLayer._indexedDBKey,
-                queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-            })
+            await saveToGISDB(gisData, {id: dbKey})
     
             targetLayer._group.getLayers().forEach(i => {
-                if (i._indexedDBKey !== targetLayer._indexedDBKey) return
+                if (i._indexedDBKey !== dbKey) return
                 updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
             })
     
@@ -192,6 +191,8 @@ const handleLeafletDrawBtns = (map, {
                 if (!text) return
     
                 try {
+                    const dbKey = targetLayer._indexedDBKey
+
                     let newFeatures = JSON.parse(text)
                     if (newFeatures.type === 'FeatureCollection') newFeatures = newFeatures.features
                     if (newFeatures.type === 'Feature') newFeatures = [newFeatures]
@@ -202,42 +203,38 @@ const handleLeafletDrawBtns = (map, {
     
                     const copyId = generateRandomString()
                     newFeatures.forEach(async f => {
+                        const metadata = f.metadata = f.metadata ?? {}
                         const prefix = `copied_feature`
-                        let propKey = `__${prefix}__`
+                        let propKey = prefix
 
                         let count = 0
-                        while (Object.keys(f.properties).includes(propKey)) {
+                        while (Object.keys(metadata).includes(propKey)) {
                             count +=1
-                            propKey = `__${prefix}_${count}__`
+                            propKey = `${prefix}_${count}`
                         }
                         
-                        f.properties[`${propKey}`] = f.properties.__gsl_id__
+                        metadata[propKey] = metadata.gsl_id ?? ''
+                        metadata[`copy_id${count ? `_${count}` : ''}`] = copyId
                         
-                        f.properties[`__copy_id${count ? `_${count}` : ''}__`] = copyId
-                        
-                        delete f.properties.__gsl_id__
-                        f.properties.__gsl_id__ = await hashJSON(f.properties)
+                        await generateFeatureMetadataId(f)
                     })
 
-                    const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
+                    const {gisData, queryExtent} = await getFromGISDB(dbKey)
                     gisData.features = [
                         ...gisData.features,
                         ...newFeatures
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {
-                        id: targetLayer._indexedDBKey,
-                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                    })
+                    await saveToGISDB(gisData, {id: dbKey})
 
                     targetLayer._group.getLayers().forEach(i => {
-                        if (i._indexedDBKey !== targetLayer._indexedDBKey) return
+                        if (i._indexedDBKey !== dbKey) return
                         updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
                     })
 
                     drawControl._addChange({
                         type: 'created',
-                        features: newFeatures.map(i => i.properties.__gsl_id__)
+                        features: newFeatures.map(i => i.metadata.gsl_id)
                     })
                 } catch (error) {
                     console.log(error)
@@ -247,6 +244,8 @@ const handleLeafletDrawBtns = (map, {
     })
 
     const undoLastChange = async ({lastChange}={}) => {
+        const dbKey = targetLayer._indexedDBKey
+        
         if (!lastChange) {
             const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
             lastChange = changes.pop()
@@ -255,10 +254,10 @@ const handleLeafletDrawBtns = (map, {
 
         if (!lastChange) return
 
-        const gisData = (await getFromGISDB(targetLayer._indexedDBKey)).gisData
+        const gisData = (await getFromGISDB(dbKey)).gisData
         
         if (lastChange.type === 'created') {
-            gisData.features = gisData.features.filter(i => !lastChange.features.includes(i.properties.__gsl_id__))
+            gisData.features = gisData.features.filter(i => !lastChange.features.includes(i.metadata.gsl_id))
         }
         
         if (lastChange.type === 'deleted') {
@@ -269,29 +268,26 @@ const handleLeafletDrawBtns = (map, {
         }
 
         if (lastChange.type === 'edited') {
-            const gslIds = lastChange.features.map(i => i.new.properties.__gsl_id__)
+            const gslIds = lastChange.features.map(i => i.new.metadata.gsl_id)
             
             const oldFeatures = {}
-            lastChange.features.forEach(i => oldFeatures[i.old.properties.__gsl_id__] = i.old)
+            lastChange.features.forEach(i => oldFeatures[i.old.metadata.gsl_id] = i.old)
             
             gisData.features = [
-                ...gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__)),
+                ...gisData.features.filter(i => !gslIds.includes(i.metadata.gsl_id)),
                 ...Object.values(oldFeatures)
             ]
         }
 
         if (lastChange.type === 'restore') {
-            const [id, version] = targetLayer._indexedDBKey.split('--version')
-            gisData.features = (await getFromGISDB(`${id}--version${lastChange.features[0].old}`)).gisData.features
+            const properties = getDBKeyProperties(dbKey)
+            gisData.features = (await getFromGISDB(createLocalLayerDBKey({...properties, version: lastChange.features[0].old}))).gisData.features
         }
         
-        await saveToGISDB(turf.clone(gisData), {
-            id: targetLayer._indexedDBKey,
-            queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-        })
+        await saveToGISDB(gisData, {id: dbKey})
 
         targetLayer._group.getLayers().forEach(i => {
-            if (i._indexedDBKey !== targetLayer._indexedDBKey) return
+            if (i._indexedDBKey !== dbKey) return
             updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
         })
         
@@ -320,29 +316,42 @@ const handleLeafletDrawBtns = (map, {
         parent: bar,
         attrs: {
             href:'#', 
-            'data-indexeddbkey-version': Number(targetLayer._indexedDBKey.split('--version')[1])-1
+            'data-indexeddbkey-version': getDBKeyProperties(targetLayer._indexedDBKey).version - 1
         },
         className: 'leaflet-draw-misc-restore bi bi-skip-backward',
         events: {
             mouseover: async (e) => {
-                const [id, version] = targetLayer._indexedDBKey.split('--version')
+                const properties = getDBKeyProperties(targetLayer._indexedDBKey)
                 const currentVersion = Number(e.target.getAttribute('data-indexeddbkey-version'))
-                const previousVersion = (await getAllGISDBKeys()).filter(i => i.startsWith(id)).map(i => Number(i.split('--version')[1])).filter(i => i < currentVersion).sort((a, b) => a - b).pop()
+                const previousVersion = (
+                    (await getAllGISDBKeys())
+                    .filter(i => i.includes(properties.id))
+                    .map(i => getDBKeyProperties(i).version)
+                    .filter(i => i < currentVersion)
+                    .sort((a, b) => a - b)
+                    .pop()
+                )
                 e.target.setAttribute('title', previousVersion ? `Restore to version ${previousVersion}` : `No older version to restore`)
 
             },
             click: async (e) => {
                 const handler = async () => {
-                    const [id, version] = targetLayer._indexedDBKey.split('--version')
+                    const properties = getDBKeyProperties(targetLayer._indexedDBKey)
                     const currentVersion = Number(e.target.getAttribute('data-indexeddbkey-version'))
-                    const previousVersion = (await getAllGISDBKeys()).filter(i => i.startsWith(id)).map(i => Number(i.split('--version')[1])).filter(i => i < currentVersion).sort((a, b) => a - b).pop()
-                    
+                    const previousVersion = (
+                        (await getAllGISDBKeys())
+                        .filter(i => i.includes(properties.id))
+                        .map(i => getDBKeyProperties(i).version)
+                        .filter(i => i < currentVersion)
+                        .sort((a, b) => a - b)
+                        .pop()
+                    )
                     if (!previousVersion) return
                     
                     e.target.setAttribute('data-indexeddbkey-version', previousVersion)
-                    const {gisData, queryExtent} = await getFromGISDB(`${id}--version${previousVersion}`)
+                    const {gisData, queryExtent} = await getFromGISDB(createLocalLayerDBKey({...properties, version: previousVersion}))
 
-                    await saveToGISDB(turf.clone(gisData), {
+                    await saveToGISDB(gisData, {
                         id: targetLayer._indexedDBKey,
                         queryExtent,
                     })
@@ -391,15 +400,15 @@ const handleLeafletDrawBtns = (map, {
                 const changes = JSON.parse(localStorage.getItem(drawControlChangesKey) ?? '[]')
                 if (!changes.length) return
 
-                const [id, version] = targetLayer._indexedDBKey.split('--version')
+                const properties = getDBKeyProperties(targetLayer._indexedDBKey)
                 const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
                 const newIndexedDBKey = await saveToGISDB(gisData, {
-                    id: `${id}--version${Number(version ?? 1)+1}`,
+                    id: createLocalLayerDBKey({...properties, version: Number(properties.version ?? 1)+1}),
                     queryExtent,
                 })
 
                 targetLayer._group._handlers.getAllLayers().forEach(i => {
-                    if (!i._indexedDBKey.startsWith(id)) return
+                    if (!i._indexedDBKey.includes(properties.id)) return
                     i._indexedDBKey = newIndexedDBKey
                 })
 
@@ -407,7 +416,7 @@ const handleLeafletDrawBtns = (map, {
 
                 localStorage.removeItem(drawControlChangesKey)
 
-                restoreBtn.setAttribute('data-indexeddbkey-version', targetLayer._indexedDBKey.split('--version')[1]-1)
+                restoreBtn.setAttribute('data-indexeddbkey-version', properties.version)
             }
         }
     })
@@ -453,47 +462,43 @@ const handleLeafletDrawBtns = (map, {
 
     const drawEvents = {
         'created': async (e) => {
+            const dbKey = targetLayer._indexedDBKey
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
-            
-            if (!targetLayer._indexedDBKey) return targetLayer.addData(geojson)
+            if (!dbKey) return targetLayer.addData(geojson)
             
             await normalizeGeoJSON(geojson)
             
-            const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
+            const {gisData, queryExtent} = await getFromGISDB(dbKey)
             gisData.features.push(geojson.features[0])
             
-            await saveToGISDB(turf.clone(gisData), {
-                id: targetLayer._indexedDBKey,
-                queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-            })
+            await saveToGISDB(gisData, {id: dbKey})
 
             targetLayer._group.getLayers().forEach(i => {
-                if (i._indexedDBKey !== targetLayer._indexedDBKey) return
+                if (i._indexedDBKey !== dbKey) return
                 updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
             })
 
             drawControl._addChange({
                 type: 'created',
-                features: geojson.features.map(i => i.properties.__gsl_id__)
+                features: geojson.features.map(i => i.metadata.gsl_id)
             })
         },
         'deleted': async (e) => {
             e.layer.removeFrom(targetLayer)
-            if (!targetLayer._indexedDBKey) return
+            
+            const dbKey = targetLayer._indexedDBKey
+            if (!dbKey) return
             
             const geojson = turf.featureCollection([e.layer.toGeoJSON()])
-            const gslIds = geojson.features.map(i => i.properties.__gsl_id__)
+            const gslIds = geojson.features.map(i => i.metadata.gsl_id)
             
-            const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
-            gisData.features = gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__))
+            const {gisData, queryExtent} = await getFromGISDB(dbKey)
+            gisData.features = gisData.features.filter(i => !gslIds.includes(i.metadata.gsl_id))
             
-            await saveToGISDB(turf.clone(gisData), {
-                id: targetLayer._indexedDBKey,
-                queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-            })
+            await saveToGISDB(gisData, {id: dbKey})
 
             targetLayer._group.getLayers().forEach(i => {
-                if (i._indexedDBKey !== targetLayer._indexedDBKey) return
+                if (i._indexedDBKey !== dbKey) return
                 updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
             })
             
@@ -505,7 +510,8 @@ const handleLeafletDrawBtns = (map, {
             })
         },
         'edited': async (e) => {
-            if (!targetLayer._indexedDBKey) return
+            const dbKey = targetLayer._indexedDBKey
+            if (!dbKey) return
 
             const features = []
             for (const i of e.layers.getLayers()) {
@@ -513,21 +519,18 @@ const handleLeafletDrawBtns = (map, {
                 features.push({old: i.feature, new: newFeature})
             }
 
-            const gslIds = features.map(i => i.old.properties.__gsl_id__)
+            const gslIds = features.map(i => i.old.metadata.gsl_id)
 
-            const {gisData, queryExtent} = await getFromGISDB(targetLayer._indexedDBKey)
+            const {gisData, queryExtent} = await getFromGISDB(dbKey)
             gisData.features = [
-                ...gisData.features.filter(i => !gslIds.includes(i.properties.__gsl_id__)),
+                ...gisData.features.filter(i => !gslIds.includes(i.metadata.gsl_id)),
                 ...features.map(i => i.new)
             ]
             
-            await saveToGISDB(turf.clone(gisData), {
-                id: targetLayer._indexedDBKey,
-                queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-            })
+            await saveToGISDB(gisData, {id: dbKey})
     
             targetLayer._group.getLayers().forEach(i => {
-                if (i._indexedDBKey !== targetLayer._indexedDBKey) return
+                if (i._indexedDBKey !== dbKey) return
                 updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
             })
 

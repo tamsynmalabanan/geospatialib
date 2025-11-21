@@ -157,7 +157,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
 
             if (coverage === 'selected') {
                 return turf.featureCollection(storedData.features.filter(f => {
-                    return (layer._selectedFeatures ?? []).includes(f.properties.__gsl_id__)
+                    return (layer._selectedFeatures ?? []).includes(f.metadata.gsl_id)
                 }))
             }
         }
@@ -187,7 +187,8 @@ const handleLeafletToolboxPanel = (map, parent) => {
                         })
 
                         geojson.features = (() => {
-                            const id = JSON.parse(inputLayer._indexedDBKey.split(';')[1].split('--')[0]).id
+                            const properties = getDBKeyProperties(inputLayer._indexedDBKey)
+                            const id = properties.id
                             const features = {}
 
                             for (const i of ['MultiPoint', 'MultiLineString', 'MultiPolygon']) {
@@ -197,7 +198,8 @@ const handleLeafletToolboxPanel = (map, parent) => {
                                         "type": i,
                                         "coordinates": []
                                     },
-                                    "properties": {__dissolved__: id}
+                                    "properties": {},
+                                    "metadata": {dissolved: id}
                                 }
                             }
 
@@ -445,21 +447,20 @@ const handleLeafletToolboxPanel = (map, parent) => {
 
                             for (const index in newFeatures) {
                                 const feature = newFeatures[index]
-                                const properties = structuredClone(feature.properties)
+                                const metadata = feature.metadata = feature.metadata ?? {}
                                 
                                 const prefix = `flatten_index`
-                                let propKey = `__${prefix}__`
+                                let propKey = prefix
                                 let count = 0
-                                while (Object.keys(properties).includes(propKey)) {
+                                while (Object.keys(metadata).includes(propKey)) {
                                     count +=1
-                                    propKey = `__${prefix}_${count}__`
+                                    propKey = `${prefix}_${count}`
                                 }
 
-                                properties[`${propKey}`] = index
-                                properties[`__flattened_feature${count ? `_${count}` : ''}__`] = properties.__gsl_id__
+                                metadata[propKey] = index
+                                metadata[`flattened_feature${count ? `_${count}` : ''}`] = f.metadata.gsl_id
 
-                                delete properties.__gsl_id__
-                                feature.properties = properties
+                                delete metadata.gsl_id
                             }
 
                             return newFeatures
@@ -499,21 +500,20 @@ const handleLeafletToolboxPanel = (map, parent) => {
 
                             for (const index in newFeatures) {
                                 const feature = newFeatures[index]
-                                const properties = structuredClone(feature.properties)
+                                const metadata = feature.metadata = feature.metadata ?? {}
                                 
                                 const prefix = `unkink_index`
-                                let propKey = `__${prefix}__`
+                                let propKey = prefix
                                 let count = 0
-                                while (Object.keys(properties).includes(propKey)) {
+                                while (Object.keys(metadata).includes(propKey)) {
                                     count +=1
-                                    propKey = `__${prefix}_${count}__`
+                                    propKey = `${prefix}_${count}`
                                 }
 
-                                properties[`${propKey}`] = index
-                                properties[`__unkinked_feature${count ? `_${count}` : ''}__`] = properties.__gsl_id__
+                                metadata[propKey] = index
+                                metadata[`unkinked_feature${count ? `_${count}` : ''}`] = f.metadata.gsl_id
 
-                                delete properties.__gsl_id__
-                                feature.properties = properties
+                                delete metadata.gsl_id
                             }
 
                             return newFeatures

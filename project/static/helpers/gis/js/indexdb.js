@@ -32,8 +32,12 @@ const createLocalLayerDBKey = ({
     name = 'new layer',
     version = 1
 }={}) => {
-    const params = canonicalize({id, name})
-    return `local;${params}--version${version}`
+    const params = canonicalize({id, name, version})
+    return `local;${params}`
+}
+
+const getDBKeyProperties = (indexedDBKey) => {
+    return JSON.parse(indexedDBKey.split(';', 2).pop())
 }
 
 const saveToGISDB = async (gisData, {
@@ -43,6 +47,7 @@ const saveToGISDB = async (gisData, {
     expirationDays=7,
 }={}) => {
     if (!gisData) return
+    gisData = structuredClone(gisData)
 
     if (!id) {
         const currentIds = await getAllGISDBKeys()
@@ -52,7 +57,7 @@ const saveToGISDB = async (gisData, {
     }
 
     if (!queryExtent && gisData.type === 'FeatureCollection') {
-        queryExtent = turf.bboxPolygon(turf.bbox(gisData)).geometry
+        queryExtent = turf.envelope(gisData).geometry
     }
 
     const expirationTime = Date.now() + (expirationDays*1000*60*60*24)
@@ -76,8 +81,8 @@ const updateGISDB = async (id, newGISData, newQueryExtent) => {
             resolve(id)
         }
         
-        const cachedData = await getFromGISDB(id, {save:false})
-        if (!cachedData) {
+        const cachedData = await getFromGISDB(id)
+        if (!cachedData || turf.flatten(cachedData.queryExtent).features.every(f => turf.booleanContains(newQueryExtent, f))) {
             await save({
                 gisData: newGISData, 
                 queryExtent: newQueryExtent,
@@ -105,7 +110,7 @@ const updateGISDB = async (id, newGISData, newQueryExtent) => {
     })
 }
 
-const getFromGISDB = async (id, {save=true}={}) => {
+const getFromGISDB = async (id) => {
     return new Promise((resolve, reject) => {
         const request = requestGISDB()
   
@@ -120,7 +125,6 @@ const getFromGISDB = async (id, {save=true}={}) => {
                 if (!result) return resolve(null)
                 
                 const {gisData, queryExtent} = result
-                if (save) await saveToGISDB(gisData, {id, queryExtent})
                 resolve({gisData:structuredClone(gisData), queryExtent})
             }
     

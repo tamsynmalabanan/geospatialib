@@ -1,27 +1,12 @@
-const getLeafletGeoJSONLayer = async ({
-    geojson,
-    group,
-    pane = 'overlayPane',
-    indexedDBKey,
-    properties = {},
-    customStyleParams = {},
-    params = {},
-} = {}) => {
-    const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
-        pane,
-        renderer: new L.SVG({pane}),
-        markersInheritOptions: true,
-    })
-
-    geojsonLayer._group = group
-    geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
-    
+const normalizeLayerParams = (params) => {
     params.name = params.name ?? params.title
     params.title = params.title ?? params.name
-    geojsonLayer._params = params
-    
-    properties = geojsonLayer._properties = properties ?? {}
+    return params
+}
 
+const normalizeLayerProperties = (properties, {
+    styleParams = {},
+}={}) => {
     properties.info = properties.info ?? {
         showLegend: true,
         showAttribution: true,
@@ -37,6 +22,7 @@ const getLeafletGeoJSONLayer = async ({
             properties: [],
         },
     }
+
     properties.symbology = properties.symbology ?? {
         default: {
             active: true,
@@ -44,12 +30,13 @@ const getLeafletGeoJSONLayer = async ({
             rank: 1,
             showCount: true,
             showLabel: true,
-            styleParams: getLeafletStyleParams(customStyleParams),
+            styleParams,
         },
         case: false,
         method: 'single',
         groupBy: [],
     }
+
     properties.visibility = properties.visibility ?? {
         active: false,
         min: 10,
@@ -71,12 +58,8 @@ const getLeafletGeoJSONLayer = async ({
                 max: 5000000,
             },
             values: {
-                'None': {
-                    active: true,
-                    fn: null,
-                },
                 'Centroid': {
-                    active: false,
+                    active: true,
                     fn: 'centroid',
                 },
                 'Bounding box': {
@@ -94,11 +77,12 @@ const getLeafletGeoJSONLayer = async ({
         },
         // clustering: {
         //     active: false,
-        //     method: {
-        //         'None': {
-        //             active: true,
-        //             fn: null,
-        //         },
+        //     scale: {
+        //         active: false,
+        //         min: 10,
+        //         max: 5000000,
+        //     },
+        //     values: {
         //         'Density-based clustering': {
         //             active: false,
         //             fn: 'clustersDbscan',
@@ -138,12 +122,36 @@ const getLeafletGeoJSONLayer = async ({
         },
     }
 
+    return properties
+}
+
+const getLeafletGeoJSONLayer = async ({
+    geojson,
+    group,
+    pane = 'overlayPane',
+    indexedDBKey,
+    properties = {},
+    customStyleParams = {},
+    params = {},
+} = {}) => {
+    const geojsonLayer =  L.geoJSON(turf.featureCollection([]), {
+        pane,
+        renderer: new L.SVG({pane}),
+        markersInheritOptions: true,
+    })
+
+    geojsonLayer._group = group
+    geojsonLayer._renderers = [geojsonLayer.options.renderer, new L.Canvas({pane})]
+    geojsonLayer._params = normalizeLayerParams(params)
+    geojsonLayer._properties = normalizeLayerProperties(properties, {
+        styleParams: getLeafletStyleParams(customStyleParams)
+    })
     geojsonLayer._selectedFeatures = []
 
     geojsonLayer._handlers = {
         getFeatureStyleParams: (feature) => {
             const symbology = geojsonLayer._properties?.symbology
-            return (symbology?.groups)?.[feature.properties.__groupId__]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
+            return (symbology?.groups)?.[feature.metadata.groupId]?.styleParams || symbology?.default?.styleParams || getLeafletStyleParams()
         },
         isPatternFilledPolygonInCanvas: (feature) => {
             const styleParams = geojsonLayer._handlers.getFeatureStyleParams(feature)
@@ -156,7 +164,7 @@ const getLeafletGeoJSONLayer = async ({
         },
         selectFeatureLayer: (layer, {updated=false}={}) => {
             const feature = layer.feature
-            const gslId = feature.properties.__gsl_id__
+            const gslId = feature.metadata.gsl_id
             if (geojsonLayer._selectedFeatures.includes(gslId) && !updated) return
 
             const handler = feature.geometry.type.includes('Point') ? 'setIcon' : 'setStyle'
@@ -200,7 +208,7 @@ const getLeafletGeoJSONLayer = async ({
         },
         deselectFeatureLayer: (layer) => {
             const feature = layer.feature
-            const gslId = feature.properties.__gsl_id__
+            const gslId = feature.metadata.gsl_id
             if (!geojsonLayer._selectedFeatures.includes(gslId)) return
 
             const handler = feature.geometry.type.includes('Point') ? 'setIcon' : 'setStyle'
@@ -220,7 +228,7 @@ const getLeafletGeoJSONLayer = async ({
     }
 
     geojsonLayer.options.onEachFeature = (feature, layer) => {
-        const gslId = feature.properties.__gsl_id__
+        const gslId = feature.metadata.gsl_id
         const styleParams = geojsonLayer._handlers.getFeatureStyleParams(feature)
 
         const handler = (layer) => {
@@ -230,14 +238,15 @@ const getLeafletGeoJSONLayer = async ({
             const isMapDrawControlLayer = group._name === 'local' && geojsonLayer._indexedDBKey === group._map._drawControl?._targetLayer?._indexedDBKey
             
             const properties = feature.properties
+            const metadata = feature.metadata
 
             const info = geojsonLayer._properties.info
-            info.attributes = Array.from(new Set([...Object.keys(properties), ...(info.attributes ?? [])]))
+            info.attributes = Array.from(new Set([...Object.keys(properties), ...Object.keys(metadata), ...(info.attributes ?? [])]))
             
             const tooltip = info.tooltip
             layer._params.title = tooltip.properties.length ? (() => {
                 const values = tooltip.properties.map(i => {
-                    let value = properties[i]
+                    let value = properties[i] ?? metadata[i]
                     
                     if (!isNaN(value)) return formatNumberWithCommas(Number(value))
 
@@ -253,10 +262,10 @@ const getLeafletGeoJSONLayer = async ({
                 let popupProperties = {}
                 if (popup.properties.length && !isMapDrawControlLayer) {
                     for (const i of popup.properties) {
-                        popupProperties[i] = properties[i]
+                        popupProperties[i] = properties[i] ?? metadata[i]
                     }
                 } else {
-                    popupProperties = properties
+                    popupProperties = {...properties, ...getCleanFeatureMetadata(feature)}
                 }
 
                 const getPopupHeader = () => [geojsonLayer, layer].map(i => i._params.title).filter(i => i).join(': ').trim()
@@ -299,8 +308,8 @@ const getLeafletGeoJSONLayer = async ({
 
                     Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
                         const propertyName = row.firstChild.innerText
-                        if (propertyName.startsWith('__') && propertyName.endsWith('__')) return
-
+                        if (!Object.keys(properties).includes(propertyName)) return
+                        
                         const propertyValue = row.firstChild.nextElementSibling.innerText
                         
                         Array.from(row.children).forEach(i => i.innerHTML = '')
@@ -445,6 +454,7 @@ const getLeafletGeoJSONLayer = async ({
                         innerHTML: 'Save',
                         events: {
                             click: async (e) => {
+                                const dbKey = geojsonLayer._indexedDBKey
                                 const newProperties = {}
                                 Array.from(content.querySelectorAll('tbody tr')).forEach(row => {
                                     if (row.lastChild.firstChild.checked) {
@@ -460,19 +470,16 @@ const getLeafletGeoJSONLayer = async ({
                                 newFeature.properties = newProperties
                                 newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
 
-                                const {gisData, queryExtent} = await getFromGISDB(geojsonLayer._indexedDBKey)
+                                const {gisData, queryExtent} = await getFromGISDB(dbKey)
                                 gisData.features = [
-                                    ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                                    ...gisData.features.filter(i => i.metadata.gsl_id !== gslId),
                                     newFeature
                                 ]
 
-                                await saveToGISDB(turf.clone(gisData), {
-                                    id: geojsonLayer._indexedDBKey,
-                                    queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                                })
+                                await saveToGISDB(gisData, {id: dbKey})
 
                                 group.getLayers().forEach(i => {
-                                    if (i._indexedDBKey !== geojsonLayer._indexedDBKey) return
+                                    if (i._indexedDBKey !== dbKey) return
                                     updateLeafletGeoJSONLayer(i, {geojson: gisData, updateLocalStorage: false})
                                 })
 
@@ -582,6 +589,133 @@ const getLeafletGeoJSONLayer = async ({
     return geojsonLayer
 }
 
+const getLeafletVectorGridLayer = async ({
+    geojson,
+    group,
+    pane = 'overlayPane',
+    indexedDBKey,
+    properties = {},
+    customStyleParams = {},
+    params = {},
+}={}) => {
+    // L.GridLayer and L.Layer options
+    const gridLayerOptions = {
+        // attribution: null,
+        // tileSize: 256,
+        // opacity: 1.0,
+        // updateWhenIdle: true,
+        // updateWhenZooming: true,
+        // updateInterval: 200,
+        // zIndex: 1,
+        // bounds: udnefined,
+        // minZoom: 0,
+        // maxZoom: undefined,
+        // maxNativeZoom: undefined,
+        // minNativeZoom: undefined,
+        // noWrap: false,
+        // className: '',
+        // keepBuffer: 2,
+        // opacity: 1.0,
+        pane,
+    }
+
+    // geojsoon-vt options
+    const geoJSONVTOptions = {
+        // maxZoom: 14,  // max zoom to preserve detail on; can't be higher than 24
+        // tolerance: 3, // simplification tolerance (higher means simpler)
+        // extent: 4096, // tile extent (both width and height)
+        // buffer: 64,   // tile buffer on each side
+        // debug: 0,     // logging level (0 to disable, 1 or 2)
+        // lineMetrics: false, // whether to enable line metrics tracking for LineString/MultiLineString features
+        // promoteId: null,    // name of a feature property to promote to feature.id. Cannot be used with `generateId`
+        // generateId: false,  // whether to generate feature ids. Cannot be used with `promoteId`
+        // indexMaxZoom: 5,       // max zoom in the initial tile index
+        // indexMaxPoints: 100000, // max number of points per tile in the index
+    }
+
+    // L.path options
+    const pathOptions = {
+        // stroke: true,
+        // color: '',
+        // weight: 3,
+        // opacity: 1.0,
+        // lineCap: 'round',
+        // lineJoin: 'round',
+        // dashArray: null,
+        // dashOffset: null,
+        // fill: true,
+        // fillColor: '',
+        // fillOpacity: 0.5,
+        // fillRule: 'evenodd',
+        // bubblingPointerEvents: true,
+        // renderer: null,
+        // className: '',
+        // interactive: true,
+        // pane: pane,
+        // attribution: null,
+    }
+
+    // L.Icon options
+    const iconOptions = {
+        // iconUrl,
+        // iconRetinaUrl,
+        // iconSize,
+        // iconAnchor,
+        // popupAnchor,
+        // tooltipAnchor,
+        // shadowUrl,
+        // shadowRetinaUrl,
+        // shadowSize,
+        // shadowAnchor,
+        // className,
+        // crossOrigin,
+    }
+
+    const vectorGrid = L.vectorGrid.slicer(geojson, {
+        ...gridLayerOptions,
+        ...geoJSONVTOptions,
+        // vectorTileLayerName: 'sliced',
+        // rendererFactory: L.svg.tile || L.canvas.tile,
+        interactive: true,
+        getFeatureId: (f) => f.metadata.gsl_id,
+        vectorTileLayerStyles: {
+            sliced: (properties, zoom, geometryDimension) => {
+                // geometryDimension: 1 === 'point', 2 === 'line', 3 === 'polygon'
+                return (
+                    (pathOptions, pathOptions) 
+                    || new L.icon(iconOptions) 
+                    || new L.circleMarker({...pathOptions, radius: 10})
+                )
+            }
+        },
+    })
+
+    vectorGrid._group = group
+    vectorGrid._params = normalizeLayerParams(params)
+    vectorGrid._properties = normalizeLayerProperties(properties, {
+        styleParams: customStyleParams
+    })
+    vectorGrid._selectedFeatures = []
+
+    // vectorGrid.setFeatureStyle(id, style)
+    // vectorGrid.resetFeatureStyle(id)
+
+    return vectorGrid
+}
+
+const getCleanFeatureMetadata = (feature) => {
+    const propertyKeys = Object.keys(feature.properties)
+    const metadata = feature.metadata
+    
+    const includedMetadata = {}
+    Object.keys(metadata).forEach(i => {
+        if (Object.keys(propertyKeys).includes(i)) return
+        includedMetadata[i] = metadata[i]
+    })
+    
+    return includedMetadata
+}
+
 const getFeatureTitle = (properties) => {
     let title
 
@@ -686,9 +820,9 @@ const getLeafletGeoJSONData = async (layer, {
                 const valid = hasActiveFilters ? validateGeoJSONFeature(feature, filters) : true
             
                 if (valid) {
-                    const properties = feature.properties
-                    properties.__groupId__ = ''
-                    properties.__groupRank__ = groups.length + 1
+                    const metadata = feature.metadata
+                    metadata.groupId = ''
+                    metadata.groupRank = groups.length + 1
         
                     if (hasActiveGroups) {
                         for (const [id, group] of groups) {
@@ -696,8 +830,8 @@ const getLeafletGeoJSONData = async (layer, {
             
                             if (!group.active || !validateGeoJSONFeature(feature, group.filters ?? {})) continue
                             
-                            properties.__groupId__ = id
-                            properties.__groupRank__ = group.rank
+                            metadata.groupId = id
+                            metadata.groupRank = group.rank
                             break
                         }
                     }
@@ -745,12 +879,12 @@ const getLeafletGeoJSONData = async (layer, {
     return data
 }
 
-const isUnderenderedLayer = (layer) => {
+const isUnrenderedLayer = (layer) => {
     return layer._group._map._handlers.hasHiddenLegendLayer(layer) || layer._group._map._handlers.hasHiddenLegendGroupLayer(layer) || !leafletLayerIsVisible(layer)
 }
 
 const updateLeafletGeoJSONLayer = async (layer, {geojson, controller, abortBtns, updateLocalStorage=true} = {}) => {
-    if (!layer || !layer._map || isUnderenderedLayer(layer)) return
+    if (!layer || !layer._map || isUnrenderedLayer(layer)) return
 
     const map = layer._map ?? layer._group?._map
     if (!map) return
@@ -880,7 +1014,7 @@ const getGeoJSONLayerStyles = (layer) => {
     layer.eachLayer(featureLayer => {
         const feature = featureLayer.feature
         const featureType = feature.geometry.type.toLowerCase()
-        const groupId = feature.properties.__groupId__ ?? ""
+        const groupId = feature.metadata.groupId ?? ''
         const style = styles[groupId] ?? styles['']
         
         if (featureType === 'geometrycollection') {

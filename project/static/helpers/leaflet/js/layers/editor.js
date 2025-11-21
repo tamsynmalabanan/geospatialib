@@ -13,20 +13,20 @@ const toggleLeafletLayerEditor = async (layer, {
 
     
     if (editableLayer) {
-        const [id, version] = editableLayer._indexedDBKey.split('--version')
+        const properties = getDBKeyProperties(editableLayer._indexedDBKey)
         const drawControlChanges = JSON.parse(localStorage.getItem(`draw-control-changes-${mapContainer.id}`) ?? '[]')
-        const previousKey = `${id}--version${Number(version ?? 2)-1}`
+        const previousKey = createLocalLayerDBKey({...properties, version: Number(properties.version ?? 2)-1})        
         
         const endEditingSession = (indexedDBKey) => {
             if (indexedDBKey !== editableLayer._indexedDBKey) {
                 deleteFromGISDB(editableLayer._indexedDBKey)
             }
     
-            localLayers.forEach(i => {
+            layer._group._handlers.getAllLayers().forEach(i => {
                 const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)
-                Array.from(legend.querySelectorAll(`.bi.bi-pencil-square`)).forEach(i => i.remove())
+                Array.from(legend?.querySelectorAll(`.bi.bi-pencil-square`) ?? []).forEach(i => i.remove())
 
-                if (!i._indexedDBKey.startsWith(id)) return
+                if (!i._indexedDBKey.includes(properties.id)) return
                 i._indexedDBKey = indexedDBKey
             })
         }
@@ -89,18 +89,18 @@ const toggleLeafletLayerEditor = async (layer, {
     }
 
     if (enableEditor) {
-        const [id, version] = layer._indexedDBKey.split('--version')
+        const properties = getDBKeyProperties(layer._indexedDBKey)
         const {gisData, queryExtent} = (await getFromGISDB(layer._indexedDBKey)) ?? {
             gisData: turf.featureCollection([]),
             queryExtent: turf.feature([]).geometry,
         }    
         const newIndexedDBKey = indexedDBKey ?? await saveToGISDB(gisData, {
-            id: `${id}--version${Number(version ?? 1)+1}`,
+            id: createLocalLayerDBKey({...properties, version: Number(properties.version ?? 1)+1}),
             queryExtent,
         })    
         
         localLayers.forEach(i => {
-            if (!i._indexedDBKey.startsWith(id)) return
+            if (!i._indexedDBKey.includes(properties.id)) return
             i._indexedDBKey = newIndexedDBKey
             
             const legend = layerLegends.querySelector(`#${layerLegends.id}-${i._leaflet_id}`)

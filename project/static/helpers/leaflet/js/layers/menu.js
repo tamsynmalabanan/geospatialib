@@ -11,7 +11,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     } catch {}
     const featureType = feature ? turf.getType(feature) : null
     const geojsonLayer = type === 'geojson' ? layer : feature ? findLeafletFeatureLayerParent(layer) : null
-    const gslId = feature ? feature?.properties?.__gsl_id__ : null
+    const gslId = feature ? feature?.metadata?.gsl_id : null
     const indexedDBKey = (geojsonLayer ?? layer)._indexedDBKey
 
     const group = layer._group ?? geojsonLayer?._group
@@ -56,7 +56,7 @@ const getLeafletLayerContextMenu = async (event, layer, {
     const selectedFeatures = isLegendGeoJSONLayer ? geojsonLayer._selectedFeatures ?? [] : null
     const isSelectedFeature = selectedFeatures?.includes(gslId)
     const featureCountAll = geojsonLayer?.getLayers().length ?? 0
-    const featureCountSelected = geojsonLayer?.getLayers().filter(l => selectedFeatures?.includes(l.feature.properties.__gsl_id__)).length ?? 0
+    const featureCountSelected = geojsonLayer?.getLayers().filter(l => selectedFeatures?.includes(l.feature.metadata.gsl_id)).length ?? 0
 
     return contextMenuHandler(event, {
         zoomin: {
@@ -68,8 +68,8 @@ const getLeafletLayerContextMenu = async (event, layer, {
             btnCallback: async () => {
                 zoomLeafletMapToBounds(map, L.geoJSON(turf.featureCollection(
                     geojsonLayer.getLayers()
-                    .map(l => turf.clone(l.feature))
-                    .filter(f => selectedFeatures.includes(f.properties.__gsl_id__))
+                    .map(l => l.feature)
+                    .filter(f => selectedFeatures.includes(f.metadata.gsl_id))
                 )).getBounds())
             }
         },
@@ -190,18 +190,15 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     if (newFeature.type !== 'Feature') return
 
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
-                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
+                    const gslId = newFeature.metadata.gsl_id = feature.metadata.gsl_id
 
                     const {gisData, queryExtent} = await getFromGISDB(indexedDBKey)
                     gisData.features = [
-                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                        ...gisData.features.filter(i => i.metadata.gsl_id !== gslId),
                         newFeature
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {
-                        id: indexedDBKey,
-                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                    })
+                    await saveToGISDB(gisData, {id: indexedDBKey})
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return
@@ -236,18 +233,15 @@ const getLeafletLayerContextMenu = async (event, layer, {
                     let newFeature = structuredClone(feature)
                     newFeature.properties = newProperties
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
-                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
+                    const gslId = newFeature.metadata.gsl_id = feature.metadata.gsl_id
 
                     const {gisData, queryExtent} = await getFromGISDB(indexedDBKey)
                     gisData.features = [
-                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                        ...gisData.features.filter(i => i.metadata.gsl_id !== gslId),
                         newFeature
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {
-                        id: indexedDBKey,
-                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                    })
+                    await saveToGISDB(gisData, {id: indexedDBKey})
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return
@@ -275,25 +269,22 @@ const getLeafletLayerContextMenu = async (event, layer, {
                 try {
                     let newGeom = JSON.parse(text)
                     if (newGeom.type === 'Feature') newGeom = newGeom.geometry
-                    if (!newGeom || !newGeom.coordinates || !newGeom.type) return
+                    if (!newGeom || !newGeom.coordinates || !newGeom.type || !turf.booleanValid(newGeom)) return
 
 
                     let newFeature = structuredClone(feature)
                     newFeature.geometry = newGeom
                     newFeature = (await normalizeGeoJSON(turf.featureCollection([newFeature]))).features[0]
 
-                    const gslId = newFeature.properties.__gsl_id__ = feature.properties.__gsl_id__
+                    const gslId = newFeature.metadata.gsl_id = feature.metadata.gsl_id
 
                     const {gisData, queryExtent} = await getFromGISDB(indexedDBKey)
                     gisData.features = [
-                        ...gisData.features.filter(i => i.properties.__gsl_id__ !== gslId),
+                        ...gisData.features.filter(i => i.metadata.gsl_id !== gslId),
                         newFeature
                     ]
 
-                    await saveToGISDB(turf.clone(gisData), {
-                        id: indexedDBKey,
-                        queryExtent: turf.bboxPolygon(turf.bbox(gisData)).geometry
-                    })
+                    await saveToGISDB(gisData, {id: indexedDBKey})
 
                     group.getLayers().forEach(i => {
                         if (i._indexedDBKey !== indexedDBKey) return
@@ -343,7 +334,9 @@ const getLeafletLayerContextMenu = async (event, layer, {
         csv: isSearch || !layerGeoJSON ? null : {
             innerText: `Export centroid${feature ? '' : 's'} to CSV`,
             btnCallback: () => {
-                const properties = layerGeoJSON.features.map(f => f.properties)
+                const properties = layerGeoJSON.features.map(f => {
+                    return {...f.properties, ...getCleanFeatureMetadata(f)}
+                })
 
                 const headers = [...Array.from(
                     new Set(properties.flatMap(prop => Object.keys(prop)))

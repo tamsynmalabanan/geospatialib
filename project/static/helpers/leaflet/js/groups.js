@@ -128,12 +128,6 @@ const handleLeafletLayerGroups = async (map) => {
                     if (layer._indexedDBKey === map._drawControl?._targetLayer?._indexedDBKey) {
                         toggleLeafletLayerEditor(layer)
                     }
-                    
-                    // const [id, version] = layer._indexedDBKey.split('--version')
-                    // const keys = await getAllGISDBKeys()
-                    // keys.forEach(k => {
-                    //     if (k.startsWith(id)) deleteFromGISDB(k)
-                    // })
                 }
             },
             clearAllLayers: async () => {
@@ -217,8 +211,8 @@ const handleLeafletLayerGroups = async (map) => {
             }
 
             if (data) {
-                const id = JSON.parse(indexedDBKey.split('--version')[0].split(';')[1]).id
-                if (!(await getAllGISDBKeys()).find(i => i.includes(id))) {
+                const properties = getDBKeyProperties(indexedDBKey)
+                if (!(await getAllGISDBKeys()).find(i => i.includes(properties.id))) {
                     const {gisData, queryExtent} = data
                     await saveToGISDB(gisData, {id:indexedDBKey, queryExtent})
                 }
