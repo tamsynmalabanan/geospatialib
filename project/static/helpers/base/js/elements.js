@@ -17,7 +17,14 @@ const customCreateElement = ({
     Object.keys(attrs).forEach(k => element.setAttribute(k, attrs[k]))
     Object.keys(events).forEach(k => element.addEventListener(k, events[k]))
     
-    if (innerHTML) element.innerHTML = innerHTML
+    if (innerHTML) {
+        if (innerHTML instanceof Element) {
+            element.innerHTML = ''
+            element.appendChild(innerHTML)
+        } else {
+            element.innerHTML = innerHTML
+        }
+    }
     if (innerText) element.innerText = innerText
 
     return element

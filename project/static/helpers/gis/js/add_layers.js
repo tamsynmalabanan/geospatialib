@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const modalElement = document.querySelector(`#addLayersModal`)
+    if (!modalElement) return
+
     const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
     const formId = 'addLayersForm'
-    const form = modalElement.querySelector(`#${formId}`)
-    const sourceRadios = Array.from(form.elements.source)
+    const form = modalElement?.querySelector(`#${formId}`)
+    const sourceRadios = Array.from(form?.elements.source)
     const fileInput = form.elements.files
     const mapInput = form.elements.map
     const fileFields = form.querySelector(`#${formId}-fileFields`)
@@ -181,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         resetForm()
-        modalInstance.hide()
+        modalInstance?.hide()
     })
     
     vectorBtn.addEventListener('click', async (e) => {
@@ -197,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (layer) group.addLayer(layer)
     
         resetForm()
-        modalInstance.hide()
+        modalInstance?.hide()
     })
     
     resetBtn.addEventListener('click', resetForm)

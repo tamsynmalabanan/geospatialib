@@ -77,6 +77,8 @@ const handleGSLLayers = (layers, container) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     const modalElement = document.querySelector(`#exportLayersModal`)
+    if (!modalElement) return
+    
     const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement)
     const form = modalElement.querySelector(`#exportLayersForm`)
     const resetBtn = form.elements.reset
