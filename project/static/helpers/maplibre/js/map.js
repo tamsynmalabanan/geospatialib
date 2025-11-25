@@ -112,6 +112,8 @@ class GSLSettingsControl {
                 return item
             },
             popup: () => {
+                this.map.getCanvas().style.cursor = 'pointer'
+
                 const item = this.createMenuItem()
                 item.appendChild(this.createControlTitle('Popup options'))
 
@@ -125,17 +127,21 @@ class GSLSettingsControl {
                         label: 'Toggle popup',
                         icon: '💬',
                     },
+                    coords: {
+                        label: 'Location',
+                        icon: '📍',
+                    },
                     // elev: {
                     //     label: 'Elevation',
                     //     icon: '🏔️',
                     // },
-                    osm: {
-                        label: 'Openstreetmap',
-                        icon: '🗾',
-                    },
                     layers: {
                         label: 'Layers',
                         icon: '📚',
+                    },
+                    osm: {
+                        label: 'Openstreetmap',
+                        icon: '🗾',
                     },
                 }
 
@@ -148,7 +154,7 @@ class GSLSettingsControl {
                         attrs: {
                             type: 'checkbox',
                             name: `popup-${name}`,
-                            ...(isToggle ? {checked: true} : {})
+                            checked: true,
                         },
                         className: 'btn-check'
                     })
@@ -165,11 +171,15 @@ class GSLSettingsControl {
                         events: {
                             ...(isToggle ? {click: (e) => {
                                 const checked = !input.checked
-                                container.querySelectorAll('input').forEach(el => {
-                                    if (el === input) return
-                                    if (!checked && el.checked) el.nextElementSibling.click()
-                                    el.disabled = !checked
-                                })
+                                
+                                const inputs = Array.from(container.querySelectorAll('input:not([name="popup-toggle"])'))
+                                inputs.forEach(el => el.disabled = !checked)
+
+                                this.map.getCanvas().style.cursor = checked && inputs.some(i => i.checked) ? 'pointer' : ''
+
+                                if (!checked) {
+                                    this.map._gslHandlers._popup?.remove()
+                                } 
                             }} : {})
                         }
                     })
@@ -182,9 +192,7 @@ class GSLSettingsControl {
             misc: () => {
                 const item = this.createMenuItem()
 
-                const collapse = customCreateElement({
-                    className: 'd-flex flex-wrap gap-1'
-                })
+                const collapse = customCreateElement({className:'collapse'})
 
                 const toggle = customCreateElement({
                     parent: item,
@@ -202,9 +210,14 @@ class GSLSettingsControl {
 
                 item.appendChild(collapse)
 
+                const container = customCreateElement({
+                    parent: collapse,
+                    className: 'd-flex flex-wrap gap-1'
+                })
+
                 const input = customCreateElement({
                     tag: 'input',
-                    parent: collapse,
+                    parent: container,
                     attrs: {
                         type: 'checkbox',
                         name: 'hillshade',
@@ -215,7 +228,7 @@ class GSLSettingsControl {
                 
                 const label = customCreateElement({
                     tag: 'label',
-                    parent: collapse,
+                    parent: container,
                     className: 'btn btn-sm btn-secondary font-monospace fs-10',
                     attrs: {
                         title: 'Toggle hillshade',
@@ -268,6 +281,107 @@ class FitToWorldControl {
         events: {
             click: (e) => {
                 this.map.fitBounds([[-180, -85], [180, 85]])
+            }
+        }
+    })
+
+    return this.container
+  }
+
+  onRemove() {
+    this.container.parentNode.removeChild(this.container);
+    this.map = undefined;
+  }
+}
+
+class PlaceSearchControl {
+  onAdd(map) {
+    this.map = map
+    this.container = customCreateElement({className:'maplibregl-ctrl maplibregl-ctrl-group d-flex flex-nowrap gap-1 align-items-center'})
+
+    const sourceId = 'placeSearch'
+    this.map.addSource(sourceId, {
+        type: "geojson",
+        data: turf.featureCollection([])
+    })
+    this.map.getSource(sourceId).title = 'Place search result'
+
+    const icon = customCreateElement({
+        tag:'button',
+        parent: this.container,
+        className: 'fs-16',
+        attrs: {
+            type: 'button',
+            tabindex: '-1',
+        },
+        innerText: '🔍',
+        events: {
+            click: (e) => {
+                this.container.classList.add('p-1')
+                collapse.classList.remove('d-none')
+                input.focus()
+            }
+        }
+    })
+
+    const collapse = customCreateElement({
+        parent: this.container,
+        className: 'd-flex flex-no-wrap gap-1 align-items-center d-none'
+    })
+
+    const input = customCreateElement({
+        tag: 'input',
+        parent: collapse,
+        className: 'form-control form-control-sm box-shadow-none border-0 p-0 fs-12',
+        attrs: {
+            type: 'search',
+            placeholder: 'Search a place or location',
+            tabindex: '-1',
+        },
+        events: {
+            change: async (e) => {
+                this.map._gslHandlers.removeGeoJSONLayers(sourceId)
+                
+                let geojson = turf.featureCollection([])
+
+                const value = input.value.trim()
+                if (value !== '') {
+                    const coords = isLngLatString(value)
+                    if (coords) {
+                        map.flyTo({
+                            center: coords,
+                            zoom: 11,
+                        })
+                        geojson = turf.featureCollection([turf.point(coords)])
+                    } else {
+                        geojson = await fetchSearchNominatim(value)
+                        if (geojson?.features.length) {
+                            const bbox = turf.bbox(geojson)
+                            map.fitBounds(bbox, {padding:100, maxZoom:12})
+                        }
+                    }
+                }
+
+                map.getSource(sourceId).setData(geojson)
+                if (geojson.features.length) {
+                    this.map._gslHandlers.addGeoJSONLayers(sourceId)
+                }
+            }
+        }
+    })
+
+    const close = customCreateElement({
+        tag:'button',
+        parent: collapse,
+        className: 'bi bi-backspace-fill text-secondary',
+        attrs: {
+            type: 'button',
+            tabindex: '-1',
+        },
+        events: {
+            click: (e) => {
+                this.container.classList.remove('p-1')
+                collapse.classList.add('d-none')
             }
         }
     })
@@ -390,6 +504,12 @@ const initMapLibreMap = (el) => {
                 }
             }
         },
+        setPlaceSearchControl: ({
+            position='top-left',
+        }={}) => {
+            const control = new PlaceSearchControl()
+            map.addControl(control, position)
+        },
         setFitToWorldControl: ({
             position='top-left',
         }={}) => {
@@ -410,31 +530,259 @@ const initMapLibreMap = (el) => {
         getProjection: () => {
             return map._gslHandlers._projection
         },
-        createPopup: async ({
-            lngLat,
-        }={}) => {
+        createPopup: async (e) => {
             const popupContainer = map._controls.find(i => i instanceof GSLSettingsControl).controls.popup
             if (!popupContainer.querySelector('input[name="popup-toggle"]').checked) return
 
-            const pt = lngLat ?? map.getCenter()
-            const popup = new maplibregl.Popup()
-            .setLngLat(pt)
-            .setHTML(`
-                <span>Clicked Location</span>
-                <p>Longitude: ${pt.lng.toFixed(4)}<br>
-                Latitude: ${pt.lat.toFixed(4)}</p>
-            `)
+            const checkedOptions = Array.from(popupContainer.querySelectorAll('input:not([name="popup-toggle"])')).filter(i => i.checked).map(i => i.getAttribute('name').split('-').pop())
+            if (!checkedOptions.length) return
+
+            const sourceId = 'popupFeature'
+            let source = map.getSource(sourceId)
+            if (!source) {
+                map.addSource(sourceId, {
+                    type: "geojson",
+                    data: turf.featureCollection([])
+                })
+                source = map.getSource(sourceId)
+                source.title = 'Popup feature'
+            }
+
+            let features = []
+            let lngLat = e.lngLat
+            if (checkedOptions.includes('layers')) {
+                features = map.queryRenderedFeatures(e.point)
+                console.log('update features with wms features, other sources')
+
+                features = features.filter(f => {
+                    return turf.booleanValid(f) && f.layer.source !== sourceId
+                })
+
+                if (features.length > 1) {
+                    const point = turf.point([lngLat.lng, lngLat.lat])
+                    const intersectedFeatures = features.filter(f => turf.booleanIntersects(f, point))
+                    if (intersectedFeatures.length) {
+                        features = intersectedFeatures
+                    } else {
+                        const polygonFeatures = features.map(f => {
+                            if (f.geometry.type.includes('Polygon')) return f
+                            f = turf.clone(f)
+                            f.geometry = turf.buffer(f, 10, { units: "meters" }).geometry
+                            return f
+                        })
+                        features = polygonFeatures.map(f1 => polygonFeatures.filter(f2 => turf.booleanIntersects(f1, f2))).reduce((a, b) => (b.length > a.length ? b : a))
+                        if (features.length > 1) {
+                            try {
+                                const intersection = turf.intersect(turf.featureCollection(features))
+                                lngLat = new maplibregl.LngLat(...turf.pointOnFeature(intersection).geometry.coordinates)
+                            } catch (error) {console.log(error)}
+                        }
+                    }
+                }
+            }
+
+            if (features.length === 1) {
+                lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
+            }
+
+            const popup = map._gslHandlers._popup = new maplibregl.Popup()
+            .setLngLat(lngLat)
+            .setHTML(`<div class='mt-2 d-flex flex-column'></div>`)
             .addTo(map)
 
-            if (!lngLat) {
-                popup._container.querySelector('.maplibregl-popup-tip')?.remove()
+            popup.on("close", () => {
+                map._gslHandlers._popup = null
+                map._gslHandlers.removeGeoJSONLayers(sourceId)
+                source.setData(turf.featureCollection([]))
+            })
+            
+            const container = popup._container.querySelector('.maplibregl-popup-content').firstChild
+
+            if (features.length) {
+                const carousel = customCreateElement({
+                    parent: container,
+                    className: 'carousel slide',
+                })
+
+                const carouselInner = customCreateElement({
+                    parent: carousel,
+                    className: 'carousel-inner'
+                })
+
+                Object.keys(features).forEach(i => {
+                    const f = features[i]
+                    const header = Array(
+                        map.getSource(f.layer.source).title, 
+                        f.properties[Array('display_name', 'name', 'title', 'id').find(i => Object.keys(f.properties).find(j => j.includes(i))) ?? Object.keys(f.properties).pop()]
+                    ).filter(i => i).join(': ')
+                    const content = createFeaturePropertiesTable(f.properties, {header})
+                    content.classList.add('fs-12')
+                    const carouselItem = customCreateElement({
+                        parent: carouselInner,
+                        className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
+                        innerHTML: content,
+                    })
+                })
+                
+                if (features.length > 1) {
+                    Array.from(customCreateElement({
+                        innerHTML: `
+                            <button class="carousel-control-prev" type="button" data-bs-target="#${carousel.id}" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        `
+                    }).children).forEach(b => carousel.appendChild(b))
+                }
+
             }
+
+            const footer = customCreateElement({
+                parent: container,
+                className: 'd-flex flex-wrap gap-2'
+            })
+
+            if (checkedOptions.includes('coords')) {
+                const coordsValues = Object.values(lngLat).map(i => i.toFixed(6))    
+
+                const coordsContent = `<span>📋</span><span>${coordsValues[0]}</span><span>${coordsValues[1]}</span>`
+                const coords = customCreateElement({
+                    tag: 'button',
+                    className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12 flex-grow-1',
+                    parent: footer,
+                    innerHTML: coordsContent,
+                    events: {
+                        click: (e) => {
+                            navigator.clipboard.writeText(coordsValues.join(' '))
+                        }
+                    }
+                })
+
+                const zoom = customCreateElement({
+                    tag: 'button',
+                    className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12',
+                    parent: footer,
+                    innerText: '🔍',
+                    events: {
+                        click: (e) => {
+                            map.flyTo({
+                                center: coordsValues,
+                                zoom: 11,
+                            })
+                        }
+                    }
+                })
+            }
+            
+            if (checkedOptions.includes('osm')) {
+                const geojson = await fetchReverseNominatim({
+                    queryGeom: turf.point(Object.values(lngLat)),
+                    zoom: map.getZoom(),
+                })
+                
+                if (geojson?.features?.length) {
+                    const feature = geojson.features[0]
+                    const place = customCreateElement({
+                        tag: 'button',
+                        className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap align-items-center gap-2 fs-12 flex-grow-1 pe-3',
+                        parent: footer,
+                        innerHTML: `<span>📍</span><span class="text-wrap text-break text-start">${feature.properties.display_name}</span>`,
+                        events: {
+                            click: async (e) => {
+                                const geojson = await source.getData()
+                                if (geojson?.features?.length && turf.booleanEqual(geojson.features[0], feature)) {
+                                    map._gslHandlers.removeGeoJSONLayers(sourceId)
+                                    source.setData(turf.featureCollection([]))
+                                } else {
+                                    map.fitBounds(feature.bbox)
+                                    source.setData(turf.featureCollection([feature]))
+                                    map._gslHandlers.addGeoJSONLayers(sourceId)
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+        },
+        removeGeoJSONLayers: (sourceId) => {
+            const layers = map.getStyle().layers
+            if (!layers) return
+
+            layers.forEach(l => {
+                if (l.source !== sourceId) return
+                map.removeLayer(l.id)
+            })
+        },
+        addGeoJSONLayers: (sourceId, {
+            pointType = 'symbol'
+        }={}) => {
+            if (!map.getSource(sourceId)) return
+            
+            const polygonId = `${sourceId}-Polygon`
+            let polygonLayer = map.getLayer(polygonId) 
+            if (!polygonLayer) {
+                polygonLayer = map.addLayer({
+                    id: polygonId,
+                    type: "fill",
+                    source: sourceId,
+                    paint: {
+                        "fill-color": "#088",
+                        "fill-opacity": 0.5
+                    },
+                    filter: ["==", "$type", "Polygon"]
+                })
+            }
+            
+            const lineStringId = `${sourceId}-LineString`
+            let lineStringLayer = map.getLayer(lineStringId) 
+            if (!lineStringLayer) {
+                lineStringLayer = map.addLayer({
+                    id: lineStringId,
+                    type: "line",
+                    source: sourceId,
+                    paint: {
+                        "line-color": "#000",
+                        "line-width": 2
+                    },
+                    filter: ["==", "$type", "LineString"]
+                })
+            }
+
+            const pointId = `${sourceId}-Point`
+            let pointLayer = map.getLayer(pointId) 
+            if (!pointLayer) {
+                pointLayer = map.addLayer({
+                    id: pointId,
+                    type: pointType,
+                    source: sourceId,
+                    ...(pointType === 'circle' ? {
+                        paint: {
+                            "circle-radius": 6,
+                            "circle-color": "#f00"
+                        }
+                    } : {
+                        layout: {
+                            "text-field": "🔴",
+                            "text-size": 24,
+                            "text-allow-overlap": true
+                        }
+                    }),
+                    filter: ["==", "$type", "Point"]
+                })
+            }
+
+            return {polygonLayer, lineStringLayer, pointLayer}
         }
     }
 
     map.on('style.load', () => {
         map._gslHandlers.setProjection()
 
+        map._gslHandlers.setPlaceSearchControl()
         map._gslHandlers.setNavControl()
         map._gslHandlers.setScaleControl()
         map._gslHandlers.setTerrainControl()
@@ -444,7 +792,7 @@ const initMapLibreMap = (el) => {
     })
 
     map.on('click', (e) => {
-        map._gslHandlers.createPopup({lngLat: e.lngLat})
+        map._gslHandlers.createPopup(e)
     })
 
     // Enable terrain rendering

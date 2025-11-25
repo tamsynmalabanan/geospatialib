@@ -415,8 +415,8 @@ const createFeaturePropertiesTable = (properties, {
         const theadth = document.createElement('th')
         theadth.setAttribute('scope', 'col')
         theadth.setAttribute('colspan', '2')
-        theadth.className = 'fw-medium text-break text-wrap'
-        theadth.innerText = header
+        theadth.className = 'fw-bold text-break text-wrap'
+        theadth.innerHTML = header
         theadtr.appendChild(theadth)
     }
 
@@ -447,7 +447,7 @@ const createFeaturePropertiesTable = (properties, {
 const fetchGeoJSONHandlers = (name) => {
     return {
         osm: fetchOSMData,
-        nominatim: fetchNominatim,
+        nominatim: fetchReverseNominatim,
         overpass: fetchOverpass,
         geojson: fetchGeoJSON,
         file: fetchFileData,
