@@ -413,10 +413,36 @@ const initMapLibreMap = (el) => {
         createPopup: async ({
             lngLat,
         }={}) => {
-            const popupToggle = map._controls.find(i => i instanceof GSLSettingsControl).controls.popup.querySelector('input[name="popup-toggle"]')
-            if (!popupToggle.checked) return
+            const popupContainer = map._controls.find(i => i instanceof GSLSettingsControl).controls.popup
+            if (!popupContainer.querySelector('input[name="popup-toggle"]').checked) return
 
             const pt = lngLat ?? map.getCenter()
+            
+            const fetchElev = popupContainer.querySelector('input[name="popup-elev"]').checked
+            if (fetchElev) {
+                const point = turf.point([pt.lng, pt.lat])
+                const SRTM30mBoundingBoxes = await getSRTM30mBoundingBoxes()
+                const bbox = SRTM30mBoundingBoxes.features.find(f =>
+                   turf.booleanPointInPolygon(point, f)
+                )
+
+                const url = `https://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/${bbox.properties.dataFile}`
+                console.log(url)
+
+                fetch(url, {
+                    headers: {
+                        'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLCJzaWciOiJlZGxqd3RwdWJrZXlfb3BzIiwiYWxnIjoiUlMyNTYifQ.eyJ0eXBlIjoiVXNlciIsInVpZCI6InRhbXN5bm1hbGFiYW5hbiIsImV4cCI6MTc2OTE4ODcxMCwiaWF0IjoxNzY0MDA0NzEwLCJpc3MiOiJodHRwczovL3Vycy5lYXJ0aGRhdGEubmFzYS5nb3YiLCJpZGVudGl0eV9wcm92aWRlciI6ImVkbF9vcHMiLCJhY3IiOiJlZGwiLCJhc3N1cmFuY2VfbGV2ZWwiOjN9.HQLdf3R_RvflatPYpLE12Vddu6NrKFYATNow94lbD4H95LvbIczEfGBNxE0nZPZXiRF0ZApCOa5hvPeTIwr94IqBifyZ_Je1-4a5p0whFW7mJe8OEg9-9qRRFh_XmJANSOACufxWf8izaRAKnC9jGX__TEkyffVAwDrTZW9n-799EZ24oTvTqp0KthuoV0EaV8V8m2yJJzeWjEltbnl0CoIWzO7D_X072zrQPmmGDBrnDjSgOyHnQh_o922xc0B7NaWyJ2-N6GGHeSld_99GCNVyW0xaSczC02RmuZ_fIitJJYTORilxhMktZlVzmNy_v7niBlB6kCEjns7SbjIdFw'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error('Fetch failed')
+                    return response.blob()
+                })
+                .then(blob => {
+                    console.log(blob)
+                })
+            }
+
             const popup = new maplibregl.Popup()
             .setLngLat(pt)
             .setHTML(`

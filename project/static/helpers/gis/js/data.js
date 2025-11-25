@@ -486,3 +486,11 @@ const fetchFileData = async (params, {abortBtns, controller} = {}) => {
     mapForFetchFileData.set(mapKey, filesArrayPromise)
     return handler(await filesArrayPromise)
 }
+
+let SRTM30mBoundingBoxes
+const getSRTM30mBoundingBoxes = async () => {
+    if (!SRTM30mBoundingBoxes) {
+        SRTM30mBoundingBoxes = await fetchGeoJSON({url: 'https://dwtkns.com/srtm30m/srtm30m_bounding_boxes.json'})
+    }
+    return SRTM30mBoundingBoxes
+}
