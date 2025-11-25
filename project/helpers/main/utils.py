@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.contrib.gis.geos import GEOSGeometry, Polygon
 
 from helpers.base.utils import (
     remove_query_params,
@@ -15,6 +16,7 @@ import base64
 import os
 from staticmap import StaticMap, CircleMarker
 from PIL import Image
+import json
 
 import logging
 logger = logging.getLogger('django')
@@ -37,6 +39,16 @@ def get_clean_url(url, format:str=None, exclusions=[]):
     url = get_google_drive_file_download_url(url) or url
     
     return url
+
+def features_to_geometries(features, srid=4326):
+    geometries = []
+    for feature in features:
+        geometry = GEOSGeometry(json.dumps(feature["geometry"]))
+        geometry.srid = srid
+        if srid != 4326:
+            geometry.transform(4326)
+        geometries.append(geometry)
+    return geometries
 
 def get_world_gdf():
     world = cache.get('world_gdf')

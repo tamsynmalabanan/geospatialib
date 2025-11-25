@@ -32,14 +32,12 @@ from pyproj import CRS
 import ezdxf
 from shapely.geometry import LineString, Point, Polygon as Poly, mapping
 
-
-
 from main.models import SpatialRefSys, Layer
 from helpers.base.utils import get_response, get_response_file, generate_uuid, create_cache_key
 from helpers.base.files import extract_zip, is_zipped_file, is_sqlite_file
 from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES, QUERY_BLACKLIST
 from helpers.base.utils import create_cache_key, get_special_characters
-
+from helpers.main.utils import features_to_geometries
 
 import logging
 logger = logging.getLogger('django')
@@ -160,15 +158,6 @@ class FilteredLayers():
 
         return queryset
 
-def features_to_geometries(features, srid=4326):
-    geometries = []
-    for feature in features:
-        geometry = GEOSGeometry(json.dumps(feature["geometry"]))
-        geometry.srid = srid
-        if srid != 4326:
-            geometry.transform(4326)
-        geometries.append(geometry)
-    return geometries
 
 def get_geojson_bbox_polygon(fc, srid=4326):
     try:

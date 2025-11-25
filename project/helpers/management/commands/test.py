@@ -10,6 +10,7 @@ from main.tasks import onboard_collection
 from main.models import URL, Collection, Layer
 from main.forms import ValidateCollectionForm
 from main.agent import create_thematic_map
+from helpers.main.utils import get_srtm_elevation
 import io
 
 import xml.etree.ElementTree as ET
@@ -19,6 +20,7 @@ import requests
 import re
 from urllib.parse import urlparse, urlunparse
 from urllib.parse import unquote
+
 
 def test_get_collection_data():
     # url = 'https://dataworks.calderdale.gov.uk/download/ep46w/dc5/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.geojson'

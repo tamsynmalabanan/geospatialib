@@ -175,6 +175,8 @@ def cors_proxy_content(request):
     content_type = response.headers.get('Content-Type')
     return HttpResponse(response.content, content_type=content_type, status=response.status_code)
 
+
+
 def srs_wkt(request, srid):
     srs = get_object_or_404(SpatialRefSys, srid=srid)
     return HttpResponse(srs.srtext, content_type='text/plain')
