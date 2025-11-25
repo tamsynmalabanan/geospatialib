@@ -30,6 +30,7 @@ from helpers.base.utils import generate_uuid, get_response
 from helpers.main.constants import QUERY_BLACKLIST
 from helpers.main.layers import FilteredLayers
 from main.agent import create_thematic_map
+from .import models
 
 import logging
 logger = logging.getLogger('django')

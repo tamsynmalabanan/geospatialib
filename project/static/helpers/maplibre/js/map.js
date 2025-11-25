@@ -125,10 +125,10 @@ class GSLSettingsControl {
                         label: 'Toggle popup',
                         icon: '💬',
                     },
-                    elev: {
-                        label: 'Elevation',
-                        icon: '🏔️',
-                    },
+                    // elev: {
+                    //     label: 'Elevation',
+                    //     icon: '🏔️',
+                    // },
                     osm: {
                         label: 'Openstreetmap',
                         icon: '🗾',
@@ -417,27 +417,6 @@ const initMapLibreMap = (el) => {
             if (!popupContainer.querySelector('input[name="popup-toggle"]').checked) return
 
             const pt = lngLat ?? map.getCenter()
-            
-            const fetchElev = popupContainer.querySelector('input[name="popup-elev"]').checked
-            if (fetchElev) {
-                let SRTM30mBoundingBoxes
-                const getSRTM30mBoundingBoxes = async () => {
-                    if (!SRTM30mBoundingBoxes) {
-                        SRTM30mBoundingBoxes = await fetchGeoJSON({url: 'https://dwtkns.com/srtm30m/srtm30m_bounding_boxes.json'})
-                    }
-                    return SRTM30mBoundingBoxes
-                }
-
-                const point = turf.point([pt.lng, pt.lat])
-                const bbox = SRTM30mBoundingBoxes.features.find(f =>
-                   turf.booleanPointInPolygon(point, f)
-                )
-
-                const url = `https://e4ftl01.cr.usgs.gov/MEASURES/SRTMGL1.003/2000.02.11/${bbox.properties.dataFile}`
-                console.log(url)
-
-            }
-
             const popup = new maplibregl.Popup()
             .setLngLat(pt)
             .setHTML(`

@@ -11,6 +11,9 @@ from main.models import URL, Collection, Layer
 from main.forms import ValidateCollectionForm
 from main.agent import create_thematic_map
 from helpers.main.utils import get_srtm_elevation
+
+from htmx.models import SRTMBoundingBox
+
 import io
 
 import xml.etree.ElementTree as ET
