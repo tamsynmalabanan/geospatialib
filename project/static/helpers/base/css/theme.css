@@ -93,3 +93,27 @@
         background-color: var(--default-bg-dark) !important;
     }
 }
+
+.border-light {
+    border-color: var(--default-bg-light) !important;
+}
+
+.border-dark {
+    border-color: var(--default-bg-dark) !important;
+}
+
+.border-top-light {
+    border-top-color: var(--default-bg-light) !important;
+}
+
+.border-top-dark {
+    border-top-color: var(--default-bg-dark) !important;
+}
+
+.border-bottom-light {
+    border-bottom-color: var(--default-bg-light) !important;
+}
+
+.border-bottom-dark {
+    border-bottom-color: var(--default-bg-dark) !important;
+}

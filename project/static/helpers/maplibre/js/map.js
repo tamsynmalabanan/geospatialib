@@ -1,46 +1,421 @@
-class GSLSettingsControl {
+class GeospatialibControl {
     constructor(options = {}) {
         this.options = options
         this.container = null
-        this.createDropdownMenu = () => {
-            const dropdown = customCreateElement({
-                parent: this.container,
-                className: 'dropdown gsl-settings-control'
-            })
-
-            const button = customCreateElement({
-                tag: 'button',
-                parent: dropdown,
-                className: 'fs-16',
-                attrs: {
-                    type: 'button',
-                    'data-bs-toggle': 'dropdown',
-                    'aria-expanded': false
-                },
-                innerText: '⚙️'
-            })
-
-            const menu = customCreateElement({
-                tag: 'form',
-                parent: dropdown,
-                className: 'dropdown-menu mt-1 maplibregl-ctrl maplibregl-ctrl-group'
-            })
-
-            menu.addEventListener('click', (e) => {
-                e.stopPropagation()
-            })
-
-            this.dropdownMenu = customCreateElement({
-                parent: menu,
-                className: 'd-flex flex-column px-2 gap-2'
-            })
+        this.controls = null
+        
+        this.config = {
+            renderHillshade: true,
+            projection: 'mercator',
+            popup: null,
         }
-        this.createControls = () => {
-            const handlers = {
-                projections: () => {
-                    this.map._gslHandlers.setProjection()
 
-                    const container = this.createControlSection('Projection options')
+        this.handlers = {
+            setGeolocateControl: ({
+                position='top-left',
+            }={}) => {
+                const control = new maplibregl.GeolocateControl({
+                    positionOptions: {
+                        enableHighAccuracy: true
+                    },
+                    trackUserLocation: true,
+                    showUserHeading: true,
+                });
+                this.map.addControl(control, position)
+            },
+            setNavControl: ({
+                visualizePitch=true,
+                showZoom=true,
+                showCompass=true,
+                position='top-left',
+            }={}) => {
+                const control = new maplibregl.NavigationControl({
+                    visualizePitch,
+                    showZoom,
+                    showCompass,
+                })
+                this.map.addControl(control, position)
+            },
+            setScaleControl: ({
+                unit='metric',
+                maxWidth=200,
+                position='bottom-right',
+            }={}) => {
+                const control = new maplibregl.ScaleControl({
+                    maxWidth,
+                    unit,
+                })
+                this.map.addControl(control, position)
+            },
+            setTerrainControl: ({
+                source='terrain',
+                exaggeration=1,
+                position='top-left',
+            }={}) => {
+                const map = this.map
+
+                if (!Object.keys(map.style.stylesheet.sources).includes(source)) return
+
+                const control = new maplibregl.TerrainControl({
+                    source,
+                    exaggeration,
+                })
+                map.addControl(control, position)
+                map.setTerrain(null)
+
+                control._container.querySelector('button').addEventListener('click', this.handlers.toggleHillshade)
+            },
+            setPlaceSearchControl: ({
+                position='top-left',
+            }={}) => {
+                const control = new PlaceSearchControl()
+                this.map.addControl(control, position)
+            },
+            setFitToWorldControl: ({
+                position='top-left',
+            }={}) => {
+                const control = new FitToWorldControl()
+                this.map.addControl(control, position)
+            },
+
+            setTerrainSource: ({
+                source = 'terrain',
+                exaggeration = 1,
+            } = {}) => {
+                this.map.setTerrain({ source, exaggeration });
+            },
+            toggleHillshade: () => {
+                const map = this.map
+
+                const source = map.getTerrain()?.source
+                if (source && this.config.renderHillshade) {
+                    if (!map.getLayer('hillshade')) {
+                        map.addLayer({
+                            id: 'hillshade',
+                            source,
+                            type: 'hillshade'
+                        });
+                    }
+                } else {
+                    if (map.getLayer('hillshade')) {
+                        map.removeLayer('hillshade')
+                    }
+                }
+            },
+            setProjection: ({type='mercator'}={}) => {
+                if (!type) type = 'mercator'
+                this.map.setProjection({type})
+                this.config.projection = type
+            },
+            getProjection: () => {
+                return this.config.projection
+            },
+            createPopup: async (e) => {
+                const map = this.map
+
+                const toggleSelector = `[name="popup-toggle"]`
+                const popupControl = this.controls.popup
+
+                const popupToggle = popupControl.querySelector(`input${toggleSelector}`)
+                if (!popupToggle.checked) return
+
+                const checkedOptions = Array.from(popupControl.querySelectorAll(`input:not(${toggleSelector})`)).filter(i => i.checked).map(i => i.getAttribute('name').split('-').pop())
+                if (!checkedOptions.length) return
+
+                const sourceId = 'popupFeature'
+                const source = map.getSource(sourceId)
+
+                let features = []
+                let lngLat = e.lngLat
+
+                if (checkedOptions.includes('layers')) {
+                    features = map.queryRenderedFeatures(e.point)
+                    console.log('update features with features from wms layers, etc.')
+
+                    features = features.filter(f => {
+                        return turf.booleanValid(f) && f.layer.source !== sourceId
+                    })
+
+                    if (features.length > 1) {
+                        const point = turf.point([lngLat.lng, lngLat.lat])
+                        const intersectedFeatures = features.filter(f => turf.booleanIntersects(f, point))
+                        if (intersectedFeatures.length) {
+                            features = intersectedFeatures
+                        } else {
+                            const polygonFeatures = features.map(f => {
+                                if (f.geometry.type.includes('Polygon')) return f
+                                f = turf.clone(f)
+                                f.geometry = turf.buffer(f, 10, { units: "meters" }).geometry
+                                return f
+                            })
+                            features = polygonFeatures.map(f1 => polygonFeatures.filter(f2 => turf.booleanIntersects(f1, f2))).reduce((a, b) => (b.length > a.length ? b : a))
+                            if (features.length > 1) {
+                                try {
+                                    const intersection = turf.intersect(turf.featureCollection(features))
+                                    lngLat = new maplibregl.LngLat(...turf.pointOnFeature(intersection).geometry.coordinates)
+                                } catch (error) {console.log(error)}
+                            }
+                        }
+                    }
+                }
+
+                if (features.length === 1) {
+                    lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
+                }
+
+                const popup = this.config.popup = new maplibregl.Popup()
+                .setLngLat(lngLat)
+                .setMaxWidth(`${window.innerWidth * 0.3}px`)
+                .setHTML(`<div class='d-flex flex-column gap-3'></div>`)
+                .addTo(map)
+
+                popup.on("close", () => {
+                    this.config.popup = null
+                    this.handlers.removeGeoJSONLayers(sourceId)
+                    this.handlers.setGeoJSONSourceData(sourceId)
+                })
+                
+                const popupHeight = window.innerHeight * 0.5
+                
+                const popupContainer = popup._container
+                popupContainer.style.maxHeight = `${popupHeight}px`
+                
+                const popupTooltip = popupContainer.querySelector('.maplibregl-popup-tip')
+                popupTooltip.classList.add(`border-top-${getPreferredTheme()}`, `border-bottom-${getPreferredTheme()}`)
+                
+                const popupCloseBtn = popupContainer.querySelector('.maplibregl-popup-close-button')
+                popupCloseBtn.classList.add(`text-bg-${getPreferredTheme()}`)
+                
+                const popupContent = popupContainer.querySelector('.maplibregl-popup-content')
+                popupContent.classList.add(`bg-${getPreferredTheme()}`)
+                popupContent.style.maxHeight = `${popupHeight-10}px`
+                popupContent.style.padding = `24px 12px 12px 12px`
+                
+                const container = popupContainer.querySelector('.maplibregl-popup-content').firstChild
+                container.style.maxHeight = `${popupHeight-10-12-24}px`
+                
+                if (features.length) {
+                    const carouselContainer = customCreateElement({
+                        parent: container,
+                        className: 'd-flex flex-grow-1 overflow-auto'
+                    })
+
+                    const carousel = customCreateElement({
+                        parent: carouselContainer,
+                        className: 'carousel slide',
+                    })
+
+                    const carouselInner = customCreateElement({
+                        parent: carousel,
+                        className: 'carousel-inner'
+                    })
+
+                    Object.keys(features).forEach(i => {
+                        const f = features[i]
+
+                        const tempHeader = '<img src="https://th.bing.com/th/id/OSK.HEROlJnsXcA4gu9_6AQ2NKHnHukTiry1AIf99BWEqfbU29E?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM">'
+                        const header = tempHeader ?? Array(
+                            map.getSource(f.layer.source).config.title, 
+                            f.properties[
+                                Array('display_name', 'name', 'title', 'id')
+                                .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
+                                ?? Object.keys(f.properties).pop()
+                            ]
+                        ).filter(i => i).join(': ')
+                        
+                        const content = createFeaturePropertiesTable(f.properties, {header, tableClass: `fs-12 table-${getPreferredTheme()}`})
+
+                        const carouselItem = customCreateElement({
+                            parent: carouselInner,
+                            className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
+                            innerHTML: content,
+                        })
+                    })
+                    
+                    if (features.length > 1) {
+                        Array.from(customCreateElement({
+                            innerHTML: `
+                                <button class="carousel-control-prev" type="button" data-bs-target="#${carousel.id}" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            `
+                        }).children).forEach(b => carousel.appendChild(b))
+                    }
+
+                }
+
+                const footer = customCreateElement({
+                    parent: container,
+                    className: 'd-flex flex-wrap gap-2'
+                })
+
+                const zoom = customCreateElement({
+                    tag: 'button',
+                    className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12',
+                    parent: footer,
+                    innerText: '🔍',
+                    events: {
+                        click: (e) => {
+                            map.flyTo({
+                                center: Object.values(lngLat),
+                                zoom: 11,
+                            })
+                        }
+                    }
+                })
+
+                if (checkedOptions.includes('coords')) {
+                    const coordsValues = Object.values(lngLat).map(i => i.toFixed(6))    
+
+                    const coordsContent = `<span>📋</span><span>${coordsValues[0]}</span><span>${coordsValues[1]}</span>`
+                    const coords = customCreateElement({
+                        tag: 'button',
+                        className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12 flex-grow-1',
+                        parent: footer,
+                        innerHTML: coordsContent,
+                        events: {
+                            click: (e) => {
+                                navigator.clipboard.writeText(coordsValues.join(' '))
+                            }
+                        }
+                    })
+                }
+                
+                if (checkedOptions.includes('osm')) {
+                    const data = await fetchReverseNominatim({
+                        queryGeom: turf.point(Object.values(lngLat)),
+                        zoom: map.getZoom(),
+                    })
+                    
+                    if (data?.features?.length) {
+                        const feature = data.features[0]
+                        const place = customCreateElement({
+                            tag: 'button',
+                            className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap align-items-center gap-2 fs-12 pe-3 flex-grow-1',
+                            parent: footer,
+                            innerHTML: `<span>📍</span><span class="text-wrap text-break text-start">${feature.properties.display_name}</span>`,
+                            events: {
+                                click: async (e) => {
+                                    const geojson = await source.getData()
+                                    if (geojson?.features?.length && turf.booleanEqual(geojson.features[0], feature)) {
+                                        this.handlers.removeGeoJSONLayers(sourceId)
+                                        this.handlers.setGeoJSONSourceData(sourceId)
+                                    } else {
+                                        map.fitBounds(feature.bbox)
+                                        await this.handlers.setGeoJSONSourceData(sourceId, {data})
+                                        this.handlers.addGeoJSONLayers(sourceId)
+                                    }
+                                }
+                            }
+                        })
+                    }
+                }
+            },
+
+            setGeoJSONSourceData: async (sourceId, {
+                data=turf.featureCollection([]),
+                config,
+            }={}) => {
+                let source = this.map.getSource(sourceId)
+                if (source) {
+                    source.setData(data)
+                } else {
+                    this.map.addSource(sourceId, {
+                        type: "geojson",
+                        data,
+                    })
+                    source = this.map.getSource(sourceId)
+                    source.config = config ?? {}
+                }
+                return source
+            },
+            removeGeoJSONLayers: (sourceId) => {
+                const map = this.map
+
+                const layers = map.getStyle().layers
+                if (!layers) return
+
+                layers.forEach(l => {
+                    if (l.source !== sourceId) return
+                    map.removeLayer(l.id)
+                })
+            },
+            addGeoJSONLayers: (sourceId, {
+                pointType = 'symbol'
+            }={}) => {
+                const map = this.map
+                if (!map.getSource(sourceId)) return
+                
+                const polygonId = `${sourceId}-Polygon`
+                let polygonLayer = map.getLayer(polygonId) 
+                if (!polygonLayer) {
+                    polygonLayer = map.addLayer({
+                        id: polygonId,
+                        type: "fill",
+                        source: sourceId,
+                        paint: {
+                            "fill-color": "#088",
+                            "fill-opacity": 0.5
+                        },
+                        filter: ["==", "$type", "Polygon"]
+                    })
+                }
+                
+                const lineStringId = `${sourceId}-LineString`
+                let lineStringLayer = map.getLayer(lineStringId) 
+                if (!lineStringLayer) {
+                    lineStringLayer = map.addLayer({
+                        id: lineStringId,
+                        type: "line",
+                        source: sourceId,
+                        paint: {
+                            "line-color": "#000",
+                            "line-width": 2
+                        },
+                        filter: ["==", "$type", "LineString"]
+                    })
+                }
+
+                const pointId = `${sourceId}-Point`
+                let pointLayer = map.getLayer(pointId) 
+                if (!pointLayer) {
+                    pointLayer = map.addLayer({
+                        id: pointId,
+                        type: pointType,
+                        source: sourceId,
+                        ...(pointType === 'circle' ? {
+                            paint: {
+                                "circle-radius": 6,
+                                "circle-color": "#f00"
+                            }
+                        } : {
+                            layout: {
+                                "text-field": "🔴",
+                                "text-size": 24,
+                                "text-allow-overlap": true
+                            }
+                        }),
+                        filter: ["==", "$type", "Point"]
+                    })
+                }
+
+                return {polygonLayer, lineStringLayer, pointLayer}
+            }
+        }
+
+        this.createControl = () => {
+            const container = this.container = customCreateElement({className: 'maplibregl-ctrl maplibregl-ctrl-group'})
+
+            const handlers = {
+                projections: ({body, head}={}) => {
+                    this.handlers.setProjection()
+
+                    head.innerText = 'Projection options'
 
                     const options = {
                         mercator: {
@@ -56,11 +431,11 @@ class GSLSettingsControl {
                     Object.keys(options).forEach(name => {
                         const params = options[name]
                         
-                        const checked = this.map._gslHandlers.getProjection() === name
+                        const checked = this.handlers.getProjection() === name
                         
                         const input = customCreateElement({
                             tag: 'input',
-                            parent: container,
+                            parent: body,
                             attrs: {
                                 type: 'radio',
                                 name: 'projection',
@@ -71,7 +446,7 @@ class GSLSettingsControl {
                         
                         const label = titleToTooltip(customCreateElement({
                             tag: 'label',
-                            parent: container,
+                            parent: body,
                             className: `btn btn-sm btn-light`,
                             attrs: {
                                 title: params.label,
@@ -80,27 +455,20 @@ class GSLSettingsControl {
                             innerText: params.icon,
                             events: {
                                 click: (e) => {
-                                    this.map._gslHandlers.setProjection({type: name})
+                                    this.handlers.setProjection({type: name})
                                 }
                             }
                         }))
                     })
 
-                    return container
+                    return body
                 },
-                popup: () => {
+                popup: ({body, head}={}) => {
                     this.map.getCanvas().style.cursor = 'pointer'
 
-                    const sourceId = 'popupFeature'
-                    if (!this.map.getSource(sourceId)) {
-                        this.map.addSource(sourceId, {
-                            type: "geojson",
-                            data: turf.featureCollection([])
-                        })
-                        this.map.getSource(sourceId).title = 'Popup feature'
-                    }
+                    this.handlers.setGeoJSONSourceData('popupFeature', {config:{title: 'Popup feature'}})
 
-                    const container = this.createControlSection('Popup options')
+                    head.innerText = 'Popup options'
 
                     const options = {
                         toggle: {
@@ -131,7 +499,7 @@ class GSLSettingsControl {
 
                         const input = customCreateElement({
                             tag: 'input',
-                            parent: container,
+                            parent: body,
                             attrs: {
                                 type: 'checkbox',
                                 name: `popup-${name}`,
@@ -142,7 +510,7 @@ class GSLSettingsControl {
                         
                         const label = titleToTooltip(customCreateElement({
                             tag: 'label',
-                            parent: container,
+                            parent: body,
                             className: `btn btn-sm btn-light`,
                             attrs: {
                                 title: params.label,
@@ -155,20 +523,20 @@ class GSLSettingsControl {
                                         const checked = !input.checked
                                         
                                         const toggleSelector = '[name="popup-toggle"]'
-                                        const inputs = Array.from(container.querySelectorAll(`input:not(${toggleSelector})`))
+                                        const inputs = Array.from(body.querySelectorAll(`input:not(${toggleSelector})`))
                                         
                                         inputs.forEach(el => el.disabled = !checked)
                                         this.map.getCanvas().style.cursor = checked && inputs.some(i => i.checked) ? 'pointer' : ''
 
                                         if (!checked) {
-                                            this.map._gslHandlers._popup?.remove()
+                                            this.config.popup?.remove()
                                         } 
                                     }
                                 } : {
                                     click: (e) => {
                                         const toggleSelector = '[name="popup-toggle"]'
-                                        const toggle = container.querySelector(`input${toggleSelector}`)
-                                        const inputs = Array.from(container.querySelectorAll(`input:not(${toggleSelector})`))
+                                        const toggle = body.querySelector(`input${toggleSelector}`)
+                                        const inputs = Array.from(body.querySelectorAll(`input:not(${toggleSelector})`))
 
                                         this.map.getCanvas().style.cursor = toggle.checked && inputs.some(i => {
                                             if (input === i) return !i.checked
@@ -180,14 +548,14 @@ class GSLSettingsControl {
                         }))
                     })
 
-                    return container
+                    return body
                 },
-                misc: () => {
-                    const container = this.createControlSection('More options')
+                misc: ({body, head}={}) => {
+                    head.innerText = 'More options'
 
                     const input = customCreateElement({
                         tag: 'input',
-                        parent: container,
+                        parent: body,
                         attrs: {
                             type: 'checkbox',
                             name: 'hillshade',
@@ -198,7 +566,7 @@ class GSLSettingsControl {
                     
                     const label = titleToTooltip(customCreateElement({
                         tag: 'label',
-                        parent: container,
+                        parent: body,
                         className: 'btn btn-sm btn-light',
                         attrs: {
                             title: 'Toggle hillshade',
@@ -207,67 +575,107 @@ class GSLSettingsControl {
                         innerText: `⛰️`,
                         events: {
                             click: (e) => {
-                                this.map._gslHandlers._renderHillshade = !this.map._gslHandlers._renderHillshade
-                                this.map._gslHandlers.toggleHillshade()
+                                this.config.renderHillshade = !this.config.renderHillshade
+                                this.handlers.toggleHillshade()
                             }
                         }
                     }))
 
-                    return container
+                    return body
                 },
             }
-            
-            this.controls = Object.keys(handlers).reduce((acc, name) => {
-                acc[name] = handlers[name]()
-                return acc
-            }, {})
-        }
-        this.createControlSection = (title) => {
-            const item = customCreateElement({
-                tag: 'div',
-                parent: this.dropdownMenu,
-                className: 'd-flex flex-column gap-1',
-            })
-            const collapse = customCreateElement({
-                className:'collapse show'
-            })
-            
-            const toggle = customCreateElement({
-                parent: item,
-                tag: 'a', 
-                className: 'text-reset text-decoration-none',
-                attrs: {
-                    'data-bs-toggle': 'collapse',
-                    href: `#${collapse.id}`,
-                    role: 'button',
-                    'aria-expanded': true,
-                    'aria-controls': collapse.id
-                },
-            })
-            
-            const head = customCreateElement({
-                parent: toggle,
-                tag: 'span',
-                innerText: title,
-                className: 'fs-12 user-select-none fw-bold text-secondary'
-            })
-            
-            item.appendChild(collapse)
-            
-            const container = customCreateElement({
-                parent: collapse,
-                className: 'd-flex flex-wrap gap-1'
+
+            const dropdown = customCreateElement({
+                parent: container,
+                className: 'dropdown gsl-settings-control'
             })
 
-            return container
+            const button = customCreateElement({
+                tag: 'button',
+                parent: dropdown,
+                className: 'fs-16',
+                attrs: {
+                    type: 'button',
+                    'data-bs-toggle': 'dropdown',
+                    'aria-expanded': false
+                },
+                innerText: '⚙️'
+            })
+
+            const menu = customCreateElement({
+                tag: 'form',
+                parent: dropdown,
+                className: 'dropdown-menu m-1 maplibregl-ctrl maplibregl-ctrl-group'
+            })
+
+            menu.addEventListener('click', (e) => {
+                e.stopPropagation()
+            })
+
+            const content = customCreateElement({
+                parent: menu,
+                className: 'd-flex flex-column px-2 gap-2'
+            })
+            
+            this.controls = Object.keys(handlers).reduce((acc, name) => {
+                const item = customCreateElement({
+                    tag: 'div',
+                    parent: content,
+                    className: 'd-flex flex-column gap-1',
+                })
+
+                const collapse = customCreateElement({
+                    className:'collapse show'
+                })
+                
+                const toggle = customCreateElement({
+                    parent: item,
+                    tag: 'a', 
+                    className: 'text-reset text-decoration-none',
+                    attrs: {
+                        'data-bs-toggle': 'collapse',
+                        href: `#${collapse.id}`,
+                        role: 'button',
+                        'aria-expanded': true,
+                        'aria-controls': collapse.id
+                    },
+                })
+                
+                const head = customCreateElement({
+                    parent: toggle,
+                    tag: 'span',
+                    className: 'fs-12 user-select-none fw-bold text-secondary'
+                })
+                
+                item.appendChild(collapse)
+                
+                const body = customCreateElement({
+                    parent: collapse,
+                    className: 'd-flex flex-wrap gap-1'
+                })
+
+                acc[name] = handlers[name]({body, head})
+                return acc
+            }, {})
         }
     }
 
     onAdd(map) {
         this.map = map
-        this.container = customCreateElement({className: 'maplibregl-ctrl maplibregl-ctrl-group'})
-        this.createDropdownMenu()
-        this.createControls()
+
+        this.handlers.setPlaceSearchControl()
+        this.handlers.setNavControl()
+        this.handlers.setTerrainControl()
+        this.handlers.setGeolocateControl()
+        this.handlers.setFitToWorldControl()
+        
+        this.handlers.setScaleControl()
+
+        this.map.on('click', (e) => {
+            this.handlers.createPopup(e)
+        })
+        
+        this.createControl()
         return this.container
     }
 
@@ -308,104 +716,100 @@ class FitToWorldControl {
 }
 
 class PlaceSearchControl {
-  onAdd(map) {
-    this.map = map
-    this.container = customCreateElement({className:'maplibregl-ctrl maplibregl-ctrl-group d-flex flex-nowrap gap-1 align-items-center'})
+    onAdd(map) {
+        this.map = map
+        this.container = customCreateElement({className:'maplibregl-ctrl maplibregl-ctrl-group d-flex flex-nowrap gap-1 align-items-center'})
 
-    const sourceId = 'placeSearch'
-    this.map.addSource(sourceId, {
-        type: "geojson",
-        data: turf.featureCollection([])
-    })
-    this.map.getSource(sourceId).title = 'Place search result'
-
-    const icon = customCreateElement({
-        tag:'button',
-        parent: this.container,
-        className: 'fs-16',
-        attrs: {
-            type: 'button',
-            tabindex: '-1',
-        },
-        innerText: '🔍',
-        events: {
-            click: (e) => {
-                this.container.classList.add('p-1')
-                collapse.classList.remove('d-none')
-                input.focus()
+        const icon = customCreateElement({
+            tag:'button',
+            parent: this.container,
+            className: 'fs-16',
+            attrs: {
+                type: 'button',
+                tabindex: '-1',
+            },
+            innerText: '🔍',
+            events: {
+                click: (e) => {
+                    this.container.classList.add('p-1')
+                    collapse.classList.remove('d-none')
+                    input.focus()
+                }
             }
-        }
-    })
+        })
 
-    const collapse = customCreateElement({
-        parent: this.container,
-        className: 'd-flex flex-no-wrap gap-1 align-items-center d-none'
-    })
+        const collapse = customCreateElement({
+            parent: this.container,
+            className: 'd-flex flex-no-wrap gap-1 align-items-center d-none'
+        })
 
-    const input = customCreateElement({
-        tag: 'input',
-        parent: collapse,
-        className: 'form-control form-control-sm box-shadow-none border-0 p-0 fs-12',
-        attrs: {
-            type: 'search',
-            placeholder: 'Search a place or location',
-            tabindex: '-1',
-        },
-        events: {
-            change: async (e) => {
-                this.map._gslHandlers.removeGeoJSONLayers(sourceId)
-                
-                let geojson = turf.featureCollection([])
+        const input = customCreateElement({
+            tag: 'input',
+            parent: collapse,
+            className: 'form-control form-control-sm box-shadow-none border-0 p-0 fs-12',
+            attrs: {
+                type: 'search',
+                placeholder: 'Search a place or location',
+                tabindex: '-1',
+            },
+            events: {
+                change: async (e) => {
+                    const geospatialibControl = Object.values(this.map._controls).find(i => i instanceof GeospatialibControl)
+                    
+                    const sourceId = 'placeSearch'
+                    geospatialibControl.handlers.removeGeoJSONLayers(sourceId, {config:{title: 'Place search result'}})
+                    
+                    let data = turf.featureCollection([])
 
-                const value = input.value.trim()
-                if (value !== '') {
-                    const coords = isLngLatString(value)
-                    if (coords) {
-                        map.flyTo({
-                            center: coords,
-                            zoom: 11,
-                        })
-                        geojson = turf.featureCollection([turf.point(coords)])
-                    } else {
-                        geojson = await fetchSearchNominatim(value)
-                        if (geojson?.features.length) {
-                            const bbox = turf.bbox(geojson)
-                            map.fitBounds(bbox, {padding:100, maxZoom:12})
+                    const value = input.value.trim()
+                    if (value !== '') {
+                        const coords = isLngLatString(value)
+                        if (coords) {
+                            map.flyTo({
+                                center: coords,
+                                zoom: 11,
+                            })
+                            data = turf.featureCollection([turf.point(coords)])
+                        } else {
+                            data = await fetchSearchNominatim(value)
+                            if (data?.features.length) {
+                                const bbox = turf.bbox(data)
+                                map.fitBounds(bbox, {padding:100, maxZoom:12})
+                            }
                         }
                     }
-                }
 
-                map.getSource(sourceId).setData(geojson)
-                if (geojson.features.length) {
-                    this.map._gslHandlers.addGeoJSONLayers(sourceId)
+                    await geospatialibControl.handlers.setGeoJSONSourceData(sourceId, {data})
+                    if (data.features.length) {
+                        geospatialibControl.handlers.addGeoJSONLayers(sourceId)
+                    }
                 }
             }
-        }
-    })
+        })
 
-    const close = customCreateElement({
-        tag:'button',
-        parent: collapse,
-        className: 'bi bi-backspace-fill text-secondary',
-        attrs: {
-            type: 'button',
-            tabindex: '-1',
-        },
-        events: {
-            click: (e) => {
-                this.container.classList.remove('p-1')
-                collapse.classList.add('d-none')
+        const close = customCreateElement({
+            tag:'button',
+            parent: collapse,
+            className: 'bi bi-backspace-fill text-secondary',
+            attrs: {
+                type: 'button',
+                tabindex: '-1',
+            },
+            events: {
+                click: (e) => {
+                    this.container.classList.remove('p-1')
+                    collapse.classList.add('d-none')
+                }
             }
-        }
-    })
+        })
 
-    return this.container
-  }
+        return this.container
+    }
 
-  onRemove() {
-    this.container.parentNode.removeChild(this.container);
-    this.map = undefined;
-  }
+    onRemove() {
+        this.container.parentNode.removeChild(this.container);
+        this.map = undefined;
+    }
 }
 
 const initMapLibreMap = (el) => {
@@ -446,372 +850,10 @@ const initMapLibreMap = (el) => {
         maxPitch: 85
     })
 
-    map._gslHandlers = {
-        _renderHillshade: true,
-        setGeolocateControl: ({
-            position='top-left',
-        }={}) => {
-            const control = new maplibregl.GeolocateControl({
-                positionOptions: {
-                    enableHighAccuracy: true
-                },
-                trackUserLocation: true,
-                showUserHeading: true,
-            });
-            map.addControl(control, position)
-        },
-        setNavControl: ({
-            visualizePitch=true,
-            showZoom=true,
-            showCompass=true,
-            position='top-left',
-        }={}) => {
-            const control = new maplibregl.NavigationControl({
-                visualizePitch,
-                showZoom,
-                showCompass,
-            })
-            map.addControl(control, position)
-        },
-        setScaleControl: ({
-            unit='metric',
-            maxWidth=200,
-            position='bottom-right',
-        }={}) => {
-            const control = new maplibregl.ScaleControl({
-                maxWidth,
-                unit,
-            })
-            map.addControl(control, position)
-        },
-        setTerrainControl: ({
-            source='terrain',
-            exaggeration=1,
-            position='top-left',
-        }={}) => {
-            if (!Object.keys(map.style.stylesheet.sources).includes(source)) return
-
-            const control = new maplibregl.TerrainControl({
-                source,
-                exaggeration,
-            })
-            map.addControl(control, position)
-            map.setTerrain(null)
-
-            control._container.querySelector('button').addEventListener('click', map._gslHandlers.toggleHillshade)
-        },
-        toggleHillshade: ({
-            source='terrain'
-        }={}) => {
-            if (map.getTerrain() && map._gslHandlers._renderHillshade) {
-                if (!map.getLayer('hillshade')) {
-                    map.addLayer({
-                        id: 'hillshade',
-                        source,
-                        type: 'hillshade'
-                    });
-                }
-            } else {
-                if (map.getLayer('hillshade')) {
-                    map.removeLayer('hillshade')
-                }
-            }
-        },
-        setPlaceSearchControl: ({
-            position='top-left',
-        }={}) => {
-            const control = new PlaceSearchControl()
-            map.addControl(control, position)
-        },
-        setFitToWorldControl: ({
-            position='top-left',
-        }={}) => {
-            const control = new FitToWorldControl()
-            map.addControl(control, position)
-        },
-        setGSLSettingsControl: ({
-            position='bottom-right',
-        }={}) => {
-            const control = new GSLSettingsControl()
-            map.addControl(control, position)
-        },
-        setProjection: ({type='mercator'}={}) => {
-            if (!type) type = 'mercator'
-            map.setProjection({type})
-            map._gslHandlers._projection = type 
-        },
-        getProjection: () => {
-            return map._gslHandlers._projection
-        },
-        createPopup: async (e) => {
-            const toggleSelector = `[name="popup-toggle"]`
-            const popupContainer = map._controls.find(i => i instanceof GSLSettingsControl).controls.popup
-
-            const popupToggle = popupContainer.querySelector(`input${toggleSelector}`)
-            if (!popupToggle.checked) return
-
-            const checkedOptions = Array.from(popupContainer.querySelectorAll(`input:not(${toggleSelector})`)).filter(i => i.checked).map(i => i.getAttribute('name').split('-').pop())
-            if (!checkedOptions.length) return
-
-            const sourceId = 'popupFeature'
-            const source = map.getSource(sourceId)
-
-            let features = []
-            let lngLat = e.lngLat
-
-            if (checkedOptions.includes('layers')) {
-                features = map.queryRenderedFeatures(e.point)
-                console.log('update features with features from wms layers, etc.')
-
-                features = features.filter(f => {
-                    return turf.booleanValid(f) && f.layer.source !== sourceId
-                })
-
-                if (features.length > 1) {
-                    const point = turf.point([lngLat.lng, lngLat.lat])
-                    const intersectedFeatures = features.filter(f => turf.booleanIntersects(f, point))
-                    if (intersectedFeatures.length) {
-                        features = intersectedFeatures
-                    } else {
-                        const polygonFeatures = features.map(f => {
-                            if (f.geometry.type.includes('Polygon')) return f
-                            f = turf.clone(f)
-                            f.geometry = turf.buffer(f, 10, { units: "meters" }).geometry
-                            return f
-                        })
-                        features = polygonFeatures.map(f1 => polygonFeatures.filter(f2 => turf.booleanIntersects(f1, f2))).reduce((a, b) => (b.length > a.length ? b : a))
-                        if (features.length > 1) {
-                            try {
-                                const intersection = turf.intersect(turf.featureCollection(features))
-                                lngLat = new maplibregl.LngLat(...turf.pointOnFeature(intersection).geometry.coordinates)
-                            } catch (error) {console.log(error)}
-                        }
-                    }
-                }
-            }
-
-            if (features.length === 1) {
-                lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
-            }
-
-            const popup = map._gslHandlers._popup = new maplibregl.Popup()
-            .setLngLat(lngLat)
-            .setMaxWidth("300px")
-            .setHTML(`<div class='mt-2 d-flex flex-column gap-3'></div>`)
-            .addTo(map)
-
-            popup.on("close", () => {
-                map._gslHandlers._popup = null
-                map._gslHandlers.removeGeoJSONLayers(sourceId)
-                source.setData(turf.featureCollection([]))
-            })
-            
-            const container = popup._container.querySelector('.maplibregl-popup-content').firstChild
-
-            if (features.length) {
-                const carousel = customCreateElement({
-                    parent: container,
-                    className: 'carousel slide',
-                })
-
-                const carouselInner = customCreateElement({
-                    parent: carousel,
-                    className: 'carousel-inner'
-                })
-
-                Object.keys(features).forEach(i => {
-                    const f = features[i]
-
-                    f.properties.header = '<img src="https://th.bing.com/th/id/OSK.HEROlJnsXcA4gu9_6AQ2NKHnHukTiry1AIf99BWEqfbU29E?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM">'
-                    const header = f.properties.header ?? Array(
-                        map.getSource(f.layer.source).title, 
-                        f.properties[
-                            Array('display_name', 'name', 'title', 'id')
-                            .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
-                            ?? Object.keys(f.properties).pop()
-                        ]
-                    ).filter(i => i).join(': ')
-                    
-                    const content = createFeaturePropertiesTable(f.properties, {header, tableClass: 'fs-12'})
-
-                    const carouselItem = customCreateElement({
-                        parent: carouselInner,
-                        className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
-                        innerHTML: content,
-                    })
-                })
-                
-                if (features.length > 1) {
-                    Array.from(customCreateElement({
-                        innerHTML: `
-                            <button class="carousel-control-prev" type="button" data-bs-target="#${carousel.id}" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        `
-                    }).children).forEach(b => carousel.appendChild(b))
-                }
-
-            }
-
-            const footer = customCreateElement({
-                parent: container,
-                className: 'd-flex flex-wrap gap-2'
-            })
-
-            const zoom = customCreateElement({
-                tag: 'button',
-                className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12',
-                parent: footer,
-                innerText: '🔍',
-                events: {
-                    click: (e) => {
-                        map.flyTo({
-                            center: Object.values(lngLat),
-                            zoom: 11,
-                        })
-                    }
-                }
-            })
-
-            if (checkedOptions.includes('coords')) {
-                const coordsValues = Object.values(lngLat).map(i => i.toFixed(6))    
-
-                const coordsContent = `<span>📋</span><span>${coordsValues[0]}</span><span>${coordsValues[1]}</span>`
-                const coords = customCreateElement({
-                    tag: 'button',
-                    className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12 flex-grow-1',
-                    parent: footer,
-                    innerHTML: coordsContent,
-                    events: {
-                        click: (e) => {
-                            navigator.clipboard.writeText(coordsValues.join(' '))
-                        }
-                    }
-                })
-            }
-            
-            if (checkedOptions.includes('osm')) {
-                const geojson = await fetchReverseNominatim({
-                    queryGeom: turf.point(Object.values(lngLat)),
-                    zoom: map.getZoom(),
-                })
-                
-                if (geojson?.features?.length) {
-                    const feature = geojson.features[0]
-                    const place = customCreateElement({
-                        tag: 'button',
-                        className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap align-items-center gap-2 fs-12 flex-grow-1 pe-3',
-                        parent: footer,
-                        innerHTML: `<span>📍</span><span class="text-wrap text-break text-start">${feature.properties.display_name}</span>`,
-                        events: {
-                            click: async (e) => {
-                                const geojson = await source.getData()
-                                if (geojson?.features?.length && turf.booleanEqual(geojson.features[0], feature)) {
-                                    map._gslHandlers.removeGeoJSONLayers(sourceId)
-                                    source.setData(turf.featureCollection([]))
-                                } else {
-                                    map.fitBounds(feature.bbox)
-                                    source.setData(turf.featureCollection([feature]))
-                                    map._gslHandlers.addGeoJSONLayers(sourceId)
-                                }
-                            }
-                        }
-                    })
-                }
-            }
-        },
-        removeGeoJSONLayers: (sourceId) => {
-            const layers = map.getStyle().layers
-            if (!layers) return
-
-            layers.forEach(l => {
-                if (l.source !== sourceId) return
-                map.removeLayer(l.id)
-            })
-        },
-        addGeoJSONLayers: (sourceId, {
-            pointType = 'symbol'
-        }={}) => {
-            if (!map.getSource(sourceId)) return
-            
-            const polygonId = `${sourceId}-Polygon`
-            let polygonLayer = map.getLayer(polygonId) 
-            if (!polygonLayer) {
-                polygonLayer = map.addLayer({
-                    id: polygonId,
-                    type: "fill",
-                    source: sourceId,
-                    paint: {
-                        "fill-color": "#088",
-                        "fill-opacity": 0.5
-                    },
-                    filter: ["==", "$type", "Polygon"]
-                })
-            }
-            
-            const lineStringId = `${sourceId}-LineString`
-            let lineStringLayer = map.getLayer(lineStringId) 
-            if (!lineStringLayer) {
-                lineStringLayer = map.addLayer({
-                    id: lineStringId,
-                    type: "line",
-                    source: sourceId,
-                    paint: {
-                        "line-color": "#000",
-                        "line-width": 2
-                    },
-                    filter: ["==", "$type", "LineString"]
-                })
-            }
-
-            const pointId = `${sourceId}-Point`
-            let pointLayer = map.getLayer(pointId) 
-            if (!pointLayer) {
-                pointLayer = map.addLayer({
-                    id: pointId,
-                    type: pointType,
-                    source: sourceId,
-                    ...(pointType === 'circle' ? {
-                        paint: {
-                            "circle-radius": 6,
-                            "circle-color": "#f00"
-                        }
-                    } : {
-                        layout: {
-                            "text-field": "🔴",
-                            "text-size": 24,
-                            "text-allow-overlap": true
-                        }
-                    }),
-                    filter: ["==", "$type", "Point"]
-                })
-            }
-
-            return {polygonLayer, lineStringLayer, pointLayer}
-        }
-    }
-
     map.on('load', () => {
-        map._gslHandlers.setGSLSettingsControl()
-        
-        map._gslHandlers.setPlaceSearchControl()
-        map._gslHandlers.setNavControl()
-        map._gslHandlers.setScaleControl()
-        map._gslHandlers.setTerrainControl()
-        map._gslHandlers.setGeolocateControl()
-        map._gslHandlers.setFitToWorldControl()
-    })
-
-    map.on('click', (e) => {
-        map._gslHandlers.createPopup(e)
-    })
-
-    // map.setTerrain({ source: 'terrain', exaggeration: 1.5 });
+        const control = new GeospatialibControl()
+        map.addControl(control, 'bottom-right')
+    })   
 
     console.log(map)
 }

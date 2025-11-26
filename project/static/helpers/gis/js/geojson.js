@@ -3,23 +3,23 @@ const normalizeGeoJSON = async (geojson, {
     defaultGeom,
 } = {}) => {
     if (!geojson) return
-
+    
     let crs
     if (geojson.crs) {
         const crsInfo = geojson.crs.properties?.name?.toLowerCase().replace('::', ':').split('epsg:')
         crs = crsInfo?.length ? parseInt(crsInfo[1]) : null
         delete geojson.crs   
     }
-
+    
     if (!defaultGeom || !turf.booleanValid(defaultGeom)) {
         geojson.features = geojson.features.filter(f => f.geometry)
     }
-
+    
     for (const feature of geojson.features) {
         if (controller?.signal.aborted) return
         await normalizeGeoJSONFeature(feature, {defaultGeom, crs})
     }
-
+    
     return geojson
 }
 
@@ -28,11 +28,11 @@ const normalizeGeoJSONFeature = async (feature, {
     crs,
 }={}) => {
     const geomIsValid = feature.geometry && turf.booleanValid(feature.geometry)
-
+    
     if (geomIsValid && crs && crs !== 4326) {
         await transformGeoJSONCoordinates(feature.geometry.coordinates, crs, 4326)     
     }
-
+    
     if (!geomIsValid && defaultGeom) {
         feature.geometry = defaultGeom
     }
