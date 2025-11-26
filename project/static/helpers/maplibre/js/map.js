@@ -35,35 +35,54 @@ class GSLSettingsControl {
                 className: 'd-flex flex-column px-2 gap-2'
             })
         }
-        this.createMenuItem = () => {
-            return customCreateElement({
-                tag: 'div',
-                parent: this.dropdownMenu,
-                className: 'd-flex flex-column gap-1',
-            })
-        }
         this.createControls = () => {
             this.controls = {}
             Object.keys(this.controlHandlers).forEach(name => {
                 this.controls[name] = this.controlHandlers[name]()
             })
         }
-        this.createControlTitle = (title) => {
-            return customCreateElement({
+        this.createControlSection = (title) => {
+            const item = customCreateElement({
+                tag: 'div',
+                parent: this.dropdownMenu,
+                className: 'd-flex flex-column gap-1',
+            })
+            const collapse = customCreateElement({
+                className:'collapse show'
+            })
+            
+            const toggle = customCreateElement({
+                parent: item,
+                tag: 'a', 
+                className: 'text-reset text-decoration-none',
+                attrs: {
+                    'data-bs-toggle': 'collapse',
+                    href: `#${collapse.id}`,
+                    role: 'button',
+                    'aria-expanded': true,
+                    'aria-controls': collapse.id
+                },
+            })
+            
+            const head = customCreateElement({
+                parent: toggle,
                 tag: 'span',
                 innerText: title,
                 className: 'fs-12 user-select-none fw-bold text-secondary'
             })
-        }
+            
+            item.appendChild(collapse)
+            
+            const container = customCreateElement({
+                parent: collapse,
+                className: 'd-flex flex-wrap gap-1'
+            })
+
+            return container
+        },
         this.controlHandlers = {
             projections: () => {
-                const item = this.createMenuItem()
-                item.appendChild(this.createControlTitle('Projection options'))
-
-                const container = customCreateElement({
-                    parent: item,
-                    className: 'd-flex flex-wrap gap-1'
-                })
+                const container = this.createControlSection('Projection options')
 
                 const options = {
                     mercator: {
@@ -109,18 +128,12 @@ class GSLSettingsControl {
                     titleToTooltip(label)
                 })
 
-                return item
+                return container
             },
             popup: () => {
                 this.map.getCanvas().style.cursor = 'pointer'
 
-                const item = this.createMenuItem()
-                item.appendChild(this.createControlTitle('Popup options'))
-
-                const container = customCreateElement({
-                    parent: item,
-                    className: 'd-flex flex-wrap gap-1'
-                })
+                const container = this.createControlSection('Popup actions')
 
                 const options = {
                     toggle: {
@@ -172,49 +185,35 @@ class GSLSettingsControl {
                             ...(isToggle ? {click: (e) => {
                                 const checked = !input.checked
                                 
-                                const inputs = Array.from(container.querySelectorAll('input:not([name="popup-toggle"])'))
+                                const toggleSelector = '[name="popup-toggle"]'
+                                const inputs = Array.from(container.querySelectorAll(`input:not(${toggleSelector})`))
                                 inputs.forEach(el => el.disabled = !checked)
-
                                 this.map.getCanvas().style.cursor = checked && inputs.some(i => i.checked) ? 'pointer' : ''
 
                                 if (!checked) {
                                     this.map._gslHandlers._popup?.remove()
                                 } 
-                            }} : {})
+                            }} : {
+                                click: (e) => {
+                                    const toggleSelector = '[name="popup-toggle"]'
+                                    const toggle = container.querySelector(`input${toggleSelector}`)
+                                    const inputs = Array.from(container.querySelectorAll(`input:not(${toggleSelector})`))
+                                    this.map.getCanvas().style.cursor = toggle.checked && inputs.some(i => {
+                                        if (input === i) return !i.checked
+                                        return i.checked
+                                    }) ? 'pointer' : ''
+                                }
+                            })
                         }
                     })
 
                     titleToTooltip(label)
                 })
 
-                return item
+                return container
             },
             misc: () => {
-                const item = this.createMenuItem()
-
-                const collapse = customCreateElement({className:'collapse'})
-
-                const toggle = customCreateElement({
-                    parent: item,
-                    tag: 'a', 
-                    className: 'text-reset text-decoration-none',
-                    attrs: {
-                        'data-bs-toggle': 'collapse',
-                        href: `#${collapse.id}`,
-                        role: 'button',
-                        'aria-expanded': false,
-                        'aria-controls': collapse.id
-                    },
-                    innerHTML: this.createControlTitle('More options')
-                })
-
-                item.appendChild(collapse)
-
-                const container = customCreateElement({
-                    parent: collapse,
-                    className: 'd-flex flex-wrap gap-1'
-                })
-
+                const container = this.createControlSection('More options')
                 const input = customCreateElement({
                     tag: 'input',
                     parent: container,
@@ -242,10 +241,10 @@ class GSLSettingsControl {
                         }
                     }
                 })
-
+                
                 titleToTooltip(label)
 
-                return item
+                return container
             },
         }
     }
@@ -646,6 +645,21 @@ const initMapLibreMap = (el) => {
                 className: 'd-flex flex-wrap gap-2'
             })
 
+            const zoom = customCreateElement({
+                tag: 'button',
+                className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12',
+                parent: footer,
+                innerText: '🔍',
+                events: {
+                    click: (e) => {
+                        map.flyTo({
+                            center: Object.values(lngLat),
+                            zoom: 11,
+                        })
+                    }
+                }
+            })
+
             if (checkedOptions.includes('coords')) {
                 const coordsValues = Object.values(lngLat).map(i => i.toFixed(6))    
 
@@ -658,21 +672,6 @@ const initMapLibreMap = (el) => {
                     events: {
                         click: (e) => {
                             navigator.clipboard.writeText(coordsValues.join(' '))
-                        }
-                    }
-                })
-
-                const zoom = customCreateElement({
-                    tag: 'button',
-                    className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12',
-                    parent: footer,
-                    innerText: '🔍',
-                    events: {
-                        click: (e) => {
-                            map.flyTo({
-                                center: coordsValues,
-                                zoom: 11,
-                            })
                         }
                     }
                 })
@@ -795,7 +794,6 @@ const initMapLibreMap = (el) => {
         map._gslHandlers.createPopup(e)
     })
 
-    // Enable terrain rendering
     // map.setTerrain({ source: 'terrain', exaggeration: 1.5 });
 
     console.log(map)
