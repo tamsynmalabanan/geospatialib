@@ -214,8 +214,9 @@ class GeospatialibControl {
                         const f = features[i]
 
                         const tempHeader = '<img src="https://th.bing.com/th/id/OSK.HEROlJnsXcA4gu9_6AQ2NKHnHukTiry1AIf99BWEqfbU29E?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM">'
+                        console.log(f)
                         const header = tempHeader ?? Array(
-                            map.getSource(f.layer.source).config.title, 
+                            f.layer.metadata.title ?? map.getSource(f.layer.source).metadata.title,
                             f.properties[
                                 Array('display_name', 'name', 'title', 'id')
                                 .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
@@ -319,7 +320,7 @@ class GeospatialibControl {
 
             setGeoJSONSourceData: async (sourceId, {
                 data=turf.featureCollection([]),
-                config,
+                metadata,
             }={}) => {
                 let source = this.map.getSource(sourceId)
                 if (source) {
@@ -330,7 +331,7 @@ class GeospatialibControl {
                         data,
                     })
                     source = this.map.getSource(sourceId)
-                    source.config = config ?? {}
+                    source.metadata = metadata ?? {}
                 }
                 return source
             },
@@ -346,7 +347,7 @@ class GeospatialibControl {
                 })
             },
             addGeoJSONLayers: (sourceId, {
-                pointType = 'symbol'
+
             }={}) => {
                 const map = this.map
                 if (!map.getSource(sourceId)) return
@@ -386,9 +387,9 @@ class GeospatialibControl {
                 if (!pointLayer) {
                     pointLayer = map.addLayer({
                         id: pointId,
-                        type: pointType,
+                        type: 'symbol',
                         source: sourceId,
-                        ...(pointType === 'circle' ? {
+                        ...('symbol' === 'circle' ? {
                             paint: {
                                 "circle-radius": 6,
                                 "circle-color": "#f00"
@@ -466,7 +467,7 @@ class GeospatialibControl {
                 popup: ({body, head}={}) => {
                     this.map.getCanvas().style.cursor = 'pointer'
 
-                    this.handlers.setGeoJSONSourceData('popupFeature', {config:{title: 'Popup feature'}})
+                    this.handlers.setGeoJSONSourceData('popupFeature', {metadata:{title: 'Popup feature'}})
 
                     head.innerText = 'Popup options'
 
@@ -757,7 +758,7 @@ class PlaceSearchControl {
                     const geospatialibControl = Object.values(this.map._controls).find(i => i instanceof GeospatialibControl)
                     
                     const sourceId = 'placeSearch'
-                    geospatialibControl.handlers.removeGeoJSONLayers(sourceId, {config:{title: 'Place search result'}})
+                    geospatialibControl.handlers.removeGeoJSONLayers(sourceId, {metadata:{title: 'Place search result'}})
                     
                     let data = turf.featureCollection([])
 
