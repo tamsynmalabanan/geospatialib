@@ -125,7 +125,7 @@ const pushURLParams = (url, params) => {
 
 const formatNumberWithCommas = (number) => {
     let [integer, decimal] = number.toString().split(".")
-    integer = integer.replaceAll(/\B(?=(\d{3})+(?!\d))/g, ",")
+    integer = new Intl.NumberFormat("en-US").format(Number(integer))
     return integer + (decimal ? "." + decimal : '')
 }
 

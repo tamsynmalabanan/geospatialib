@@ -36,10 +36,191 @@ class GSLSettingsControl {
             })
         }
         this.createControls = () => {
-            this.controls = {}
-            Object.keys(this.controlHandlers).forEach(name => {
-                this.controls[name] = this.controlHandlers[name]()
-            })
+            const handlers = {
+                projections: () => {
+                    this.map._gslHandlers.setProjection()
+
+                    const container = this.createControlSection('Projection options')
+
+                    const options = {
+                        mercator: {
+                            label: 'Web Mercator',
+                            icon: '🗺️',
+                        },
+                        globe: {
+                            label: '3D Globe',
+                            icon: '🌍',
+                        },
+                    }
+
+                    Object.keys(options).forEach(name => {
+                        const params = options[name]
+                        
+                        const checked = this.map._gslHandlers.getProjection() === name
+                        
+                        const input = customCreateElement({
+                            tag: 'input',
+                            parent: container,
+                            attrs: {
+                                type: 'radio',
+                                name: 'projection',
+                                ...(checked ? {checked: true} : {})
+                            },
+                            className: 'btn-check'
+                        })
+                        
+                        const label = titleToTooltip(customCreateElement({
+                            tag: 'label',
+                            parent: container,
+                            className: `btn btn-sm btn-light`,
+                            attrs: {
+                                title: params.label,
+                                for: input.id,
+                            },
+                            innerText: params.icon,
+                            events: {
+                                click: (e) => {
+                                    this.map._gslHandlers.setProjection({type: name})
+                                }
+                            }
+                        }))
+                    })
+
+                    return container
+                },
+                popup: () => {
+                    this.map.getCanvas().style.cursor = 'pointer'
+
+                    const sourceId = 'popupFeature'
+                    if (!this.map.getSource(sourceId)) {
+                        this.map.addSource(sourceId, {
+                            type: "geojson",
+                            data: turf.featureCollection([])
+                        })
+                        this.map.getSource(sourceId).title = 'Popup feature'
+                    }
+
+                    const container = this.createControlSection('Popup options')
+
+                    const options = {
+                        toggle: {
+                            label: 'Toggle popup',
+                            icon: '💬',
+                        },
+                        coords: {
+                            label: 'Location',
+                            icon: '📍',
+                        },
+                        // elev: {
+                        //     label: 'Elevation', // and bathymetry
+                        //     icon: '🏔️',
+                        // },
+                        layers: {
+                            label: 'Layers',
+                            icon: '📚',
+                        },
+                        osm: {
+                            label: 'Openstreetmap',
+                            icon: '🗾',
+                        },
+                    }
+
+                    Object.keys(options).forEach(name => {
+                        const params = options[name]
+                        const isToggle = name === 'toggle'
+
+                        const input = customCreateElement({
+                            tag: 'input',
+                            parent: container,
+                            attrs: {
+                                type: 'checkbox',
+                                name: `popup-${name}`,
+                                checked: true,
+                            },
+                            className: 'btn-check'
+                        })
+                        
+                        const label = titleToTooltip(customCreateElement({
+                            tag: 'label',
+                            parent: container,
+                            className: `btn btn-sm btn-light`,
+                            attrs: {
+                                title: params.label,
+                                for: input.id,
+                            },
+                            innerText: params.icon,
+                            events: {
+                                ...(isToggle ? {
+                                    click: (e) => {
+                                        const checked = !input.checked
+                                        
+                                        const toggleSelector = '[name="popup-toggle"]'
+                                        const inputs = Array.from(container.querySelectorAll(`input:not(${toggleSelector})`))
+                                        
+                                        inputs.forEach(el => el.disabled = !checked)
+                                        this.map.getCanvas().style.cursor = checked && inputs.some(i => i.checked) ? 'pointer' : ''
+
+                                        if (!checked) {
+                                            this.map._gslHandlers._popup?.remove()
+                                        } 
+                                    }
+                                } : {
+                                    click: (e) => {
+                                        const toggleSelector = '[name="popup-toggle"]'
+                                        const toggle = container.querySelector(`input${toggleSelector}`)
+                                        const inputs = Array.from(container.querySelectorAll(`input:not(${toggleSelector})`))
+
+                                        this.map.getCanvas().style.cursor = toggle.checked && inputs.some(i => {
+                                            if (input === i) return !i.checked
+                                            return i.checked
+                                        }) ? 'pointer' : ''
+                                    }
+                                })
+                            }
+                        }))
+                    })
+
+                    return container
+                },
+                misc: () => {
+                    const container = this.createControlSection('More options')
+
+                    const input = customCreateElement({
+                        tag: 'input',
+                        parent: container,
+                        attrs: {
+                            type: 'checkbox',
+                            name: 'hillshade',
+                            checked: true
+                        },
+                        className: 'btn-check'
+                    })
+                    
+                    const label = titleToTooltip(customCreateElement({
+                        tag: 'label',
+                        parent: container,
+                        className: 'btn btn-sm btn-light',
+                        attrs: {
+                            title: 'Toggle hillshade',
+                            for: input.id,
+                        },
+                        innerText: `⛰️`,
+                        events: {
+                            click: (e) => {
+                                this.map._gslHandlers._renderHillshade = !this.map._gslHandlers._renderHillshade
+                                this.map._gslHandlers.toggleHillshade()
+                            }
+                        }
+                    }))
+
+                    return container
+                },
+            }
+            
+            this.controls = Object.keys(handlers).reduce((acc, name) => {
+                acc[name] = handlers[name]()
+                return acc
+            }, {})
         }
         this.createControlSection = (title) => {
             const item = customCreateElement({
@@ -79,173 +260,6 @@ class GSLSettingsControl {
             })
 
             return container
-        },
-        this.controlHandlers = {
-            projections: () => {
-                const container = this.createControlSection('Projection options')
-
-                const options = {
-                    mercator: {
-                        label: 'Web Mercator',
-                        icon: '🗺️',
-                    },
-                    globe: {
-                        label: '3D Globe',
-                        icon: '🌍',
-                    },
-                }
-
-                Object.keys(options).forEach(name => {
-                    const params = options[name]
-                    const checked = this.map._gslHandlers.getProjection() === name
-                    const input = customCreateElement({
-                        tag: 'input',
-                        parent: container,
-                        attrs: {
-                            type: 'radio',
-                            name: 'projection',
-                            ...(checked ? {checked: true} : {})
-                        },
-                        className: 'btn-check'
-                    })
-                    
-                    const label = customCreateElement({
-                        tag: 'label',
-                        parent: container,
-                        className: `btn btn-sm btn-secondary`,
-                        attrs: {
-                            title: params.label,
-                            for: input.id,
-                        },
-                        innerText: params.icon,
-                        events: {
-                            click: (e) => {
-                                this.map._gslHandlers.setProjection({type: name})
-                            }
-                        }
-                    })
-
-                    titleToTooltip(label)
-                })
-
-                return container
-            },
-            popup: () => {
-                this.map.getCanvas().style.cursor = 'pointer'
-
-                const container = this.createControlSection('Popup actions')
-
-                const options = {
-                    toggle: {
-                        label: 'Toggle popup',
-                        icon: '💬',
-                    },
-                    coords: {
-                        label: 'Location',
-                        icon: '📍',
-                    },
-                    // elev: {
-                    //     label: 'Elevation',
-                    //     icon: '🏔️',
-                    // },
-                    layers: {
-                        label: 'Layers',
-                        icon: '📚',
-                    },
-                    osm: {
-                        label: 'Openstreetmap',
-                        icon: '🗾',
-                    },
-                }
-
-                Object.keys(options).forEach(name => {
-                    const params = options[name]
-                    const isToggle = name === 'toggle'
-                    const input = customCreateElement({
-                        tag: 'input',
-                        parent: container,
-                        attrs: {
-                            type: 'checkbox',
-                            name: `popup-${name}`,
-                            checked: true,
-                        },
-                        className: 'btn-check'
-                    })
-                    
-                    const label = customCreateElement({
-                        tag: 'label',
-                        parent: container,
-                        className: `btn btn-sm btn-secondary`,
-                        attrs: {
-                            title: params.label,
-                            for: input.id,
-                        },
-                        innerText: params.icon,
-                        events: {
-                            ...(isToggle ? {click: (e) => {
-                                const checked = !input.checked
-                                
-                                const toggleSelector = '[name="popup-toggle"]'
-                                const inputs = Array.from(container.querySelectorAll(`input:not(${toggleSelector})`))
-                                inputs.forEach(el => el.disabled = !checked)
-                                this.map.getCanvas().style.cursor = checked && inputs.some(i => i.checked) ? 'pointer' : ''
-
-                                if (!checked) {
-                                    this.map._gslHandlers._popup?.remove()
-                                } 
-                            }} : {
-                                click: (e) => {
-                                    const toggleSelector = '[name="popup-toggle"]'
-                                    const toggle = container.querySelector(`input${toggleSelector}`)
-                                    const inputs = Array.from(container.querySelectorAll(`input:not(${toggleSelector})`))
-                                    this.map.getCanvas().style.cursor = toggle.checked && inputs.some(i => {
-                                        if (input === i) return !i.checked
-                                        return i.checked
-                                    }) ? 'pointer' : ''
-                                }
-                            })
-                        }
-                    })
-
-                    titleToTooltip(label)
-                })
-
-                return container
-            },
-            misc: () => {
-                const container = this.createControlSection('More options')
-                const input = customCreateElement({
-                    tag: 'input',
-                    parent: container,
-                    attrs: {
-                        type: 'checkbox',
-                        name: 'hillshade',
-                        checked: true
-                    },
-                    className: 'btn-check'
-                })
-                
-                const label = customCreateElement({
-                    tag: 'label',
-                    parent: container,
-                    className: 'btn btn-sm btn-secondary font-monospace fs-10',
-                    attrs: {
-                        title: 'Toggle hillshade',
-                        for: input.id,
-                    },
-                    innerText: `⛰️`,
-                    events: {
-                        click: (e) => {
-                            this.map._gslHandlers._renderHillshade = !this.map._gslHandlers._renderHillshade
-                            this.map._gslHandlers.toggleHillshade()
-                        }
-                    }
-                })
-                
-                titleToTooltip(label)
-
-                return container
-            },
         }
     }
 
@@ -516,7 +530,7 @@ const initMapLibreMap = (el) => {
             map.addControl(control, position)
         },
         setGSLSettingsControl: ({
-            position='top-left',
+            position='bottom-right',
         }={}) => {
             const control = new GSLSettingsControl()
             map.addControl(control, position)
@@ -530,28 +544,24 @@ const initMapLibreMap = (el) => {
             return map._gslHandlers._projection
         },
         createPopup: async (e) => {
+            const toggleSelector = `[name="popup-toggle"]`
             const popupContainer = map._controls.find(i => i instanceof GSLSettingsControl).controls.popup
-            if (!popupContainer.querySelector('input[name="popup-toggle"]').checked) return
 
-            const checkedOptions = Array.from(popupContainer.querySelectorAll('input:not([name="popup-toggle"])')).filter(i => i.checked).map(i => i.getAttribute('name').split('-').pop())
+            const popupToggle = popupContainer.querySelector(`input${toggleSelector}`)
+            if (!popupToggle.checked) return
+
+            const checkedOptions = Array.from(popupContainer.querySelectorAll(`input:not(${toggleSelector})`)).filter(i => i.checked).map(i => i.getAttribute('name').split('-').pop())
             if (!checkedOptions.length) return
 
             const sourceId = 'popupFeature'
-            let source = map.getSource(sourceId)
-            if (!source) {
-                map.addSource(sourceId, {
-                    type: "geojson",
-                    data: turf.featureCollection([])
-                })
-                source = map.getSource(sourceId)
-                source.title = 'Popup feature'
-            }
+            const source = map.getSource(sourceId)
 
             let features = []
             let lngLat = e.lngLat
+
             if (checkedOptions.includes('layers')) {
                 features = map.queryRenderedFeatures(e.point)
-                console.log('update features with wms features, other sources')
+                console.log('update features with features from wms layers, etc.')
 
                 features = features.filter(f => {
                     return turf.booleanValid(f) && f.layer.source !== sourceId
@@ -586,7 +596,8 @@ const initMapLibreMap = (el) => {
 
             const popup = map._gslHandlers._popup = new maplibregl.Popup()
             .setLngLat(lngLat)
-            .setHTML(`<div class='mt-2 d-flex flex-column'></div>`)
+            .setMaxWidth("300px")
+            .setHTML(`<div class='mt-2 d-flex flex-column gap-3'></div>`)
             .addTo(map)
 
             popup.on("close", () => {
@@ -610,12 +621,19 @@ const initMapLibreMap = (el) => {
 
                 Object.keys(features).forEach(i => {
                     const f = features[i]
-                    const header = Array(
+
+                    f.properties.header = '<img src="https://th.bing.com/th/id/OSK.HEROlJnsXcA4gu9_6AQ2NKHnHukTiry1AIf99BWEqfbU29E?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM">'
+                    const header = f.properties.header ?? Array(
                         map.getSource(f.layer.source).title, 
-                        f.properties[Array('display_name', 'name', 'title', 'id').find(i => Object.keys(f.properties).find(j => j.includes(i))) ?? Object.keys(f.properties).pop()]
+                        f.properties[
+                            Array('display_name', 'name', 'title', 'id')
+                            .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
+                            ?? Object.keys(f.properties).pop()
+                        ]
                     ).filter(i => i).join(': ')
-                    const content = createFeaturePropertiesTable(f.properties, {header})
-                    content.classList.add('fs-12')
+                    
+                    const content = createFeaturePropertiesTable(f.properties, {header, tableClass: 'fs-12'})
+
                     const carouselItem = customCreateElement({
                         parent: carouselInner,
                         className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
@@ -778,16 +796,15 @@ const initMapLibreMap = (el) => {
         }
     }
 
-    map.on('style.load', () => {
-        map._gslHandlers.setProjection()
-
+    map.on('load', () => {
+        map._gslHandlers.setGSLSettingsControl()
+        
         map._gslHandlers.setPlaceSearchControl()
         map._gslHandlers.setNavControl()
         map._gslHandlers.setScaleControl()
         map._gslHandlers.setTerrainControl()
         map._gslHandlers.setGeolocateControl()
         map._gslHandlers.setFitToWorldControl()
-        map._gslHandlers.setGSLSettingsControl()
     })
 
     map.on('click', (e) => {

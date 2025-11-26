@@ -872,7 +872,7 @@ const getLeafletGeoJSONData = async (layer, {
         
         if (sort) {
             if (controller?.signal?.aborted) return
-            sortGeoJSONFeatures(data, {reverse:true})
+            sortGeoJSONFeatures(data)
         }
     }    
 

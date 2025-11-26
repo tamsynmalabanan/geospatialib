@@ -17,10 +17,7 @@ const normalizeGeoJSON = async (geojson, {
 
     for (const feature of geojson.features) {
         if (controller?.signal.aborted) return
-        await normalizeGeoJSONFeature(feature, {
-            defaultGeom,
-            crs,
-        })
+        await normalizeGeoJSONFeature(feature, {defaultGeom, crs})
     }
 
     return geojson
@@ -45,6 +42,32 @@ const normalizeGeoJSONFeature = async (feature, {
 
     normalizeFeatureProperties(feature)
     await updateFeatureMetadata(feature)
+}
+
+const normalizeFeatureProperties = (feature) => {
+    const properties = feature.properties ?? {}
+    const normalProperties = {}
+
+    const handler = (properties, prefix='') => {
+        prefix = prefix.trim()
+
+        Object.keys(properties).forEach(property => {
+            const name = prefix ? `${prefix}_${property}` : property
+            const value = properties[property]
+            
+            if (Array.isArray(value) && value.every(i => typeof i !== 'object')) {
+                normalProperties[name] = value.map(i => String(i)).join(', ')
+            } else if (value && typeof value === 'object') {
+                handler(value, prefix=name)
+            } else {
+                normalProperties[name] = value
+            }
+        })
+    }
+
+    handler(properties)    
+
+    feature.properties = normalProperties
 }
 
 const updateFeatureMetadata = async (feature) => {
@@ -100,34 +123,7 @@ const generateFeatureMetadataId = async (feature) => {
     return feature
 }
 
-const normalizeFeatureProperties = (feature) => {
-    const properties = feature.properties ?? {}
-    const normalProperties = {}
-
-    const handler = (properties, prefix='') => {
-        prefix = prefix.trim()
-
-        Object.keys(properties).forEach(property => {
-            const name = prefix ? `${prefix}_${property}` : property
-            const value = properties[property]
-            
-            if (Array.isArray(value) && value.every(i => typeof i !== 'object')) {
-                normalProperties[name] = value.map(i => String(i)).join(', ')
-            } else if (value && typeof value === 'object') {
-                handler(value, prefix=name)
-            } else {
-                normalProperties[name] = value
-            }
-
-        })
-    }
-
-    handler(properties)    
-
-    feature.properties = normalProperties
-}
-
-const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
+const sortGeoJSONFeatures = (geojson) => {
     if (!geojson?.features?.length) return
     
     geojson.features.sort((a, b) => {
@@ -139,6 +135,7 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
             "Polygon",
             "MultiPolygon",
         ]
+        
         const typeComparison = featureOrder.indexOf(a.geometry?.type) - featureOrder.indexOf(b.geometry?.type)
         const rankComparison = (a.metadata.groupRank ?? 0) - (b.metadata.groupRank ?? 0)
 
@@ -148,8 +145,10 @@ const sortGeoJSONFeatures = (geojson, { reverse = false } = {}) => {
             (a.properties?.name ?? '').localeCompare(b.properties?.name ?? '')
         )
 
-        return reverse ? -comparison : comparison
+        return -comparison
     })
+
+    return geojson
 }
 
 const transformGeoJSONCoordinates = async (coordinates, source, target) => {
@@ -399,10 +398,11 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
 
 const createFeaturePropertiesTable = (properties, {
     header,
+    tableClass = ''
 } = {}) => {
     const table = document.createElement('table')
     table.className = removeWhitespace(`
-        table table-sm table-striped
+        table table-sm table-striped m-0 ${tableClass}
     `)
 
     if (header) {
@@ -603,7 +603,7 @@ const getGeoJSON = async (dbKey, {
             }
 
             if (geojson?.features?.length && sort) {
-                sortGeoJSONFeatures(geojson, {reverse:true})
+                sortGeoJSONFeatures(geojson)
             }
 
             return geojson
