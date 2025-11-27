@@ -169,7 +169,10 @@ def get_ogc_layers(url, format):
     
     try:
         type = format.split('-')[-1]
-        response = get_response(f'{url}?service={type.upper()}&request=GetCapabilities', raise_for_status=False)
+        response = get_response(
+            f'{url}?service={type.upper()}&request=GetCapabilities', 
+            raise_for_status=False
+        )
         response.raise_for_status()
         content = response.content
         if len(content) < 100000:

@@ -98,7 +98,7 @@ def get_response(
     data=None, 
     raise_for_status=True, 
     cache_response=True,
-    cache_duration=60*10,
+    cache_duration=60*15,
 ):
     response = None
 
@@ -118,6 +118,7 @@ def get_response(
                 response = cache.get(create_cache_key(['get_response', url, i, data_str]))
                 if response:
                     break
+        logger.info(f'cached_response: {response}')
 
     if not response:
         try:
@@ -142,7 +143,8 @@ def get_response(
                     cache.set(create_cache_key(['get_response', url, method, data_str]), response, cache_duration)
         except Exception as e:
             logger.error(f'get_response, {e}')
-            
+            return None
+
     return response
 
 def get_filename_from_response(response, alt):
@@ -155,7 +157,7 @@ def get_filename_from_response(response, alt):
     
 def get_response_file(url):
     try:
-        response = get_response(url, raise_for_status=True)
+        response = get_response(ur)
         content_type = response.headers.get('Content-Type', '')
 
         filename = get_filename_from_response(response, os.path.normpath(url).split(os.sep)[-1])

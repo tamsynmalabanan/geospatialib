@@ -469,7 +469,7 @@ def get_geojson_metadata(data):
             
 def validate_geojson(url, name, params):
     try:
-        response = get_response(url, raise_for_status=True)
+        response = get_response(url)
         geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
         
         params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
@@ -480,7 +480,7 @@ def validate_geojson(url, name, params):
             
 def validate_osm(url, name, params):
     try:
-        response = get_response(url, raise_for_status=True)
+        response = get_response(url)
         text = response.text
         
         if text.startswith('{'):
@@ -525,7 +525,7 @@ def validate_overpass(url, name, params):
 
 def validate_csv(url, name, params):
     try:
-        response = get_response(url, raise_for_status=True)
+        response = get_response(url)
         geojson_obj, params = csv_to_geojson(io.StringIO(response.text), params)
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
 
@@ -537,7 +537,7 @@ def validate_csv(url, name, params):
 
 def validate_gpx(url, name, params):
     try:
-        response = get_response(url, raise_for_status=True)
+        response = get_response(url)
         geojson_obj, params = gpx_to_geojson(io.StringIO(response.text), params)
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
 
@@ -549,7 +549,7 @@ def validate_gpx(url, name, params):
 
 def validate_kml(url, name, params):
     try:
-        response = get_response(url, raise_for_status=True)
+        response = get_response(url)
         geojson_obj, params = kml_to_geojson(io.StringIO(response.text), params)
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
         params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
@@ -560,7 +560,7 @@ def validate_kml(url, name, params):
 
 def validate_shp(url, name, params):
     try:
-        response = get_response(url, raise_for_status=True)
+        response = get_response(url)
         geojson_obj, params = shp_to_geojson({
             name: io.StringIO(response.text)
         }, os.path.normpath(name))
@@ -573,7 +573,7 @@ def validate_shp(url, name, params):
 
 def validate_dxf(url, name, params):
     try:
-        response = get_response(url, raise_for_status=True)
+        response = get_response(url)
         geojson_obj = dxf_to_geojson(io.BytesIO(response.content))
         srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
         params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)

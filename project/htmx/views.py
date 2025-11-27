@@ -158,17 +158,13 @@ def cors_proxy_content(request):
         return JsonResponse({'error': 'URL parameter is required'}, status=400)
     
     try:
-        data = {}
-        if request.method == 'POST':
-            data = json.loads(request.body.decode('utf-8'))
         method = str(data.get('method', 'get')).lower()
-        headers = data.get('headers', {})
-        headers['User-Agent'] = 'Geospatialib/1.0 (tamsyn.malabanan@gmail.com)'
-        
-        if method == 'get':
-           response = requests.get(url, headers=headers)
-        elif method == 'post':
-            response = requests.post(url, json=data, headers=headers)
+        if method in ['get', 'post']:   
+            data = {}
+            if request.method == 'POST':
+                data = json.loads(request.body.decode('utf-8'))
+            headers = data.get('headers', {})
+            response = get_response(url, method, headers, data)
         else:
             return JsonResponse({'error': f'Unsupported method: {method}'}, status=400)
     except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
