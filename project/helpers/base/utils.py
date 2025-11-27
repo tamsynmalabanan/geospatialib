@@ -12,11 +12,10 @@ import re
 from urllib.parse import urlparse, urlunparse, unquote
 import uuid
 import os
+import json
 
 import logging
 logger = logging.getLogger('django')
-
-DEFAULT_REQUEST_HEADERS = {'User-Agent': 'Geospatialib/1.0 (tamsyn.malabanan@gmail.com)'}
 
 def get_special_characters(value):
     scs = (list(string.punctuation) + [' '])
@@ -71,9 +70,6 @@ def get_first_substring_match(value, choices={}, case_sensitive=False):
 
     return current_key
 
-def create_cache_key(values):
-    return ';'.join([str(i) for i in values])
-
 def dict_to_choices(dict, blank_choice=None, sort=False):
     dict_copy = {'':str(blank_choice)} if blank_choice is not None else {}
 
@@ -88,57 +84,65 @@ def dict_to_choices(dict, blank_choice=None, sort=False):
     
     return [(key, value) for key, value in dict_copy.items()]
 
+def create_cache_key(values):
+    return ';'.join([str(i) for i in values])
+
+DEFAULT_REQUEST_HEADERS = {
+    'User-Agent': 'Geospatialib/1.0 (tamsyn.malabanan@gmail.com)'
+}
+
 def get_response(
     url, 
     method='get', 
-    with_default_headers=False, 
-    raise_for_status=True, 
+    headers=None, 
     data=None, 
-    cache_response=True
+    raise_for_status=True, 
+    cache_response=True,
+    cache_duration=60*10,
 ):
     response = None
 
+    if data is None:
+        data = {}
+
+    try:
+        data_str = json.dumps(data, sort_keys=True)
+    except Exception as e:
+        logger.error(f'Failed to json.dumps data in get_response, {e}')
+        data_str = generate_uuid()
+    
     if cache_response:
-        response = cache.get(create_cache_key(['get_response', url, method]))
+        response = cache.get(create_cache_key(['get_response', url, method, data_str]))
         if not response and method == 'head':
-            response = cache.get(
-                create_cache_key(['get_response', url, 'get']), 
-                cache.get(create_cache_key(['get_response', url, 'post']))
-            )
+            for i in ['get', 'post']:
+                response = cache.get(create_cache_key(['get_response', url, i, data_str]))
+                if response:
+                    break
 
     if not response:
         try:
-            headers = DEFAULT_REQUEST_HEADERS if with_default_headers else None
-
-            if method == 'head' and not headers:
+            if headers is None:
+                headers = DEFAULT_REQUEST_HEADERS
+            else:
+                headers = {**DEFAULT_REQUEST_HEADERS, **headers}
+            
+            if method == 'head':
                 response = requests.head(url)
-
-            if method in ['head', 'get']:
-                method = 'get'
+            elif method == 'get':
                 response = requests.get(url, headers=headers)
-            
-            if method == 'post':
-                if data is None:
-                    data = {}
-                response = requests.post(url, data=data, headers=headers)
+            elif method == 'post':
+                response = requests.post(url, json=data, headers=headers)
+            else:
+                raise ValueError(f'Unsupported method: {method}')
+            if response:
+                if raise_for_status:
+                    response.raise_for_status()
 
-            if response.status_code == 403 and not headers:
-                response = get_response(
-                    url, 
-                    method=method, 
-                    with_default_headers=True, 
-                    raise_for_status=raise_for_status, 
-                    data=data
-                )
-            
-            if raise_for_status:
-                response.raise_for_status()
-            
-            if response.status_code != 404 and cache_response:
-                cache.set(create_cache_key(['get_response', url, method]), response, 60*10)
+                if response.status_code != 404 and cache_response:
+                    cache.set(create_cache_key(['get_response', url, method, data_str]), response, cache_duration)
         except Exception as e:
             logger.error(f'get_response, {e}')
-    
+            
     return response
 
 def get_filename_from_response(response, alt):
