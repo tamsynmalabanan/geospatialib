@@ -157,7 +157,7 @@ def get_filename_from_response(response, alt):
     
 def get_response_file(url):
     try:
-        response = get_response(ur)
+        response = get_response(url)
         content_type = response.headers.get('Content-Type', '')
 
         filename = get_filename_from_response(response, os.path.normpath(url).split(os.sep)[-1])

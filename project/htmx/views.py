@@ -158,20 +158,20 @@ def cors_proxy_content(request):
         return JsonResponse({'error': 'URL parameter is required'}, status=400)
     
     try:
+        data = {}
+        if request.method == 'POST':
+            data = json.loads(request.body.decode('utf-8'))
         method = str(data.get('method', 'get')).lower()
+        
         if method in ['get', 'post']:   
-            data = {}
-            if request.method == 'POST':
-                data = json.loads(request.body.decode('utf-8'))
             headers = data.get('headers', {})
-            response = get_response(url, method, headers, data)
+            response = get_response(url, method, headers, data, raise_for_status=False)
+            content_type = response.headers.get('Content-Type')
+            return HttpResponse(response.content, content_type=content_type, status=response.status_code)
         else:
             return JsonResponse({'error': f'Unsupported method: {method}'}, status=400)
     except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
         return JsonResponse({'error': f'Error during request: {str(e)}'}, status=500)
-
-    content_type = response.headers.get('Content-Type')
-    return HttpResponse(response.content, content_type=content_type, status=response.status_code)
 
 def srs_wkt(request, srid):
     srs = get_object_or_404(SpatialRefSys, srid=srid)
