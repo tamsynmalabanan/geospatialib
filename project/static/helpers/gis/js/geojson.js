@@ -416,6 +416,7 @@ const createFeaturePropertiesTable = (properties, {
         theadth.setAttribute('scope', 'col')
         theadth.setAttribute('colspan', '2')
         theadth.className = 'fw-bold text-break text-wrap'
+        theadth.style.textAlign = 'center'
         theadth.innerHTML = header
         theadtr.appendChild(theadth)
     }
@@ -436,6 +437,7 @@ const createFeaturePropertiesTable = (properties, {
         tr.appendChild(key)
         
         const value = document.createElement('td')
+        value.style.maxWidth = `${window.innerWidth * 0.25}px`
         value.className = 'text-wrap'
         value.innerHTML = isNaN(data) ? data : formatNumberWithCommas(Number(data))
         tr.appendChild(value)

@@ -16,7 +16,7 @@ import os
 import logging
 logger = logging.getLogger('django')
 
-DEFAULT_REQUEST_HEADERS = {'User-Agent': 'Mozilla/5.0'}
+DEFAULT_REQUEST_HEADERS = {'User-Agent': 'Geospatialib/1.0 (tamsyn.malabanan@gmail.com)'}
 
 def get_special_characters(value):
     scs = (list(string.punctuation) + [' '])

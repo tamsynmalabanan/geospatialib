@@ -1,6 +1,6 @@
 const fetchSearchNominatim = async (q, {
     format='geojson',
-    limit=1000,
+    limit=100,
     abortBtns,
     controller,
 } = {}) => {
@@ -14,7 +14,6 @@ const fetchSearchNominatim = async (q, {
         abortBtns,
         controller,
         callback: parseJSONResponse
-
     }).catch(error => {
         console.log(error)
     })

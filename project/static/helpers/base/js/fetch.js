@@ -8,7 +8,7 @@ const htmxFetch = async (url, {
             headers: {
                 'Content-Type': 'application/json',
                 'HX-Request': 'true',
-                'X-CSRFToken': getCookie('csrftoken')
+                'X-CSRFToken': getCookie('csrftoken'),
             },
             body: JSON.stringify(data)
         });
@@ -72,7 +72,7 @@ const fetchHeadersViaCORSProxy = async (url) => {
 
 const mapForFetchTimeout = new Map()
 const fetchTimeout = async (url, {
-    fetchParams,
+    fetchParams={},
     timeoutMs = 60000,
     controller = new AbortController(),
     abortBtns,
@@ -83,6 +83,9 @@ const fetchTimeout = async (url, {
         const response = (await mapForFetchTimeout.get(mapKey)).clone()
         return callback(response)
     }
+    
+    const headers = fetchParams.headers = fetchParams.headers ?? {}
+    headers['User-Agent'] = 'Geospatialib/1.0 (tamsyn.malabanan@gmail.com)'
 
     const abortController = () => controller.abort('Fetch timed out or manually aborted.')
     abortBtns?.forEach(btn => btn.addEventListener('click', abortController))

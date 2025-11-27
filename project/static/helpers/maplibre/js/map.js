@@ -163,22 +163,22 @@ class GeospatialibControl {
                     lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
                 }
 
+                const popupWidth = window.innerWidth * 0.5
+                const popupHeight = window.innerHeight * 0.5
+
                 const popup = this.config.popup = new maplibregl.Popup()
                 .setLngLat(lngLat)
-                .setMaxWidth(`${window.innerWidth * 0.3}px`)
+                .setMaxWidth(`${popupWidth}px`)
                 .setHTML(`<div class='d-flex flex-column gap-3'></div>`)
                 .addTo(map)
 
                 popup.on("close", () => {
                     this.config.popup = null
                     this.handlers.removeGeoJSONLayers(sourceId)
-                    this.handlers.setGeoJSONSourceData(sourceId)
+                    this.handlers.setGeoJSONData(sourceId)
                 })
                 
-                const popupHeight = window.innerHeight * 0.5
-                
                 const popupContainer = popup._container
-                popupContainer.style.maxHeight = `${popupHeight}px`
                 
                 const popupTooltip = popupContainer.querySelector('.maplibregl-popup-tip')
                 popupTooltip.classList.add(`border-top-${getPreferredTheme()}`, `border-bottom-${getPreferredTheme()}`)
@@ -188,16 +188,20 @@ class GeospatialibControl {
                 
                 const popupContent = popupContainer.querySelector('.maplibregl-popup-content')
                 popupContent.classList.add(`bg-${getPreferredTheme()}`)
-                popupContent.style.maxHeight = `${popupHeight-10}px`
                 popupContent.style.padding = `24px 12px 12px 12px`
                 
                 const container = popupContainer.querySelector('.maplibregl-popup-content').firstChild
                 container.style.maxHeight = `${popupHeight-10-12-24}px`
+                container.style.maxWidth = `${popupWidth-12-12}px`
                 
                 if (features.length) {
                     const carouselContainer = customCreateElement({
                         parent: container,
-                        className: 'd-flex flex-grow-1 overflow-auto'
+                        className: 'd-flex overflow-auto'
+                    })
+
+                    elementResizeObserver(carouselContainer, (e) => {
+                        footer.style.maxWidth = carouselContainer.offsetWidth
                     })
 
                     const carousel = customCreateElement({
@@ -214,7 +218,6 @@ class GeospatialibControl {
                         const f = features[i]
 
                         const tempHeader = '<img src="https://th.bing.com/th/id/OSK.HEROlJnsXcA4gu9_6AQ2NKHnHukTiry1AIf99BWEqfbU29E?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM">'
-                        console.log(f)
                         const header = tempHeader ?? Array(
                             f.layer.metadata.title ?? map.getSource(f.layer.source).metadata.title,
                             f.properties[
@@ -224,12 +227,10 @@ class GeospatialibControl {
                             ]
                         ).filter(i => i).join(': ')
                         
-                        const content = createFeaturePropertiesTable(f.properties, {header, tableClass: `fs-12 table-${getPreferredTheme()}`})
-
                         const carouselItem = customCreateElement({
                             parent: carouselInner,
                             className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
-                            innerHTML: content,
+                            innerHTML: createFeaturePropertiesTable(f.properties, {header, tableClass: `fs-12 table-${getPreferredTheme()}`}),
                         })
                     })
                     
@@ -247,12 +248,14 @@ class GeospatialibControl {
                             `
                         }).children).forEach(b => carousel.appendChild(b))
                     }
-
                 }
 
                 const footer = customCreateElement({
                     parent: container,
-                    className: 'd-flex flex-wrap gap-2'
+                    className: 'd-flex flex-wrap gap-2',
+                    style: {
+                        maxWidth: `${popupWidth/2}px`,
+                    }
                 })
 
                 const zoom = customCreateElement({
@@ -273,12 +276,11 @@ class GeospatialibControl {
                 if (checkedOptions.includes('coords')) {
                     const coordsValues = Object.values(lngLat).map(i => i.toFixed(6))    
 
-                    const coordsContent = `<span>📋</span><span>${coordsValues[0]}</span><span>${coordsValues[1]}</span>`
                     const coords = customCreateElement({
                         tag: 'button',
                         className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12 flex-grow-1',
                         parent: footer,
-                        innerHTML: coordsContent,
+                        innerHTML: `<span>📋</span><span>${coordsValues[0]}</span><span>${coordsValues[1]}</span>`,
                         events: {
                             click: (e) => {
                                 navigator.clipboard.writeText(coordsValues.join(' '))
@@ -305,10 +307,10 @@ class GeospatialibControl {
                                     const geojson = await source.getData()
                                     if (geojson?.features?.length && turf.booleanEqual(geojson.features[0], feature)) {
                                         this.handlers.removeGeoJSONLayers(sourceId)
-                                        this.handlers.setGeoJSONSourceData(sourceId)
+                                        this.handlers.setGeoJSONData(sourceId)
                                     } else {
                                         map.fitBounds(feature.bbox)
-                                        await this.handlers.setGeoJSONSourceData(sourceId, {data})
+                                        await this.handlers.setGeoJSONData(sourceId, {data, attribution: data.licence})
                                         this.handlers.addGeoJSONLayers(sourceId)
                                     }
                                 }
@@ -318,39 +320,61 @@ class GeospatialibControl {
                 }
             },
 
-            setGeoJSONSourceData: async (sourceId, {
+            setGeoJSONData: async (sourceId, {
                 data=turf.featureCollection([]),
                 metadata,
+                attribution,
             }={}) => {
-                let source = this.map.getSource(sourceId)
+                const map = this.map
+
+                let source = map.getSource(sourceId)
                 if (source) {
                     source.setData(data)
+                    if (metadata) {
+                        source.metadata = metadata
+                    }
                 } else {
-                    this.map.addSource(sourceId, {
+                    map.addSource(sourceId, {
                         type: "geojson",
+                        generateId: true,
+                        promoteId: true,
                         data,
+                        attribution: attribution ?? '',
+
+                        //url,
+                        //tiles,
+                        //bounds,
+                        //minzoom,
+                        //minzoom
+                        // maxzoom,
                     })
-                    source = this.map.getSource(sourceId)
+                    source = map.getSource(sourceId)
                     source.metadata = metadata ?? {}
                 }
                 return source
             },
-            removeGeoJSONLayers: (sourceId) => {
+            removeGeoJSONLayers: (sourceId, {
+                // layer=[],
+                // types=[],
+                // group=[],
+            }={}) => {
                 const map = this.map
 
-                const layers = map.getStyle().layers
-                if (!layers) return
-
-                layers.forEach(l => {
+                map.getStyle().layers?.forEach(l => {
                     if (l.source !== sourceId) return
                     map.removeLayer(l.id)
                 })
             },
             addGeoJSONLayers: (sourceId, {
+                types={
 
+                }
             }={}) => {
                 const map = this.map
                 if (!map.getSource(sourceId)) return
+
+                // id = sourceId-layerId-type-groupId
+                // metadata = source.metadata + layerId + layer props
                 
                 const polygonId = `${sourceId}-Polygon`
                 let polygonLayer = map.getLayer(polygonId) 
@@ -467,7 +491,7 @@ class GeospatialibControl {
                 popup: ({body, head}={}) => {
                     this.map.getCanvas().style.cursor = 'pointer'
 
-                    this.handlers.setGeoJSONSourceData('popupFeature', {metadata:{title: 'Popup feature'}})
+                    this.handlers.setGeoJSONData('popupFeature', {metadata:{title: 'Popup feature'}})
 
                     head.innerText = 'Popup options'
 
@@ -780,7 +804,7 @@ class PlaceSearchControl {
                         }
                     }
 
-                    await geospatialibControl.handlers.setGeoJSONSourceData(sourceId, {data})
+                    await geospatialibControl.handlers.setGeoJSONData(sourceId, {data, attribution: data.licence})
                     if (data.features.length) {
                         geospatialibControl.handlers.addGeoJSONLayers(sourceId)
                     }

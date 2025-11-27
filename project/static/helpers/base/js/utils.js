@@ -1,11 +1,16 @@
 const svgNS = "http://www.w3.org/2000/svg"
 
-const elementResizeObserver = (element, callback) => {
+const elementResizeObserver = (element, callback, {
+    once = false,
+} = {}) => {
     let resizeTimeout
     
     const resizeObserver = new ResizeObserver(entries => {
         for (const entry of entries) {
             if (entry.target === element) {
+                if (once) {
+                    resizeObserver.unobserve(element)
+                }
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
                     callback(element)
@@ -14,7 +19,7 @@ const elementResizeObserver = (element, callback) => {
         }
     });
 
-    resizeObserver.observe(element);
+    resizeObserver.observe(element)
 }
 
 const animateElement = (element, animation, {
