@@ -1,24 +1,3 @@
-const fetchSearchNominatim = async (q, {
-    format='geojson',
-    limit=100,
-    abortBtns,
-    controller,
-} = {}) => {
-    if (!q) return
-
-    const url = pushURLParams('https://nominatim.openstreetmap.org/search?', {
-        q, format, limit
-    })
-
-    return await fetchTimeout(url, {
-        abortBtns,
-        controller,
-        callback: parseJSONResponse
-    }).catch(error => {
-        console.log(error)
-    })
-}
-
 const fetchReverseNominatim = async ({
     queryGeom,
     zoom,

@@ -39,7 +39,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
             return {
                 required,
                 value,
-                createElement: ({parent, name, fieldParams}={}) => {
+                customCreateElement: ({parent, name, fieldParams}={}) => {
                     return createInputGroup({
                         parent,
                         prefixHTML: `<span class='fs-12'>${label}</span>`,
@@ -73,7 +73,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
             return {
                 required,
                 value,
-                createElement: ({parent, name, fieldParams}={}) => {
+                customCreateElement: ({parent, name, fieldParams}={}) => {
                     return createFormCheck({
                         parent, 
                         name, 
@@ -98,7 +98,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
             return {
                 required,
                 value,
-                createElement: ({parent, name, fieldParams}={}) => {
+                customCreateElement: ({parent, name, fieldParams}={}) => {
                     const container = customCreateElement({
                         parent,
                         className: 'input-group d-flex flex-nowrap w-50 flex-grow-1'
@@ -250,7 +250,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                         method: {
                             required: true,
                             value: null,
-                            createElement: ({parent, name, fieldParams}={}) => {
+                            customCreateElement: ({parent, name, fieldParams}={}) => {
                                 const container = customCreateElement({
                                     parent,
                                     className: 'input-group d-flex flex-nowrap',
@@ -352,7 +352,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                         method: {
                             required: true,
                             value: null,
-                            createElement: ({parent, name, fieldParams}={}) => {
+                            customCreateElement: ({parent, name, fieldParams}={}) => {
                                 const container = customCreateElement({
                                     parent,
                                     className: 'input-group d-flex flex-nowrap',
@@ -547,7 +547,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
                         types: {
                             required: true,
                             value: null,
-                            createElement: ({parent, name, fieldParams}={}) => {
+                            customCreateElement: ({parent, name, fieldParams}={}) => {
                                 const container = customCreateElement({
                                     parent,
                                     className: 'input-group d-flex flex-nowrap',
@@ -783,7 +783,7 @@ const handleLeafletToolboxPanel = (map, parent) => {
     
                 for (const name in toolParams.fields) {
                     const fieldParams = toolParams.fields[name]
-                    fieldParams.createElement({
+                    fieldParams.customCreateElement({
                         parent: toolForm,
                         name,
                         fieldParams,

@@ -1,31 +1,45 @@
 const customCreateElement = ({
     tag = 'div',
-    id,
+    id = generateRandomString(),
     className = '',
-    parent,
-    style = {},
     innerHTML = '',
+    innerText = '',
+    style = {},
     attrs = {},
     events = {},
-    innerText = ''
+    parent,
 } = {}) => {
     const element = document.createElement(tag)
-    element.id = id || generateRandomString()
+    element.id = id
     element.className = className
-    parent?.appendChild(element)
-    Object.keys(style).forEach(k => element.style[k] = style[k])
-    Object.keys(attrs).forEach(k => element.setAttribute(k, attrs[k]))
-    Object.keys(events).forEach(k => element.addEventListener(k, events[k]))
+    
+    Object.keys(style).forEach(k => {
+        element.style[k] = style[k]
+    })
+
+    Object.keys(attrs).forEach(k => {
+        element.setAttribute(k, attrs[k])
+    })
+    
+    Object.keys(events).forEach(k => {
+        element.addEventListener(k, events[k])
+    })
     
     if (innerHTML) {
         if (innerHTML instanceof Element) {
-            element.innerHTML = ''
             element.appendChild(innerHTML)
         } else {
             element.innerHTML = innerHTML
         }
     }
-    if (innerText) element.innerText = innerText
+
+    if (innerText) {
+        element.innerText = innerText
+    }
+    
+    if (parent && parent instanceof Element) {
+        parent.appendChild(element)
+    }
 
     return element
 }

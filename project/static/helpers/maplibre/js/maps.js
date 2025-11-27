@@ -2,8 +2,8 @@ class GeospatialibControl {
     constructor(options = {}) {
         this.options = options
         this.container = null
-        this.controls = null
         
+        this.controls = null
         this.config = {
             renderHillshade: true,
             projection: 'mercator',
@@ -53,8 +53,7 @@ class GeospatialibControl {
                 position='top-left',
             }={}) => {
                 const map = this.map
-
-                if (!Object.keys(map.style.stylesheet.sources).includes(source)) return
+                if (!map.getSource(source)) return
 
                 const control = new maplibregl.TerrainControl({
                     source,
@@ -82,18 +81,19 @@ class GeospatialibControl {
                 source = 'terrain',
                 exaggeration = 1,
             } = {}) => {
-                this.map.setTerrain({ source, exaggeration });
+                if (!this.map.getSource(source)) return
+                this.map.setTerrain({ source, exaggeration })
             },
             toggleHillshade: () => {
                 const map = this.map
-
                 const source = map.getTerrain()?.source
+
                 if (source && this.config.renderHillshade) {
                     if (!map.getLayer('hillshade')) {
                         map.addLayer({
                             id: 'hillshade',
+                            type: 'hillshade',
                             source,
-                            type: 'hillshade'
                         });
                     }
                 } else {
@@ -137,7 +137,7 @@ class GeospatialibControl {
                     })
 
                     if (features.length > 1) {
-                        const point = turf.point([lngLat.lng, lngLat.lat])
+                        const point = turf.point(Object.values(lngLat))
                         const intersectedFeatures = features.filter(f => turf.booleanIntersects(f, point))
                         if (intersectedFeatures.length) {
                             features = intersectedFeatures
@@ -169,7 +169,7 @@ class GeospatialibControl {
                 const popup = this.config.popup = new maplibregl.Popup()
                 .setLngLat(lngLat)
                 .setMaxWidth(`${popupWidth}px`)
-                .setHTML(`<div class='d-flex flex-column gap-3'></div>`)
+                .setHTML(`<div></div>`)
                 .addTo(map)
 
                 popup.on("close", () => {
@@ -190,7 +190,8 @@ class GeospatialibControl {
                 popupContent.classList.add(`bg-${getPreferredTheme()}`)
                 popupContent.style.padding = `24px 12px 12px 12px`
                 
-                const container = popupContainer.querySelector('.maplibregl-popup-content').firstChild
+                const container = popupContent.firstChild
+                container.className = `d-flex flex-column gap-3`
                 container.style.maxHeight = `${popupHeight-10-12-24}px`
                 container.style.maxWidth = `${popupWidth-12-12}px`
                 
@@ -875,10 +876,10 @@ const initMapLibreMap = (el) => {
         maxPitch: 85
     })
 
-    map.on('load', () => {
+    map.on('style.load', () => {
         const control = new GeospatialibControl()
         map.addControl(control, 'bottom-right')
+        
+        console.log(map)
     })   
-
-    console.log(map)
 }
