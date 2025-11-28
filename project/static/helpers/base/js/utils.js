@@ -8,11 +8,9 @@ const elementResizeObserver = (element, callback, {
     const resizeObserver = new ResizeObserver(entries => {
         for (const entry of entries) {
             if (entry.target === element) {
-                if (once) {
-                    resizeObserver.unobserve(element)
-                }
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
+                    if (once) resizeObserver.unobserve(element)
                     callback(element)
                 }, 100)
             }
@@ -20,6 +18,8 @@ const elementResizeObserver = (element, callback, {
     });
 
     resizeObserver.observe(element)
+
+    return resizeObserver
 }
 
 const animateElement = (element, animation, {

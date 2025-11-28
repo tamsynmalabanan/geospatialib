@@ -7,7 +7,7 @@ class GeospatialibControl {
         this.config = {
             renderHillshade: true,
             projection: 'mercator',
-            popup: null,
+            popup: {}
         }
 
         this.handlers = {
@@ -110,6 +110,37 @@ class GeospatialibControl {
             getProjection: () => {
                 return this.config.projection
             },
+            togglePopupFeature: (feature, {toggle}={}) => {
+                const popupFeature = this.config.popup.feature
+                const popupToggle = this.config.popup.toggle
+                
+                const toggleOff = popupFeature && featuresAreSimilar(popupFeature, feature)
+                const sourceId = 'popupFeature'
+                
+                if (toggleOff) {
+                    this.config.popup.feature = null
+                    this.handlers.resetGeoJSONSource(sourceId)
+                } else {
+                    this.config.popup.feature = feature
+                    this.map.fitBounds(feature.bbox ?? turf.bbox(feature))
+                    this.handlers.setGeoJSONData(sourceId, {data: turf.featureCollection([feature])})
+                    this.handlers.addGeoJSONLayers(sourceId)
+                }
+
+                if (popupToggle) {
+                    popupToggle.classList.add('text-bg-secondary')
+                    popupToggle.classList.remove('text-bg-primary')
+                    this.config.popup.toggle = null
+                }
+
+                if (toggle) {
+                    toggle.classList.toggle('text-bg-secondary', toggleOff)
+                    toggle.classList.toggle('text-bg-primary', !toggleOff)
+                    this.config.popup.toggle = !toggleOff ? toggle : null;;
+                }
+
+                return !toggleOff
+            },
             createPopup: async (e) => {
                 const map = this.map
 
@@ -123,7 +154,6 @@ class GeospatialibControl {
                 if (!checkedOptions.length) return
 
                 const sourceId = 'popupFeature'
-                const source = map.getSource(sourceId)
 
                 let features = []
                 let lngLat = e.lngLat
@@ -131,11 +161,11 @@ class GeospatialibControl {
                 if (checkedOptions.includes('layers')) {
                     features = map.queryRenderedFeatures(e.point)
                     console.log('update features with features from wms layers, etc.')
-
+                    
                     features = features.filter(f => {
                         return turf.booleanValid(f) && f.layer.source !== sourceId
                     })
-
+                    
                     if (features.length > 1) {
                         const point = turf.point(Object.values(lngLat))
                         const intersectedFeatures = features.filter(f => turf.booleanIntersects(f, point))
@@ -166,16 +196,15 @@ class GeospatialibControl {
                 const popupWidth = window.innerWidth * 0.5
                 const popupHeight = window.innerHeight * 0.5
 
-                const popup = this.config.popup = new maplibregl.Popup()
+                const popup = this.config.popup.control = new maplibregl.Popup()
                 .setLngLat(lngLat)
                 .setMaxWidth(`${popupWidth}px`)
                 .setHTML(`<div></div>`)
                 .addTo(map)
 
                 popup.on("close", () => {
-                    this.config.popup = null
-                    this.handlers.removeGeoJSONLayers(sourceId)
-                    this.handlers.setGeoJSONData(sourceId)
+                    this.config.popup = {}
+                    this.handlers.resetGeoJSONSource(sourceId)
                 })
                 
                 const popupContainer = popup._container
@@ -201,9 +230,10 @@ class GeospatialibControl {
                         className: 'd-flex overflow-auto'
                     })
 
-                    elementResizeObserver(carouselContainer, (e) => {
+                    const resizeObserver = elementResizeObserver(carouselContainer, (e) => {
                         footer.style.maxWidth = carouselContainer.offsetWidth
                     })
+                    popup.on('close', () => resizeObserver.unobserve(carouselContainer))
 
                     const carousel = customCreateElement({
                         parent: carouselContainer,
@@ -217,21 +247,36 @@ class GeospatialibControl {
 
                     Object.keys(features).forEach(i => {
                         const f = features[i]
-
-                        const tempHeader = '<img src="https://th.bing.com/th/id/OSK.HEROlJnsXcA4gu9_6AQ2NKHnHukTiry1AIf99BWEqfbU29E?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM">'
-                        const header = tempHeader ?? Array(
-                            f.layer.metadata.title ?? map.getSource(f.layer.source).metadata.title,
-                            f.properties[
-                                Array('display_name', 'name', 'title', 'id')
-                                .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
-                                ?? Object.keys(f.properties).pop()
-                            ]
-                        ).filter(i => i).join(': ')
                         
                         const carouselItem = customCreateElement({
                             parent: carouselInner,
                             className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
-                            innerHTML: createFeaturePropertiesTable(f.properties, {header, tableClass: `fs-12 table-${getPreferredTheme()}`}),
+                        })
+                        
+                        const tempHeader = '<img src="https://th.bing.com/th/id/OSK.HEROlJnsXcA4gu9_6AQ2NKHnHukTiry1AIf99BWEqfbU29E?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM">'
+                        const propertiesTable = createFeaturePropertiesTable(f.properties, {
+                            parent: carouselItem, 
+                            header: tempHeader ?? Array(
+                                f.layer.metadata.title ?? map.getSource(f.layer.source).metadata.title,
+                                f.properties[
+                                    Array('display_name', 'name', 'title', 'id')
+                                    .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
+                                    ?? Object.keys(f.properties).pop()
+                                ]
+                            ).filter(i => i).join(': '), 
+                            tableClass: `fs-12 table-${getPreferredTheme()}`
+                        })
+
+                        const place = customCreateElement({
+                            tag: 'button',
+                            className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12 position-absolute top-0 end-0 m-2',
+                            parent: carouselItem,
+                            innerText: '👁️',
+                            events: {
+                                click: async (e) => {
+                                    this.handlers.togglePopupFeature(turf.feature(f.geometry, f.properties), {toggle:place})
+                                }
+                            }
                         })
                     })
                     
@@ -305,15 +350,7 @@ class GeospatialibControl {
                             innerHTML: `<span>📍</span><span class="text-wrap text-break text-start">${feature.properties.display_name}</span>`,
                             events: {
                                 click: async (e) => {
-                                    const geojson = await source.getData()
-                                    if (geojson?.features?.length && turf.booleanEqual(geojson.features[0], feature)) {
-                                        this.handlers.removeGeoJSONLayers(sourceId)
-                                        this.handlers.setGeoJSONData(sourceId)
-                                    } else {
-                                        map.fitBounds(feature.bbox)
-                                        await this.handlers.setGeoJSONData(sourceId, {data, attribution: data.licence})
-                                        this.handlers.addGeoJSONLayers(sourceId)
-                                    }
+                                    this.handlers.togglePopupFeature(feature, {toggle:place})
                                 }
                             }
                         })
@@ -321,61 +358,107 @@ class GeospatialibControl {
                 }
             },
 
-            setGeoJSONData: async (sourceId, {
+            resetGeoJSONSource: (sourceId) => {
+                const source = this.map.getSource(sourceId)
+                if (!source) return
+
+                this.handlers.removeGeoJSONLayers(sourceId)
+                this.handlers.setGeoJSONData(sourceId)
+            },
+            setGeoJSONData: (sourceId, {
                 data=turf.featureCollection([]),
                 metadata,
                 attribution,
             }={}) => {
                 const map = this.map
+                console.log('normalize geojson data')
 
                 let source = map.getSource(sourceId)
                 if (source) {
                     source.setData(data)
-                    if (metadata) {
-                        source.metadata = metadata
-                    }
+                    if (metadata) source.metadata = metadata
+                    if (attribution) source.attribution = attribution
                 } else {
                     map.addSource(sourceId, {
+                        data,
                         type: "geojson",
                         generateId: true,
-                        promoteId: true,
-                        data,
-                        attribution: attribution ?? '',
-
-                        //url,
-                        //tiles,
-                        //bounds,
+                        attribution: attribution ?? metadata.attribution ?? data[Object.keys(data).find(i => Array(
+                            'attribution', 
+                            'license', 
+                            'licence', 
+                            'copyright', 
+                            'constraints'
+                        ).find(j => i.includes(j)))] ?? '',
+                        
                         //minzoom,
-                        //minzoom
-                        // maxzoom,
+                        //maxzoom,
+                        //tolerance,
+                        //promoteId: 'id',
+                        //cluster,
+                        //clusterRadius,
+                        //clusterMaxZoom,
+                        //clusterMinPoints,
+                        //clusterProperties,
                     })
+
                     source = map.getSource(sourceId)
-                    source.metadata = metadata ?? {}
+                    source.metadata = metadata ?? {
+                        // default metadata properties
+                    }
                 }
+
                 return source
             },
-            removeGeoJSONLayers: (sourceId, {
-                // layer=[],
-                // types=[],
-                // group=[],
+            removeGeoJSONLayers: (layerPrefix) => {
+                this.map.getStyle().layers?.forEach(l => {
+                    if (!l.id.startsWith(layerPrefix)) return
+                    this.map.removeLayer(l.id)
+                })
+            },
+            moveGeoJSONLayers: (layerPrefix, {
+                beforeId,
             }={}) => {
-                const map = this.map
+                const layers = this.map.getStyle().layers ?? []
+                beforeId = layers.find(l => l.id.startsWith(beforeId))?.id
 
-                map.getStyle().layers?.forEach(l => {
-                    if (l.source !== sourceId) return
-                    map.removeLayer(l.id)
+                layers.forEach(l => {
+                    if (!l.id.startsWith(layerPrefix)) return
+                    this.map.moveLayer(l.id, beforeId)
                 })
             },
             addGeoJSONLayers: (sourceId, {
-                types={
-
-                }
+                groups,
+                beforeId,
             }={}) => {
                 const map = this.map
                 if (!map.getSource(sourceId)) return
+                
+                beforeId = map.getStyle().layers?.find(l => l.id.startsWith(beforeId) || Array(
+                    'popupFeature', 
+                    'placeSearch'
+                ).find(i => l.id.startsWith(i)))?.id 
 
-                // id = sourceId-layerId-type-groupId
-                // metadata = source.metadata + layerId + layer props
+                groups = groups ?? {
+                    default: {
+                        types: {
+                            'fill': true, 
+                            'line': true, 
+                            'symbol': true, 
+                            'circle': false, 
+                            'fill-extrusion': false, 
+                            'heatmap': false,
+                        },
+                        filter: [],
+                        style: {
+
+                        },
+                    }
+                }
+
+                // id = sourceId-groupId-type
+
+
                 
                 const polygonId = `${sourceId}-Polygon`
                 let polygonLayer = map.getLayer(polygonId) 
@@ -389,7 +472,7 @@ class GeospatialibControl {
                             "fill-opacity": 0.5
                         },
                         filter: ["==", "$type", "Polygon"]
-                    })
+                    }, beforeId)
                 }
                 
                 const lineStringId = `${sourceId}-LineString`
@@ -404,7 +487,7 @@ class GeospatialibControl {
                             "line-width": 2
                         },
                         filter: ["==", "$type", "LineString"]
-                    })
+                    }, beforeId)
                 }
 
                 const pointId = `${sourceId}-Point`
@@ -427,7 +510,7 @@ class GeospatialibControl {
                             }
                         }),
                         filter: ["==", "$type", "Point"]
-                    })
+                    }, beforeId)
                 }
 
                 return {polygonLayer, lineStringLayer, pointLayer}
@@ -555,7 +638,7 @@ class GeospatialibControl {
                                         this.map.getCanvas().style.cursor = checked && inputs.some(i => i.checked) ? 'pointer' : ''
 
                                         if (!checked) {
-                                            this.config.popup?.remove()
+                                            this.config.popup.control?.remove()
                                         } 
                                     }
                                 } : {
@@ -702,6 +785,9 @@ class GeospatialibControl {
         })
         
         this.createControl()
+
+        this.map.getGeospatialibControl = () => this
+
         return this.container
     }
 
@@ -742,6 +828,11 @@ class FitToWorldControl {
 }
 
 class PlaceSearchControl {
+    constructor(options = {}) {
+        this.options = options
+        this.container = null
+    }
+
     onAdd(map) {
         this.map = map
         this.container = customCreateElement({className:'maplibregl-ctrl maplibregl-ctrl-group d-flex flex-nowrap gap-1 align-items-center'})
@@ -780,33 +871,40 @@ class PlaceSearchControl {
             },
             events: {
                 change: async (e) => {
-                    const geospatialibControl = Object.values(this.map._controls).find(i => i instanceof GeospatialibControl)
-                    
                     const sourceId = 'placeSearch'
-                    geospatialibControl.handlers.removeGeoJSONLayers(sourceId, {metadata:{title: 'Place search result'}})
+
+                    const geospatialibControl = this.map.getGeospatialibControl()
+                    geospatialibControl.handlers.resetGeoJSONSource(sourceId)
+                    
+                    const value = input.value.trim()
+                    if (value === '') return
                     
                     let data = turf.featureCollection([])
 
-                    const value = input.value.trim()
-                    if (value !== '') {
-                        const coords = isLngLatString(value)
-                        if (coords) {
-                            map.flyTo({
-                                center: coords,
-                                zoom: 11,
-                            })
-                            data = turf.featureCollection([turf.point(coords)])
-                        } else {
-                            data = await fetchSearchNominatim(value)
-                            if (data?.features.length) {
-                                const bbox = turf.bbox(data)
-                                map.fitBounds(bbox, {padding:100, maxZoom:12})
-                            }
+                    const coords = isLngLatString(value)
+                    if (coords) {
+                        map.flyTo({
+                            center: coords,
+                            zoom: 11,
+                        })
+                        data = turf.featureCollection([turf.point(coords)])
+                    } else {
+                        data = await fetchSearchNominatim(value)
+                        if (data?.features?.length) {
+                            const bbox = (
+                                data.features.length === 1 
+                                ? data.features[0].bbox ?? turf.bbox(data.features[0]) 
+                                : data.bbox ?? turf.bbox(data)
+                            )
+                            map.fitBounds(bbox, {padding:100, maxZoom:11})
                         }
                     }
 
-                    await geospatialibControl.handlers.setGeoJSONData(sourceId, {data, attribution: data.licence})
-                    if (data.features.length) {
+                    if (data?.features?.length) {
+                        await geospatialibControl.handlers.setGeoJSONData(sourceId, {
+                            data, 
+                            metadata: {title: 'Place search result'}
+                        })
                         geospatialibControl.handlers.addGeoJSONLayers(sourceId)
                     }
                 }

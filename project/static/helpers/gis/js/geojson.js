@@ -151,6 +151,13 @@ const sortGeoJSONFeatures = (geojson) => {
     return geojson
 }
 
+const featuresAreSimilar = (feature1, feature2) => {
+    if (!turf.booleanIntersects(feature1, feature2)) return false
+    if (!turf.booleanEqual(feature1.geometry, feature2.geometry)) return false
+    if (!_.isEqual(feature1.properties, feature2.properties)) return false
+    return true
+}
+
 const transformGeoJSONCoordinates = async (coordinates, source, target) => {
     const source_text = `EPSG:${source}`
     if (!proj4.defs(source_text)) await fetchProj4Def(source)
@@ -398,7 +405,8 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
 
 const createFeaturePropertiesTable = (properties, {
     header,
-    tableClass = ''
+    tableClass = '',
+    parent,
 } = {}) => {
     const table = document.createElement('table')
     table.className = removeWhitespace(`
@@ -442,6 +450,10 @@ const createFeaturePropertiesTable = (properties, {
         value.innerHTML = isNaN(data) ? data : formatNumberWithCommas(Number(data))
         tr.appendChild(value)
     })
+
+    if (parent && parent instanceof Element) {
+        parent.appendChild(table)
+    }
 
     return table
 }
