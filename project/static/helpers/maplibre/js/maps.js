@@ -383,6 +383,7 @@ class GeospatialibControl {
                         data,
                         type: "geojson",
                         generateId: true,
+                        // 'line-gradient': true,
                         attribution: attribution ?? metadata.attribution ?? data[Object.keys(data).find(i => Array(
                             'attribution', 
                             'license', 
@@ -416,104 +417,659 @@ class GeospatialibControl {
                     this.map.removeLayer(l.id)
                 })
             },
+            getBeforeId: (layerPrefix, beforeId) => {
+                let fixedLayers = [
+                    'popupFeature', 
+                    'placeSearch',
+                ]
+
+                const layerMatch = fixedLayers.find(i => layerPrefix.startsWith(i))
+                if (layerMatch) {
+                    const idx = fixedLayers.indexOf(layerMatch)
+                    fixedLayers = fixedLayers.splice(idx + 1)
+                }
+
+                return this.map.getStyle().layers?.find(l => l.id.startsWith(beforeId) || fixedLayers.find(i => l.id.startsWith(i)))?.id 
+            },
             moveGeoJSONLayers: (layerPrefix, {
                 beforeId,
             }={}) => {
                 const layers = this.map.getStyle().layers ?? []
-                beforeId = layers.find(l => l.id.startsWith(beforeId))?.id
+                beforeId = this.handlers.getBeforeId(layerPrefix, beforeId)
 
                 layers.forEach(l => {
                     if (!l.id.startsWith(layerPrefix)) return
                     this.map.moveLayer(l.id, beforeId)
                 })
             },
+            getLayerParams: ({
+                color=generateRandomColor(),
+                symbolAlongLines=false,
+                polygonShadows=false,
+                polygonOutlines=true,
+                pointShadows=false,
+                lineShadows=false,
+                polygonShadowTranslate=[-10,-10],
+            }={}) => {
+                const hslaColor = manageHSLAColor(color)
+                const outlineColor = hslaColor.toString({l:hslaColor.l/2})
+
+                const defaultLayout = {
+                    visibility: 'visible', //none
+                }
+
+                const defaultPaint = {
+
+                }
+
+                const types = {
+                    'background': {
+                        main: { 
+                            render: false,
+                            layout: {
+                                ...defaultLayout,
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'background-color': color,
+                                // 'background-pattern': '',
+                                'background-opacity': 0.5,
+                            },
+                        }, 
+                    },
+
+                    // polygons
+                    'fill-extrusion': {
+                        polygonShadows: {
+                            render: polygonShadows,
+                            filter: ["==", "$type", "Polygon"],
+                            layout: {
+                                ...defaultLayout,
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'fill-extrusion-opacity': 1,
+                                'fill-extrusion-color': color,
+                                'fill-extrusion-translate': [-10,-10],
+                                'fill-extrusion-translate-anchor': 'map',
+                                // 'fill-extrusion-pattern': '',
+                                'fill-extrusion-height': 0,
+                                'fill-extrusion-base': 0,
+                                'fill-extrusion-vertical-gradient': true,
+                            },
+                        },
+                        polygons: {
+                            render: false,
+                            filter: ["==", "$type", "Polygon"],
+                            layout: {
+                                ...defaultLayout,
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'fill-extrusion-opacity': 1,
+                                'fill-extrusion-color': color,
+                                'fill-extrusion-translate': [0,0],
+                                'fill-extrusion-translate-anchor': 'map',
+                                // 'fill-extrusion-pattern': '',
+                                'fill-extrusion-height': 0,
+                                'fill-extrusion-base': 0,
+                                'fill-extrusion-vertical-gradient': true,
+                            },
+                        },
+                    },
+                    'fill': {
+                        polygonShadows: {
+                            render: polygonShadows,
+                            filter: ["==", "$type", "Polygon"],
+                            layout: {
+                                ...defaultLayout,
+                                'fill-sort-key': 0, // like z-index
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'fill-color': color,
+                                'fill-opacity': 0.5,
+                                'fill-outline-color': hslaColor.toString({l:hslaColor.l/2}),
+                                'fill-antialias': true,
+                                'fill-translate': polygonShadowTranslate,
+                                'fill-translate-anchor': 'map', // viewport
+                                'fill-pattern': '',
+                            }
+                        },
+                        polygons: {
+                            render: true,
+                            filter: ["==", "$type", "Polygon"],
+                            layout: {
+                                ...defaultLayout,
+                                'fill-sort-key': 0, // like z-index
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'fill-color': color,
+                                'fill-opacity': 0.5,
+                                'fill-outline-color': outlineColor,
+                                'fill-antialias': true,
+                                'fill-translate': [0,0],
+                                'fill-translate-anchor': 'map', // viewport
+                                // 'fill-pattern': '',
+                            }
+                        },
+                    },
+                    
+                    // lines
+                    'line': {
+                        polygonOutlines: {
+                            render: polygonOutlines,
+                            filter: ["==", "$type", "Polygon"],
+                            layout: {
+                                ...defaultLayout,
+                                'line-cap': 'butt',
+                                'line-join': 'miter',
+                               'line-miter-limit': 2,
+                               'line-round-limit': 1.05,
+                               'line-sort-key': 0,
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'line-color': color,
+                                'line-width': 3,
+                                'line-opacity': 1,
+                                'line-translate': [0,0],
+                                'line-translate-anchor': 'map',
+                                'line-gap-width': 0,
+                                'line-offset': 0,
+                                'line-blur': 0,
+                                // 'line-dasharray': [],
+                                // 'line-pattern': '',
+                                // 'line-gradient': '',
+                            }
+                        },
+                        lineShadows: {
+                           render: lineShadows,
+                           filter: ["==", "$type", "LineString"],
+                           layout: {
+                               ...defaultLayout,
+                               'line-cap': 'butt',
+                               'line-join': 'miter',
+                               'line-miter-limit': 2,
+                               'line-round-limit': 1.05,
+                               'line-sort-key': 0,
+                           },
+                           paint: {
+                               ...defaultPaint,
+                               'line-color': color,
+                               'line-width': 3,
+                               'line-opacity': 1,
+                               'line-translate': [-10,-10],
+                               'line-translate-anchor': 'map',
+                               'line-gap-width': 0,
+                               'line-offset': 0,
+                               'line-blur': 0,
+                               // 'line-dasharray': [],
+                               // 'line-pattern': '',
+                               // 'line-gradient': '',
+                            }
+                        },
+                        lines: {
+                            render: true,
+                            filter: ["==", "$type", "LineString"],
+                            layout: {
+                                ...defaultLayout,
+                                'line-cap': 'butt',
+                                'line-join': 'miter',
+                                'line-miter-limit': 2,
+                                'line-round-limit': 1.05,
+                                'line-sort-key': 0,
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'line-color': color,
+                                'line-width': 3,
+                                'line-opacity': 1,
+                                'line-translate': [0,0],
+                                'line-translate-anchor': 'map',
+                                'line-gap-width': 0,
+                                'line-offset': 0,
+                                'line-blur': 0,
+                                // 'line-dasharray': [],
+                                // 'line-pattern': '',
+                                // 'line-gradient': '',
+                           }
+                       },
+                    },
+                    
+                    // points
+                    'circle': {
+                        pointShadows: {
+                            render: pointShadows,
+                            filter: ["==", "$type", "Point"],
+                            layout: {
+                                ...defaultLayout,
+                                'circle-sort-key': 0,
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                "circle-radius": 6, 
+                                "circle-color": color,
+                                "circle-blur": 0, // 0-1
+                                "circle-opacity": 1, // 0-1
+                                "circle-translate": [-10,-10],
+                                "circle-translate-anchor": 'map',
+                                "circle-pitch-scale": 'map',
+                                "circle-pitch-alignment": 'viewport',
+                                "circle-stroke-width": 1,
+                                "circle-stroke-color": outlineColor,
+                                "circle-stroke-opacity": 1,
+                            },
+                        },
+                        points: {
+                            render: false,
+                            filter: ["==", "$type", "Point"],
+                            layout: {
+                                ...defaultLayout,
+                                'circle-sort-key': 0,
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                "circle-radius": 6, 
+                                "circle-color": color,
+                                "circle-blur": 0, // 0-1
+                                "circle-opacity": 1, // 0-1
+                                "circle-translate": [0,0],
+                                "circle-translate-anchor": 'map',
+                                "circle-pitch-scale": 'map',
+                                "circle-pitch-alignment": 'viewport',
+                                "circle-stroke-width": 1,
+                                "circle-stroke-color": outlineColor,
+                                "circle-stroke-opacity": 1,
+                            },
+                        },
+                    }, 
+                    'heatmap': {
+                        points: {
+                            render: false,
+                            filter: ["==", "$type", "Point"],
+                            layout: {
+                                ...defaultLayout,
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'heatmap-radius': 30,
+                                'heatmap-weight': 1,
+                                'heatmap-intensity': 1,
+                                'heatmap-color': [
+                                    "interpolate",
+                                    ["linear"],
+                                    ["heatmap-density"],
+                                    0,"rgba(0, 0, 255, 0)",
+                                    0.1,"royalblue",
+                                    0.3,"cyan",
+                                    0.5,"lime",
+                                    0.7,"yellow",
+                                    1,"red"
+                                ],
+                                'heatmap-opacity': 1,
+                            },
+                            
+                        },
+                    },
+                    
+                    // points and lines
+                    'symbol': {
+                        lineShadows: {
+                            render: lineShadows && symbolAlongLines,
+                            filter: ["==", "$type", "LineString"],
+                            layout: {
+                                ...defaultLayout,
+                                // 'icon-image': '',
+                                // 'icon-rotate': 0,
+                                // 'icon-padding': [2],
+                                // 'icon-keep-upright': false,
+                                // 'icon-size': 1,
+                                // 'icon-overlap': 'cooperative',
+                                // 'icon-ignore-placement': false,
+                                // 'icon-optional': false,
+                                // 'icon-rotation-alignment': 'auto',
+                                // 'icon-text-fit': 'width',
+                                // 'icon-text-fit-padding': [0,0,0,0],
+                                // 'icon-offset': [0,0],
+                                // 'icon-anchor': 'center',
+                                // 'icon-pitch-alignment': 'auto',
+                                'icon-rotation-alignment': 'auto', // viewport, map
+                                'icon-allow-overlap': false,
+                                'text-field': 'test', 
+                                'text-font': ["Open Sans Regular","Arial Unicode MS Regular"],
+                                'text-size': 12,
+                                "text-allow-overlap": true,
+                                // 'text-pitch-alignment': 'auto',
+                                // 'text-rotation-alignment': 'auto',
+                                // 'text-max-width': 10,
+                                // 'text-line-height': 1.2,
+                                // 'text-letter-spacing': 0,
+                                // 'text-justify': 'center',
+                                // 'text-radial-offset': 0,
+                                // 'text-variable-anchor': [],
+                                // 'text-variable-anchor-offset': [],
+                                // 'text-anchor': 'center',
+                                // 'text-max-angle': 45,
+                                // 'text-writing-mode': [],
+                                // 'text-rotate': 0,
+                                // 'text-padding': 2,
+                                // 'text-keep-upright': true,
+                                // 'text-transform': 'none',
+                                // 'text-offset': [0,0],
+                                // 'text-allow-overlap': false,
+                                // 'text-overlap': 'cooperative',
+                                // 'text-ignore-placement': false,
+                                // 'text-optional': false,
+                                'symbol-avoid-edges': false,
+                                'symbol-placement': 'point',
+                                'symbol-sort-key': 0,
+                                'symbol-z-order': 'auto',
+                                
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'text-color': color,
+                                // 'text-opacity': 1,
+                                // 'text-halo-color': color,
+                                // 'text-halo-width': 0,
+                                // 'text-halo-blur': 0,
+                                // 'text-translate': [0,0],
+                                // 'text-translate-anchor': 'map',
+                                'icon-color': color,
+                                // 'icon-opacity': 0,
+                                // 'icon-color': color,
+                                // 'icon-halo-color': color,
+                                // 'icon-halo-width': 0,
+                                // 'icon-halo-blur': 0,
+                                // 'icon-translate': [0,0],
+                                // 'icon-translate-anchor': 'map',
+                            }
+                        },
+                        lines: {
+                            render: symbolAlongLines,
+                            filter: ["==", "$type", "LineString"],
+                            layout: {
+                                ...defaultLayout,
+                                // 'icon-image': '',
+                                // 'icon-rotate': 0,
+                                // 'icon-padding': [2],
+                                // 'icon-keep-upright': false,
+                                // 'icon-size': 1,
+                                // 'icon-overlap': 'cooperative',
+                                // 'icon-ignore-placement': false,
+                                // 'icon-optional': false,
+                                // 'icon-rotation-alignment': 'auto',
+                                // 'icon-text-fit': 'width',
+                                // 'icon-text-fit-padding': [0,0,0,0],
+                                // 'icon-offset': [0,0],
+                                // 'icon-anchor': 'center',
+                                // 'icon-pitch-alignment': 'auto',
+                                'icon-rotation-alignment': 'auto', // viewport, map
+                                'icon-allow-overlap': false,
+                                'text-field': 'test', 
+                                'text-font': ["Open Sans Regular","Arial Unicode MS Regular"],
+                                'text-size': 12,
+                                "text-allow-overlap": true,
+                                // 'text-pitch-alignment': 'auto',
+                                // 'text-rotation-alignment': 'auto',
+                                // 'text-max-width': 10,
+                                // 'text-line-height': 1.2,
+                                // 'text-letter-spacing': 0,
+                                // 'text-justify': 'center',
+                                // 'text-radial-offset': 0,
+                                // 'text-variable-anchor': [],
+                                // 'text-variable-anchor-offset': [],
+                                // 'text-anchor': 'center',
+                                // 'text-max-angle': 45,
+                                // 'text-writing-mode': [],
+                                // 'text-rotate': 0,
+                                // 'text-padding': 2,
+                                // 'text-keep-upright': true,
+                                // 'text-transform': 'none',
+                                // 'text-offset': [0,0],
+                                // 'text-allow-overlap': false,
+                                // 'text-overlap': 'cooperative',
+                                // 'text-ignore-placement': false,
+                                // 'text-optional': false,
+                                'symbol-avoid-edges': false,
+                                'symbol-placement': 'point',
+                                'symbol-sort-key': 0,
+                                'symbol-z-order': 'auto',
+                                
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'text-color': color,
+                                // 'text-opacity': 1,
+                                // 'text-halo-color': color,
+                                // 'text-halo-width': 0,
+                                // 'text-halo-blur': 0,
+                                // 'text-translate': [0,0],
+                                // 'text-translate-anchor': 'map',
+                                'icon-color': color,
+                                // 'icon-opacity': 0,
+                                // 'icon-color': color,
+                                // 'icon-halo-color': color,
+                                // 'icon-halo-width': 0,
+                                // 'icon-halo-blur': 0,
+                                // 'icon-translate': [0,0],
+                                // 'icon-translate-anchor': 'map',
+                            }
+                        },
+                        pointShadows: {
+                            render: pointShadows,
+                            filter: ["==", "$type", "Point"],
+                            layout: {
+                                ...defaultLayout,
+                                // 'icon-image': '',
+                                // 'icon-rotate': 0,
+                                // 'icon-padding': [2],
+                                // 'icon-keep-upright': false,
+                                // 'icon-size': 1,
+                                // 'icon-overlap': 'cooperative',
+                                // 'icon-ignore-placement': false,
+                                // 'icon-optional': false,
+                                // 'icon-rotation-alignment': 'auto',
+                                // 'icon-text-fit': 'width',
+                                // 'icon-text-fit-padding': [0,0,0,0],
+                                // 'icon-offset': [0,0],
+                                // 'icon-anchor': 'center',
+                                // 'icon-pitch-alignment': 'auto',
+                                'icon-rotation-alignment': 'auto', // viewport, map
+                                'icon-allow-overlap': false,
+                                'text-field': 'test', 
+                                'text-font': ["Open Sans Regular","Arial Unicode MS Regular"],
+                                'text-size': 12,
+                                "text-allow-overlap": true,
+                                // 'text-pitch-alignment': 'auto',
+                                // 'text-rotation-alignment': 'auto',
+                                // 'text-max-width': 10,
+                                // 'text-line-height': 1.2,
+                                // 'text-letter-spacing': 0,
+                                // 'text-justify': 'center',
+                                // 'text-radial-offset': 0,
+                                // 'text-variable-anchor': [],
+                                // 'text-variable-anchor-offset': [],
+                                // 'text-anchor': 'center',
+                                // 'text-max-angle': 45,
+                                // 'text-writing-mode': [],
+                                // 'text-rotate': 0,
+                                // 'text-padding': 2,
+                                // 'text-keep-upright': true,
+                                // 'text-transform': 'none',
+                                // 'text-offset': [0,0],
+                                // 'text-allow-overlap': false,
+                                // 'text-overlap': 'cooperative',
+                                // 'text-ignore-placement': false,
+                                // 'text-optional': false,
+                                'symbol-avoid-edges': false,
+                                'symbol-placement': 'point',
+                                'symbol-sort-key': 0,
+                                'symbol-z-order': 'auto',
+                                
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'text-color': color,
+                                // 'text-opacity': 1,
+                                // 'text-halo-color': color,
+                                // 'text-halo-width': 0,
+                                // 'text-halo-blur': 0,
+                                // 'text-translate': [0,0],
+                                // 'text-translate-anchor': 'map',
+                                'icon-color': color,
+                                // 'icon-opacity': 0,
+                                // 'icon-color': color,
+                                // 'icon-halo-color': color,
+                                // 'icon-halo-width': 0,
+                                // 'icon-halo-blur': 0,
+                                // 'icon-translate': [0,0],
+                                // 'icon-translate-anchor': 'map',
+                            }
+                        },
+                        points: {
+                            render: true,
+                            filter: ["==", "$type", "Point"],
+                            layout: {
+                                ...defaultLayout,
+                                // 'icon-image': '',
+                                // 'icon-rotate': 0,
+                                // 'icon-padding': [2],
+                                // 'icon-keep-upright': false,
+                                // 'icon-size': 1,
+                                // 'icon-overlap': 'cooperative',
+                                // 'icon-ignore-placement': false,
+                                // 'icon-optional': false,
+                                // 'icon-rotation-alignment': 'auto',
+                                // 'icon-text-fit': 'width',
+                                // 'icon-text-fit-padding': [0,0,0,0],
+                                // 'icon-offset': [0,0],
+                                // 'icon-anchor': 'center',
+                                // 'icon-pitch-alignment': 'auto',
+                                'icon-rotation-alignment': 'auto', // viewport, map
+                                'icon-allow-overlap': false,
+                                'text-field': 'test', 
+                                'text-font': ["Open Sans Regular","Arial Unicode MS Regular"],
+                                'text-size': 12,
+                                "text-allow-overlap": true,
+                                // 'text-pitch-alignment': 'auto',
+                                // 'text-rotation-alignment': 'auto',
+                                // 'text-max-width': 10,
+                                // 'text-line-height': 1.2,
+                                // 'text-letter-spacing': 0,
+                                // 'text-justify': 'center',
+                                // 'text-radial-offset': 0,
+                                // 'text-variable-anchor': [],
+                                // 'text-variable-anchor-offset': [],
+                                // 'text-anchor': 'center',
+                                // 'text-max-angle': 45,
+                                // 'text-writing-mode': [],
+                                // 'text-rotate': 0,
+                                // 'text-padding': 2,
+                                // 'text-keep-upright': true,
+                                // 'text-transform': 'none',
+                                // 'text-offset': [0,0],
+                                // 'text-allow-overlap': false,
+                                // 'text-overlap': 'cooperative',
+                                // 'text-ignore-placement': false,
+                                // 'text-optional': false,
+                                'symbol-avoid-edges': false,
+                                'symbol-placement': 'point',
+                                'symbol-sort-key': 0,
+                                'symbol-z-order': 'auto',
+                                
+                            },
+                            paint: {
+                                ...defaultPaint,
+                                'text-color': color,
+                                // 'text-opacity': 1,
+                                // 'text-halo-color': color,
+                                // 'text-halo-width': 0,
+                                // 'text-halo-blur': 0,
+                                // 'text-translate': [0,0],
+                                // 'text-translate-anchor': 'map',
+                                'icon-color': color,
+                                // 'icon-opacity': 0,
+                                // 'icon-color': color,
+                                // 'icon-halo-color': color,
+                                // 'icon-halo-width': 0,
+                                // 'icon-halo-blur': 0,
+                                // 'icon-translate': [0,0],
+                                // 'icon-translate-anchor': 'map',
+                            }
+                        },
+                    },
+                }
+
+                return {
+                    types,
+                    filter: [],
+                    minzoom: 0,
+                    maxzoom: 24,
+                }
+            },
             addGeoJSONLayers: (sourceId, {
+                styleId='style',
                 groups,
                 beforeId,
             }={}) => {
                 const map = this.map
-                if (!map.getSource(sourceId)) return
+                const source = map.getSource(sourceId)
+                if (!source) return
                 
-                beforeId = map.getStyle().layers?.find(l => l.id.startsWith(beforeId) || Array(
-                    'popupFeature', 
-                    'placeSearch'
-                ).find(i => l.id.startsWith(i)))?.id 
+                const layerPrefix = `${sourceId}-${styleId}`
+                beforeId = this.handlers.getBeforeId(layerPrefix, beforeId)
 
-                groups = groups ?? {
-                    default: {
-                        types: {
-                            'fill': true, 
-                            'line': true, 
-                            'symbol': true, 
-                            'circle': false, 
-                            'fill-extrusion': false, 
-                            'heatmap': false,
-                        },
-                        filter: [],
-                        style: {
-
-                        },
-                    }
-                }
-
-                // id = sourceId-groupId-type
-
-
+                groups = groups ?? { default: this.handlers.getLayerParams() }
                 
-                const polygonId = `${sourceId}-Polygon`
-                let polygonLayer = map.getLayer(polygonId) 
-                if (!polygonLayer) {
-                    polygonLayer = map.addLayer({
-                        id: polygonId,
-                        type: "fill",
-                        source: sourceId,
-                        paint: {
-                            "fill-color": "#088",
-                            "fill-opacity": 0.5
-                        },
-                        filter: ["==", "$type", "Polygon"]
-                    }, beforeId)
-                }
-                
-                const lineStringId = `${sourceId}-LineString`
-                let lineStringLayer = map.getLayer(lineStringId) 
-                if (!lineStringLayer) {
-                    lineStringLayer = map.addLayer({
-                        id: lineStringId,
-                        type: "line",
-                        source: sourceId,
-                        paint: {
-                            "line-color": "#000",
-                            "line-width": 2
-                        },
-                        filter: ["==", "$type", "LineString"]
-                    }, beforeId)
-                }
-
-                const pointId = `${sourceId}-Point`
-                let pointLayer = map.getLayer(pointId) 
-                if (!pointLayer) {
-                    pointLayer = map.addLayer({
-                        id: pointId,
-                        type: 'symbol',
-                        source: sourceId,
-                        ...('symbol' === 'circle' ? {
-                            paint: {
-                                "circle-radius": 6,
-                                "circle-color": "#f00"
+                Object.keys(groups).forEach(groupId => {
+                    const group = groups[groupId]
+                    Object.keys(group.types).forEach(type => {
+                        const typeLayers = group.types[type]
+                        Object.keys(typeLayers).forEach(layerName => {
+                            const layerParams = typeLayers[layerName]
+                            if (!layerParams?.render) return
+    
+                            const id = `${layerPrefix}-${groupId}-${type}-${layerName}`
+                            
+                            let layer = this.map.getLayer(id)
+                            if (layer) {
+                                Object.entries(layerParams.layout).forEach(([prop, val]) => {
+                                    map.setLayoutProperty(id, prop, val)
+                                })
+    
+                                Object.entries(layerParams.paint).forEach(([prop, val]) => {
+                                    map.setPaintProperty(id, prop, val)
+                                })
+                            } else {
+                                const properties = {
+                                    id,
+                                    type,
+                                    source: sourceId,
+                                    ...(layerParams.filter ? {filter: layerParams.filter} : {}),
+                                    layout: layerParams.layout,
+                                    paint: layerParams.paint,
+                                    metadata: {
+                                        ...source.metadata,
+                                        style: styleId,
+                                        group: groupId,
+                                        layer: layerName,
+                                    },
+                                    minzoom: group.minzoom,
+                                    maxzoom: group.maxzoom,
+                                }
+    
+                                this.map.addLayer(properties, beforeId)
+                                layer = this.map.getLayer(id)
+                                console.log(layer, properties)
                             }
-                        } : {
-                            layout: {
-                                "text-field": "🔴",
-                                "text-size": 24,
-                                "text-allow-overlap": true
-                            }
-                        }),
-                        filter: ["==", "$type", "Point"]
-                    }, beforeId)
-                }
+                        })
+                    })
+                })
 
-                return {polygonLayer, lineStringLayer, pointLayer}
+                return this.map.getStyle().layers.filter(l => l.id.startsWith(layerPrefix))
             }
         }
 
