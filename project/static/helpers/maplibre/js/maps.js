@@ -5,13 +5,19 @@ class GeospatialibControl {
         
         this.controls = null
         this.config = {
+            showTooltip: true,
+            tooltip: null,
             renderHillshade: true,
             projection: 'mercator',
             popup: {
                 control: null,
                 feature: null,
                 toggle: null,
-            }
+            },
+        }
+
+        this.constants = {
+            nameProperties: ['display_name', 'name', 'title', 'id'],
         }
     }
     
@@ -212,8 +218,39 @@ class GeospatialibControl {
 
         return !toggleOff
     }
+
+    createTooltip(e) {
+        const map = this.map
+
+        this.config.tooltip?.remove()
+
+        if (!this.config.showTooltip) return
+
+        const feature = map.queryRenderedFeatures(e.point)[0]
+        if (!feature) return
+
+        const popup = this.config.tooltip = new maplibregl.Popup({closeButton: false})
+        .setLngLat(e.lngLat)
+        .setHTML(`<span>${this.getFeatureLabel(feature)}</span>`)
+        .addTo(map)
+
+        const popupContainer = popup._container
+
+        const bgColor = getPreferredTheme() === 'light' ? 'hsla(0, 0%, 100%, 0.5)' : 'hsla(0, 0%, 0%, 0.5)'
+
+        const popupTooltip = popupContainer.querySelector('.maplibregl-popup-tip')
+        popupTooltip.classList.add(`border-top-${getPreferredTheme()}`, `border-bottom-${getPreferredTheme()}`)
+        popupTooltip.style.borderColor = bgColor
+        
+        const popupContent = popupContainer.querySelector('.maplibregl-popup-content')
+        popupContent.classList.add('p-2')
+        popupContent.style.backgroundColor = bgColor
+
+        const container = popupContent.firstChild
+        container.style.color = getPreferredTheme() === 'light' ? 'hsla(0, 0%, 0%, 1)' : 'hsla(0, 0%, 100%, 1)'
+    }
     
-    async createPopup (e) {
+    async createPopup(e) { 
         const map = this.map
 
         const toggleSelector = `[name="popup-toggle"]`
@@ -343,11 +380,7 @@ class GeospatialibControl {
                     parent: carouselItem, 
                     header: tempHeader ?? Array(
                         f.layer.metadata.title ?? map.getSource(f.layer.source).metadata.title,
-                        f.properties[
-                            Array('display_name', 'name', 'title', 'id')
-                            .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
-                            ?? Object.keys(f.properties).pop()
-                        ]
+                        this.getFeatureLabel(f)
                     ).filter(i => i).join(': '), 
                     tableClass: `fs-12 table-${getPreferredTheme()}`
                 })
@@ -431,6 +464,14 @@ class GeospatialibControl {
         }
     }
     
+    getFeatureLabel(f) {
+        return f.properties[
+            this.constants.nameProperties
+            .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
+            ?? Object.keys(f.properties).pop()
+        ]
+    }
+
     resetGeoJSONSource(sourceId) {
         const source = this.map.getSource(sourceId)
         if (!source) return
@@ -1151,33 +1192,57 @@ class GeospatialibControl {
             misc: ({body, head}={}) => {
                 head.innerText = 'More options'
 
-                const input = customCreateElement({
-                    tag: 'input',
-                    parent: body,
-                    attrs: {
-                        type: 'checkbox',
-                        name: 'hillshade',
-                        checked: true
-                    },
-                    className: 'btn-check'
-                })
-                
-                const label = titleToTooltip(customCreateElement({
-                    tag: 'label',
-                    parent: body,
-                    className: `btn btn-sm btn-${getPreferredTheme()}`,
-                    attrs: {
-                        title: 'Toggle hillshade',
-                        for: input.id,
-                    },
-                    innerText: `⛰️`,
-                    events: {
-                        click: (e) => {
-                            this.config.renderHillshade = !this.config.renderHillshade
-                            this.toggleHillshade()
+                const options = {
+                    hillshade: {
+                        label: 'Toggle hillshade',
+                        icon: '⛰️',
+                        checked: true,
+                        events: {
+                            click: (e) => {
+                                this.config.renderHillshade = !this.config.renderHillshade
+                                this.toggleHillshade()
+                            }
                         }
-                    }
-                }))
+                    },
+                    tooltip: {
+                        label: 'Toggle tooltip',
+                        icon: '💬',
+                        checked: true,
+                        events: {
+                            click: (e) => {
+                                this.config.showTooltip = !this.config.showTooltip
+                                this.config.tooltip?.remove()
+                            }
+                        }
+                    },
+                }
+
+                Object.keys(options).forEach(name => {
+                    const params = options[name]
+
+                    const input = customCreateElement({
+                        tag: 'input',
+                        parent: body,
+                        attrs: {
+                            type: 'checkbox',
+                            name,
+                            checked: params.checked
+                        },
+                        className: 'btn-check'
+                    })
+                    
+                    const label = titleToTooltip(customCreateElement({
+                        tag: 'label',
+                        parent: body,
+                        className: `btn btn-sm btn-${getPreferredTheme()}`,
+                        attrs: {
+                            title: params.label,
+                            for: input.id,
+                        },
+                        innerText: params.icon,
+                        events: params.events,
+                    }))
+                })
 
                 return body
             },
@@ -1272,7 +1337,11 @@ class GeospatialibControl {
         this.map.on('click', (e) => {
             this.createPopup(e)
         })
-        
+
+        this.map.on('mousemove', (e) => {
+            this.createTooltip(e)
+        })
+
         this.createControl()
 
         this.map.getGeospatialibControl = () => this
