@@ -1,0 +1,19 @@
+<div class="modal fade" id="clearLocalDataModal" tabindex="-1" aria-labelledby="clearLocalDataModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="clearLocalDataModalLabel">Clear local data sources</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class='small'>
+                    Are you sure you want to clear locally stored data sources? Some layers in your maps may be dependent on these sources and removing them will result to broken layers in maps.
+                </p>
+            </div>
+            <div class="modal-footer d-flex justify-content-between gap-2">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Back</button>
+                <button type="submit" class="btn btn-sm btn-danger" onclick="clearGISDB()" data-bs-dismiss="modal">Clear data</button>
+            </div>
+        </div>
+    </div>
+</div>

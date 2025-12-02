@@ -4,10 +4,6 @@
 {% variable request.resolver_match.url_name as url_name %}
 {% variable app_name|add:'-'|add:url_name as page_name %}
 {% variable request.COOKIES|get:'theme' 'dark' as theme %}
-{% variable page_name|add:'-offcanvas' as offcanvas_id %}
-{% variable 'show_#'|add:offcanvas_id as show_sidebar_key %}
-{% variable request.COOKIES|get:show_sidebar_key as show_sidebar %}
-{% variable show_sidebar|equals:'true' True as show_sidebar %}
 {% variable page_name|add:'-map' as map_id %}
 
 {% block page_variables %}{% endblock page_variables %}
@@ -26,92 +22,13 @@
         {% block styles %}{% endblock styles %}
     </head>
     <body class="vh-100 overflow-hidden"> 
-        {% comment %} hx-headers="{'X-CSRFToken':'{{csrf_token}}'}" {% endcomment %}
         {% block body %}
-            <div class="container-fluid vh-100">
-                <div class='row vh-100'>
-                    {% block main_sidebar %}
-                        <div 
-                            class="{% if show_sidebar %}offcanvas-lg{% else %}offcanvas{% endif %} offcanvas-start col-lg-4 text-bg-{{theme}} shadow-lg border-0 p-0 d-flex flex-column vh-100" 
-                            id="{{offcanvas_id}}" 
-                            aria-labelledby="{{offcanvas_id}}Label"
-                            data-bs-scroll="true" 
-                            data-bs-backdrop="false" 
-                            tabindex="-1" 
-                        >
-                            <div class="offcanvas-header d-flex justify-content-between pb-5">
-                                <h5 class="offcanvas-title user-select-none" id="{{offcanvas_id}}Label"><a class='text-decoration-none text-reset' href="/" tabindex="-1">Geospatialib</a></h5>
-                                <div class='ms-5 d-flex flex-nowrap'>
-                                    {% with default_class='bi border-0 bg-transparent fs-20 p-0 ms-3 text-muted' %}
-                                        <button 
-                                            type="button" 
-                                            class="{% if theme == 'light' %}bi-moon{% else %}bi-moon-fill{% endif %} {{default_class}}"
-                                            onclick='toggleTheme()'
-                                            title='Toggle dark mode'
-                                            tabindex="-1"
-                                        ></button>
-                                        <button 
-                                            type="button" 
-                                            class="{% if show_sidebar %}bi-layout-sidebar-inset{% else %}bi-window-sidebar{% endif %} d-none d-lg-inline {{default_class}}"
-                                            onclick='toggleSidebar("#{{offcanvas_id}}")'
-                                            title='Toggle sidebar'
-                                            tabindex="-1"
-                                        ></button>
-                                        <button 
-                                            type="button" 
-                                            class="bi-x-lg {% if show_sidebar %}d-lg-none{% endif %} {{default_class}}" 
-                                            data-bs-dismiss="offcanvas" 
-                                            data-bs-target="#{{offcanvas_id}}" 
-                                            aria-label="Close"
-                                            tabindex="-1"
-                                        ></button>
-                                    {% endwith %}
-                                </div>
-                            </div>
-                            <div class="offcanvas-nav border-bottom">
-                                {% block offcanvas_nav %}{% endblock offcanvas_nav %}
-                            </div>
-                            <div class="offcanvas-body overflow-auto flex-grow-1 bg-{{theme}} p-0">
-                                {% block offcanvas_body %}{% endblock offcanvas_body %}
-                            </div>
-                        </div>
-                    {% endblock main_sidebar %}
-                    <div 
-                        class="col sidebar-gutter d-none {% if show_sidebar %}d-lg-block{% endif %}" 
-                        title='Resize sidebar' 
-                        x-data 
-                        @mousedown="resizeSidebar('#{{offcanvas_id}}')"
-                        @touchstart="resizeSidebar('#{{offcanvas_id}}')"
-                    ></div>
-                    <div class="col vh-100 p-0">
-                        <div class="position-fixed bottom-0 z-1 m-10">
-                            {% block sidebar_toggle %}
-                                {% include "helpers/partials/sidebar/toggle.html" with icon='bi-layout-sidebar-inset' title='Toggle sidebar' %}
-                            {% endblock sidebar_toggle %}
-                        </div>
-                        {% include "helpers/partials/maps/leaflet_map.html" with map_panels="true" map_class="z-0"  map_controls_included="all" %}
-                    </div>
-                </div>
-            </div>
         {% endblock body %}
         
-        <svg id='svgFillDefs' xmlns="http://www.w3.org/2000/svg" height="0" width="0" style="position: absolute; top: 0; left: 0; width: 0; height: 0;"></svg>
-
         {% block modals %}{% endblock modals %}
-
-        {% include "helpers/partials/user/user_options.html" %}
-        {% if user.is_authenticated %}
-            {% include "helpers/partials/user/delete_account.html" %}
-        {% endif %}
-        {% include "helpers/partials/user/clear_local_data.html" %}
-
-        {% include "helpers/partials/user/terms.html" %}
-        {% include "helpers/partials/user/privacy_policy.html" %}
-        {% include "helpers/partials/user/cookies_policy.html" %}
-
-        {% comment %} {% include "helpers/partials/find_layers/modal.html" %} {% endcomment %}
         {% include "helpers/partials/add_layers/modal.html" %}
         {% include "helpers/partials/export_layers/modal.html" %}
+        {% include "main/search/layer_info.html" %}
 
         {% include "helpers/partials/resources/scripts.html" %}
         {% block scripts %}{% endblock scripts %}

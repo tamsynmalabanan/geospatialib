@@ -178,4 +178,4 @@ def srs_wkt(request, srid):
     return HttpResponse(srs.srtext, content_type='text/plain')
 
 def get_user_control(request):
-    return render(request, 'helpers/maplibre/user.html')
+    return render(request, 'helpers/maplibre/user_control.html')

@@ -1328,7 +1328,7 @@ class GeospatialibControl {
             misc: ({body, head}={}) => {
                 head.innerText = 'More options'
 
-                const options = {
+                const checkboxOptions = {
                     hillshade: {
                         label: 'Toggle hillshade',
                         icon: '⛰️',
@@ -1372,8 +1372,8 @@ class GeospatialibControl {
                     },
                 }
 
-                Object.keys(options).forEach(name => {
-                    const params = options[name]
+                Object.keys(checkboxOptions).forEach(name => {
+                    const params = checkboxOptions[name]
                     const input = customCreateElement({
                         tag: 'input',
                         parent: body,
@@ -1396,6 +1396,31 @@ class GeospatialibControl {
                         innerText: params.icon,
                         events: params.events,
                     }))
+                })
+
+                const buttonOptions = {
+                    storage: {
+                        label: 'Clear stored data',
+                        icon: '🗑️',
+                        attrs: {
+                            type: 'button',
+                            'data-bs-toggle': 'modal',
+                            'data-bs-target': '#clearLocalDataModal'
+                        }
+                    }
+                }
+
+                Object.keys(buttonOptions).forEach(name => {
+                    const params = buttonOptions[name]
+                    const button = customCreateElement({
+                        tag: 'button',
+                        parent: body,
+                        attrs: {
+                            ...params.attrs,
+                            title: params.label
+                        },
+                        innerText: params.icon
+                    })
                 })
 
                 return body

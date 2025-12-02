@@ -6,6 +6,5 @@ app_name = 'main'
 
 urlpatterns = [
         path('', views.index, name='index'),
-        path('maplibre/', views.index_maplibre, name='index_maplibre'),
         path('sql-wasm.wasm', views.serve_sql_wasm, name='serve_sql_wasm'),
 ]

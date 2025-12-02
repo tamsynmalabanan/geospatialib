@@ -1,14 +1,19 @@
-{% include "helpers/partials/resources/styles.html" %}
-
 <div 
-    id="{{container_id}}" 
+    id="{{map_id}}" 
     x-data x-init="initMapLibreMap($el)"
     class="vh-100 position-relative {{container_class}}"
 
     hx-get="{% url 'htmx:user_control' %}"
     hx-trigger="userControlInit"
-    hx-target="#{{container_id}}-user-control"
+    hx-target="#{{map_id}}-user-control"
     hx-swap='innerHTML'
 ></div>
 
-{% include "helpers/partials/resources/scripts.html" %}
+{% include "helpers/maplibre/modals/clear_local_data.html" %}
+{% include "helpers/maplibre/modals/user_terms.html" %}
+{% include "helpers/maplibre/modals/privacy_policy.html" %}
+{% include "helpers/maplibre/modals/cookies_policy.html" %}
+{% include "helpers/maplibre/modals/user_settings.html" %}
+{% if not user.is_superuser %}
+    {% include "helpers/maplibre/modals/delete_account.html" %}
+{% endif %}

@@ -2,17 +2,19 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteAccountModalLabel">Delete Account</h5>
+                <h6 class="modal-title" id="deleteAccountModalLabel">Delete Account</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete your Geospatialib account?
+                <p class="small">
+                    Are you sure you want to delete your Geospatialib account?
+                </p>
             </div>
             <div class="modal-footer d-flex justify-content-between gap-2">
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#userOptionsModal">Back</button>
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#userSettingsModal">Back</button>
                 <form method="post" action="{% url 'customuser:delete_account' %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Yes</button>
+                    <button type="submit" class="btn btn-sm btn-danger">Delete account</button>
                 </form>
             </div>
         </div>

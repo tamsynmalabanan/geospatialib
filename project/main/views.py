@@ -15,11 +15,6 @@ def index(request):
         context['featured'] = 'featured content'
     return render(request, 'main/index.html', context)
 
-def index_maplibre(request):
-    return render(request, 'helpers/maplibre/map.html', context={
-        'container_id': 'main-map',
-    })
-
 def redirect_to_index(request, exception=None):
     return redirect('/')
 

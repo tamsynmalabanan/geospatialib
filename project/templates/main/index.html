@@ -7,30 +7,6 @@
     Geospatialib
 {% endblock title %}
 
-{% block offcanvas_nav %}
-    {% include "main/search/form.html" %}
-{% endblock offcanvas_nav %}
-    
-{% block offcanvas_body %}
-    {% include "main/search/featured.html" %}
-{% endblock offcanvas_body %}
-
-{% block sidebar_toggle %}
-    {% include "helpers/partials/sidebar/toggle.html" with icon='bi-search' title='Search library' %}
-{% endblock sidebar_toggle %}
-
-{% block styles %}
-    {% compress css %}
-        <link rel="stylesheet" type="text/css" href="{% static 'main/css/index.css' %}">
-    {% endcompress %}
-{% endblock styles %}
-
-{% block scripts %}
-    {% compress js %}
-        <script type="text/javascript" src="{% static 'main/js/index.js' %}"></script>
-    {% endcompress %}
-{% endblock scripts %}
-
-{% block modals %}
-    {% include "main/search/layer_info.html" %}
-{% endblock modals %}
+{% block body %}
+    {% include "helpers/maplibre/map.html" %}
+{% endblock body %}

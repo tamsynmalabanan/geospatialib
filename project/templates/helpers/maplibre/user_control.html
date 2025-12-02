@@ -1,0 +1,88 @@
+{% load static %}
+{% load socialaccount %}
+{% load utility_tags %}
+
+{% variable request.COOKIES|get:'theme' 'dark' as theme %}
+
+<div class="btn-group dropup">
+    {% if user.is_authenticated %}
+        <button class="btn btn-{{theme}} bi bi-columns" type="button" style="height:32px;width:32px;"></button>
+    {% else %}
+        <a 
+            href="{% provider_login_url 'google' %}?next={% url 'main:index' %}" 
+            rel="noopener noreferrer"
+            class="btn btn-{{theme}} justify-content-center d-flex flex-nowrap gap-2 text-reset text-decoration-none"
+            style="height:32p;"
+        >
+            <i class="bi bi-google fs-12"></i>
+            <span class='text-nowrap fw-medium fs-12'>Sign in with Google</span>
+        </a>
+    {% endif %}
+
+    <button
+        class="btn btn-{{theme}} border-top-0 dropdown-toggle"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        style="height:32px;width:32px;"
+        {% if not user.is_authenticated %}
+            x-data x-init="$el.click();$el.blur()"
+        {% endif %}
+    ></button>
+    
+    <div class="dropdown-menu text-bg-{{theme}} m-1 p-3">
+        <div class="d-flex flex-column">
+            {% if user.is_authenticated %}
+                <div class="d-flex flex-nowrap gap-3 align-items-center">
+                    {% with social_account=user.socialaccount_set.all %}
+                        {% if social_account and social_account.0.extra_data.picture %}
+                            <img
+                                class="rounded-circle"
+                                alt="{{user}}"
+                                src="{{social_account.0.extra_data.picture}}"
+                                width="50"
+                                height="50"
+                            />
+                        {% else %}
+                            <i class="bi bi-person-circle" style="font-size:50px"></i>
+                        {% endif %}
+                    {% endwith %}
+                    <div class="d-flex flex-column" style="max-height:50px;">
+                        <h6 id="lxsVhyxwVZXdpYKv" class="text-wrap fw-bold">{{user}}</h6>
+                        <div class="d-flex flex-nowrap gap-3">
+                            {% if user.is_superuser %}
+                                <div><a 
+                                    class="small text-reset text-decoration-none d-flex flex-nowrap gap-1"
+                                    href="{% url 'admin:index' %}" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"   
+                                ><i class="bi bi-database-fill-gear fs-12 text-muted fw-medium"></i><span class='fs-12 text-muted fw-medium'>Admin</span></a></div>
+                            {% endif %}
+                            <form class="m-0" method="post" action="{% url 'customuser:logout' %}">
+                                {% csrf_token %}
+                                <button class="text-bg-{{theme}} border-0 bg-transparent p-0 m-0 small fs-12 text-muted fw-medium d-flex flex-nowrap gap-1" type="submit" style="height:auto;width:auto;">
+                                    <i class="bi bi-box-arrow-in-left"></i>
+                                    <span>Logout</span>
+                                </button>
+                            </form>
+                            <button type="button" class="btn text-bg-{{theme}} btn-sm border-0 fs-12 text-muted fw-medium d-flex flex-nowrap gap-1" data-bs-toggle="modal" data-bs-target="#userSettingsModal" style="height:auto;width:auto;">
+                                <i class="bi bi-sliders"></i>
+                                <span>Settings</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            {% endif %}
+            <div class="d-flex">
+                <p class="text-wrap text-muted user-select-none lh-1 m-0 fs-12" style="width:230px;">
+                    <span class="text-bg-{{theme}}">By using Geospatialib, you agree to comply with our</span> 
+                    <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userTermsModal">Terms</span>, 
+                    <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userPrivacyPolicyModal">Privacy Policy</span>
+                    <span class="text-bg-{{theme}}">and</span> 
+                    <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userCookiesPolicyModal">Cookies Policy</span>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
