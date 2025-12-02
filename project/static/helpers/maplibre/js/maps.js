@@ -5,6 +5,7 @@ class GeospatialibControl {
         
         this.controls = null
         this.config = {
+            basemapGrayscale: getPreferredTheme() === 'dark',
             showTooltip: true,
             tooltip: null,
             renderHillshade: true,
@@ -78,7 +79,7 @@ class GeospatialibControl {
         const toggle = container.querySelector(`.maplibregl-ctrl-attrib-button`)
         toggle.innerHTML = `<i class="bi bi-info-circle"></i>`
         toggle.style.backgroundImage = 'none'
-        toggle.classList.add('d-flex', 'justify-content-center', 'align-items-center')
+        toggle.classList.add('d-flex', 'justify-content-center', 'align-items-center', `text-bg-${getPreferredTheme()}`)
 
         const inner = container.querySelector(`.maplibregl-ctrl-attrib-inner`)
         const observer = new MutationObserver(() => {
@@ -123,7 +124,7 @@ class GeospatialibControl {
         const control = new FitToWorldControl()
         this.map.addControl(control, position)
     }
-    
+
     setTerrainSource({
         source = 'terrain',
         exaggeration = 1,
@@ -206,13 +207,13 @@ class GeospatialibControl {
 
         if (popupToggle) {
             popupToggle.classList.add('text-bg-secondary')
-            popupToggle.classList.remove('text-bg-primary')
+            popupToggle.classList.remove('text-bg-info')
             this.config.popup.toggle = null
         }
 
         if (toggle) {
             toggle.classList.toggle('text-bg-secondary', toggleOff)
-            toggle.classList.toggle('text-bg-primary', !toggleOff)
+            toggle.classList.toggle('text-bg-info', !toggleOff)
             this.config.popup.toggle = !toggleOff ? toggle : null;;
         }
 
@@ -239,8 +240,12 @@ class GeospatialibControl {
         const bgColor = getPreferredTheme() === 'light' ? 'hsla(0, 0%, 100%, 0.5)' : 'hsla(0, 0%, 0%, 0.5)'
 
         const popupTooltip = popupContainer.querySelector('.maplibregl-popup-tip')
-        popupTooltip.classList.add(`border-top-${getPreferredTheme()}`, `border-bottom-${getPreferredTheme()}`)
-        popupTooltip.style.borderColor = bgColor
+        const style = window.getComputedStyle(popupTooltip)
+        Array('Top','Bottom', 'Left', 'Right').forEach(pos => {
+            if (style.getPropertyValue(`border-${pos.toLocaleLowerCase()}-color`) !== 'rgba(0, 0, 0, 0)') {
+                popupTooltip.style[`border${pos}Color`] = bgColor
+            }
+        })
         
         const popupContent = popupContainer.querySelector('.maplibregl-popup-content')
         popupContent.classList.add('p-2')
@@ -921,6 +926,22 @@ class GeospatialibControl {
                     render: false,
                     params: defaultParams.symbol,
                 },
+                'labels': {
+                    render: false,
+                    params: {
+                        ...defaultParams.symbol,
+                        filter: ["any", pointFilter, lineFilter, polygonFilter],
+                        layout: {
+                            ...defaultParams.symbol.layout,
+                            "text-field": ["get", "name"],
+                            "text-size": 12,
+                            "text-variable-anchor": ["top", "bottom", "left", "right"],
+                            "text-radial-offset": 0.5,
+                            "text-justify": "auto",
+                            "text-allow-overlap": false
+                        }
+                    },
+                },
             },
         }
 
@@ -984,11 +1005,11 @@ class GeospatialibControl {
     updateGeoJSONLayers(id, params) {
         const map = this.map
 
-        Object.entries(params.layout).forEach(([prop, val]) => {
+        Object.entries(params.layout ?? {}).forEach(([prop, val]) => {
             map.setLayoutProperty(id, prop, val)
         })
 
-        Object.entries(params.paint).forEach(([prop, val]) => {
+        Object.entries(params.paint ?? {}).forEach(([prop, val]) => {
             map.setPaintProperty(id, prop, val)
         })
 
@@ -996,7 +1017,9 @@ class GeospatialibControl {
             map.setFilter(id, params.filter)
         }
 
-        map.setLayerZoomRange(id, params.minzoom, params.maxzoom)
+        if (params.minzoom && params.maxzoom) {
+            map.setLayerZoomRange(id, params.minzoom, params.maxzoom)
+        }
     }
 
     addGeoJSONLayers(sourceId, {
@@ -1047,7 +1070,38 @@ class GeospatialibControl {
         return this.map.getStyle().layers.filter(l => l.id.startsWith(layerPrefix))
     }
 
+    toggleBasemapGrayscale() {
+        if (!this.map.getLayer('basemap')) return
+
+        let paint
+        
+        if (this.config.basemapGrayscale) {
+            paint = {
+                'raster-opacity': 1, // 0 to 1
+                'raster-hue-rotate': 200,
+                'raster-brightness-min': 0, // 0 to 1
+                'raster-brightness-max': 0.01, // 0 to 1
+                'raster-saturation': -1, // -1 to 1
+                'raster-contrast': 0.99, // -1 to 1
+            }
+        } else {
+            paint = {
+                'raster-opacity': 1, // 0 to 1
+                'raster-hue-rotate': 0,
+                'raster-brightness-min': 0, // 0 to 1
+                'raster-brightness-max': 1, // 0 to 1
+                'raster-saturation': 0, // -1 to 1
+                'raster-contrast': 0, // -1 to 1
+            }
+        }
+
+        this.updateGeoJSONLayers('basemap', {paint})
+    }
+
     createControl() {
+        const isDarkMode = getPreferredTheme() === 'dark'
+        if (isDarkMode) this.toggleBasemapGrayscale()
+
         const container = this.container = customCreateElement({className: 'maplibregl-ctrl maplibregl-ctrl-group'})
 
         const handlers = {
@@ -1201,6 +1255,17 @@ class GeospatialibControl {
                             click: (e) => {
                                 this.config.renderHillshade = !this.config.renderHillshade
                                 this.toggleHillshade()
+                            }
+                        }
+                    },
+                    basemap: {
+                        label: 'Toggle grayscale basemap',
+                        icon: '🗺️',
+                        checked: isDarkMode,
+                        events: {
+                            click: (e) => {
+                                this.config.basemapGrayscale = !this.config.basemapGrayscale
+                                this.toggleBasemapGrayscale()
                             }
                         }
                     },
@@ -1529,23 +1594,13 @@ const initMapLibreMap = (el) => {
         style: {
             version: 8,
             sources: {
-                ...(getPreferredTheme() === 'light' ? {
-                    basemap: {
-                        type: 'raster',
-                        tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
-                        tileSize: 256,
-                        attribution: '&copy; OpenStreetMap Contributors',
-                        maxzoom: 20
-                    }
-                } : {
-                    basemap: {
-                        type: 'raster',
-                        tiles: ['http://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'],
-                        tileSize: 256,
-                        attribution: 'Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.',
-                        maxzoom: 20
-                    }
-                }),
+                basemap: {
+                    type: 'raster',
+                    tileSize: 256,
+                    maxzoom: 20,
+                    tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                    attribution: '&copy; OpenStreetMap Contributors',
+                },
                 terrain: {
                     type: 'raster-dem',
                     tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
@@ -1558,7 +1613,7 @@ const initMapLibreMap = (el) => {
                 {
                     id: 'basemap',
                     type: 'raster',
-                    source: 'basemap'
+                    source: 'basemap',
                 },
             ],
             sky: {}
