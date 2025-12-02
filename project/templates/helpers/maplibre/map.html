@@ -2,9 +2,13 @@
 
 <div 
     id="{{container_id}}" 
-    x-data 
-    x-init="initMapLibreMap($el)"
+    x-data x-init="initMapLibreMap($el)"
     class="vh-100 position-relative {{container_class}}"
+
+    hx-get="{% url 'htmx:user_control' %}"
+    hx-trigger="userControlInit"
+    hx-target="#{{container_id}}-user-control"
+    hx-swap='innerHTML'
 ></div>
 
 {% include "helpers/partials/resources/scripts.html" %}

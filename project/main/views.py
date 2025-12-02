@@ -16,8 +16,8 @@ def index(request):
     return render(request, 'main/index.html', context)
 
 def index_maplibre(request):
-    return render(request, 'helpers/partials/maps/maplibre_map.html', context={
-        'container_id': 'map',
+    return render(request, 'helpers/maplibre/map.html', context={
+        'container_id': 'main-map',
     })
 
 def redirect_to_index(request, exception=None):

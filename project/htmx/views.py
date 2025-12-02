@@ -176,3 +176,6 @@ def cors_proxy_content(request):
 def srs_wkt(request, srid):
     srs = get_object_or_404(SpatialRefSys, srid=srid)
     return HttpResponse(srs.srtext, content_type='text/plain')
+
+def get_user_control(request):
+    return render(request, 'helpers/maplibre/user.html')

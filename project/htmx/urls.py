@@ -13,4 +13,5 @@ urlpatterns = [
     path('collection/update/', views.update_collection, name='update_collection'),
     path('forms/layers/', views.get_layer_forms, name='get_layer_forms'),
     path('srs/wkt/<int:srid>/', views.srs_wkt, name='srs_wkt'),
+    path('user/control/', views.get_user_control, name='user_control'),
 ]
