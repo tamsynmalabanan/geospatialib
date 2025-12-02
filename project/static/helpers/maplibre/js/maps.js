@@ -945,7 +945,6 @@ class GeospatialibControl {
             },
         }
 
-        // make default object per tyle
         if (customParams) {
             Object.entries(customParams).forEach(([a, b]) => {
                 const type = params[a]
