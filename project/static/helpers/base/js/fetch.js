@@ -41,7 +41,7 @@ const fetchContentViaCORSProxy = async (url, fetchParams={}) => {
         `/htmx/cors/proxy/content/?url=${encodeURIComponent(url)}`, 
         params
     ).then(response => {
-        if (!response.ok && (response.status < 200 || response.status > 300)) {
+        if (!response.ok && (response.status < 200 || response.status >= 400)) {
             throw new Error('Response not ok.')
         }
 
@@ -91,13 +91,14 @@ const fetchTimeout = async (url, {
     abortBtns?.forEach(btn => btn.addEventListener('click', abortController))
     
     const timeoutId = setTimeout(abortController, timeoutMs)
+
     const fetchPromise = fetch(
         url.replaceAll('http:', 'https:'), 
         {...fetchParams, signal: controller.signal}
     ).then(async response => {
         clearTimeout(timeoutId)
 
-        if (!response.ok && (response.status < 200 || response.status > 300)) {
+        if (!response.ok || (response.status < 200 || response.status >= 400)) {
             throw new Error('Response not ok.')
         }
 

@@ -9,13 +9,23 @@ const fetchSearchNominatim = async (q, {
     const url = pushURLParams('https://nominatim.openstreetmap.org/search?', {
         q, format, limit
     })
-
-    console.log(url)
+    
+    const id = `nominatim-search;${JSON.stringify({params:{url}})}`
+    const geojson = (await getFromGISDB(id))?.gisData
+    if (geojson?.features.length) {
+        return geojson
+    }
 
     return await fetchTimeout(url, {
         abortBtns,
         controller,
-        callback: parseJSONResponse
+        callback: async (response) => {
+            const geojson = await parseJSONResponse(response)
+            if (geojson?.features?.length) {
+                await saveToGISDB(geojson, {id})
+            }
+            return geojson
+        }
     }).catch(error => {
         console.log(error)
     })
