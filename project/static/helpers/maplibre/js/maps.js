@@ -50,14 +50,14 @@ class GeospatialibControl {
 
         const zoomInBtn = control._container.querySelector('.maplibregl-ctrl-zoom-in')
         zoomInBtn.innerHTML = ''
-        zoomInBtn.classList.add('bi', 'bi-plus-lg', 'fs-16', `text-bg-${getPreferredTheme()}`)
+        zoomInBtn.classList.add('bi', 'bi-plus-lg', 'fs-16', `text-bg-${getPreferredTheme()}`, 'rounded-top')
         
         const zoomOutBtn = control._container.querySelector('.maplibregl-ctrl-zoom-out')
         zoomOutBtn.innerHTML = ''
         zoomOutBtn.classList.add('bi', 'bi-dash-lg', 'fs-16', `text-bg-${getPreferredTheme()}`, `border-top-${getPreferredTheme()}`)
         
         const compassBtn = control._container.querySelector('.maplibregl-ctrl-compass')
-        compassBtn.classList.add(`text-bg-${getPreferredTheme()}`, `border-top-${getPreferredTheme()}`)
+        compassBtn.classList.add(`text-bg-${getPreferredTheme()}`, `border-top-${getPreferredTheme()}`, 'rounded-bottom')
     }
     
     setScaleControl({
@@ -174,7 +174,7 @@ class GeospatialibControl {
             this.resetGeoJSONSource(sourceId)
         } else {
             this.config.popup.feature = feature
-            this.map.fitBounds(feature.bbox ?? turf.bbox(feature))
+            this.map.fitBounds(feature.bbox ?? turf.bbox(feature), {padding:100, maxZoom:11})
             this.setGeoJSONData(sourceId, {data: turf.featureCollection([feature])})
 
             const color = `hsla(180, 100%, 50%, 1.00)`
@@ -251,19 +251,28 @@ class GeospatialibControl {
 
     async createTooltip(e) {
         this.config.tooltip?.remove()
+        this.config.tooltip = null
         
         const map = this.map
         
+        if (!this.config.showTooltip) return
+
         if (!map.getStyle().layers.find(l => Array('fill', 'line', 'circle', 'symbol', 'heatmap', 'fill-extrusion').includes(l.type))) return
         
-        if (!this.config.showTooltip) return
-        
-        const feature = (await this.queryMapData({geom:e.point}))[0]
-        if (!feature) return
+        const features = await this.queryMapData({geom:e.point})
+        if (!features?.length) return
+
+        let label
+        for (const f of features) {
+            label = this.getFeatureLabel(f)
+            if (label) break
+        }
+
+        if (!label) return
 
         const popup = this.config.tooltip = new maplibregl.Popup({closeButton: false})
         .setLngLat(e.lngLat)
-        .setHTML(`<span>${this.getFeatureLabel(feature)}</span>`)
+        .setHTML(`<span>${label}</span>`)
         .addTo(map)
 
         const popupContainer = popup._container
@@ -498,6 +507,8 @@ class GeospatialibControl {
     }
     
     getFeatureLabel(f) {
+        console.log('check user defined label properties')
+
         return f.properties[
             this.constants.nameProperties
             .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
@@ -608,7 +619,7 @@ class GeospatialibControl {
         const pointFilter = ["all", ["==", "$type", "Point"], ...validFilter]
         
         const colorHSLA = manageHSLAColor(color)
-        const outlineColor = colorHSLA.toString({l:colorHSLA.l*0.25})
+        const outlineColor = colorHSLA.toString({l:colorHSLA.l*0.5})
 
         const defaultParams = {
             'background': {
@@ -1109,10 +1120,11 @@ class GeospatialibControl {
     toggleBasemapGrayscale() {
         if (!this.map.getLayer('basemap')) return
 
-        let paint
+        let basemapPaint
+        let skyPaint
         
         if (this.config.basemapGrayscale) {
-            paint = {
+            basemapPaint = {
                 'raster-opacity': 1, // 0 to 1
                 'raster-hue-rotate': 200,
                 'raster-brightness-min': 0, // 0 to 1
@@ -1120,8 +1132,18 @@ class GeospatialibControl {
                 'raster-saturation': -1, // -1 to 1
                 'raster-contrast': 0.99, // -1 to 1
             }
+
+            skyPaint = {
+                "sky-color": "hsla(208, 95%, 15%, 1.00)",
+                "horizon-color": "hsla(0, 0%, 50%, 1.00)",
+                "fog-color": "hsla(0, 0%, 50%, 1.00)",
+                "fog-ground-blend": 0.5,
+                "horizon-fog-blend": 0.8,
+                "sky-horizon-blend": 0.8,
+                "atmosphere-blend": 0.8
+            }
         } else {
-            paint = {
+            basemapPaint = {
                 'raster-opacity': 1, // 0 to 1
                 'raster-hue-rotate': 0,
                 'raster-brightness-min': 0, // 0 to 1
@@ -1129,9 +1151,23 @@ class GeospatialibControl {
                 'raster-saturation': 0, // -1 to 1
                 'raster-contrast': 0, // -1 to 1
             }
+
+            skyPaint = {
+                "sky-color": "hsla(208, 95%, 76%, 1.00)",
+                "horizon-color": "#ffffff",
+                "fog-color": "#ffffff",
+                "fog-ground-blend": 0.5,
+                "horizon-fog-blend": 0.8,
+                "sky-horizon-blend": 0.8,
+                "atmosphere-blend": 0.8
+            }
         }
 
-        this.updateGeoJSONLayer('basemap', {paint})
+        const newStyle = structuredClone(this.map.getStyle())
+        newStyle.sky = skyPaint
+        this.map.setStyle(newStyle)
+
+        this.updateGeoJSONLayer('basemap', {paint:basemapPaint})
     }
 
     createControl() {
@@ -1472,7 +1508,7 @@ class FitToWorldControl {
         innerText: '🌍',
         events: {
             click: (e) => {
-                this.map.fitBounds([[-180, -85], [180, 85]])
+                this.map.fitBounds([[-180, -85], [180, 85]], {padding:100, maxZoom:11})
             }
         }
     })
@@ -1651,8 +1687,17 @@ const initMapLibreMap = (el) => {
                     type: 'raster',
                     source: 'basemap',
                 },
+                
             ],
-            sky: {}
+            sky: {
+                "sky-color": "#88C6FC",
+                "horizon-color": "#ffffff",
+                "fog-color": "#ffffff",
+                "fog-ground-blend": 0.5,
+                "horizon-fog-blend": 0.8,
+                "sky-horizon-blend": 0.8,
+                "atmosphere-blend": 0.8
+            }
         },
         maxZoom: 22,
         maxPitch: 85
@@ -1664,7 +1709,6 @@ const initMapLibreMap = (el) => {
 
         map.getCanvas().classList.add(`bg-${getPreferredTheme()}`)
         map.getContainer().querySelectorAll('.maplibregl-ctrl').forEach(b => b.classList.add(`text-bg-${getPreferredTheme()}`))
-
         console.log(map)
     })   
 }
