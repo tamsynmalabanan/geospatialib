@@ -227,7 +227,7 @@ class GeospatialibControl {
         queryRasters=false,
     }) {
         let features = this.map.queryRenderedFeatures(geom, {layers, filter})
-
+        
         if (features?.length) {
             const uniqueFeatures = []
             features.forEach(f1 => {
@@ -246,19 +246,19 @@ class GeospatialibControl {
             console.log('update features with features from rasters i.e. wms, dems, etc.')
         }
 
-        return features ?? []
+        return features
     }
 
     async createTooltip(e) {
         this.config.tooltip?.remove()
-
+        
         const map = this.map
-
+        
         if (!map.getStyle().layers.find(l => Array('fill', 'line', 'circle', 'symbol', 'heatmap', 'fill-extrusion').includes(l.type))) return
-
+        
         if (!this.config.showTooltip) return
-
-        const feature = await this.queryMapData({geom:e.point})[0]
+        
+        const feature = (await this.queryMapData({geom:e.point}))[0]
         if (!feature) return
 
         const popup = this.config.tooltip = new maplibregl.Popup({closeButton: false})
