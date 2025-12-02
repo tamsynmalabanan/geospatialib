@@ -5,6 +5,7 @@ const fetchSearchNominatim = async (q, {
     controller,
 } = {}) => {
     if (!q) return
+    q = q.toLowerCase()
 
     const url = pushURLParams('https://nominatim.openstreetmap.org/search?', {
         q, format, limit

@@ -220,14 +220,45 @@ class GeospatialibControl {
         return !toggleOff
     }
 
-    createTooltip(e) {
+    async queryMapData({
+        geom,
+        layers,
+        filter,
+        queryRasters=false,
+    }) {
+        let features = this.map.queryRenderedFeatures(geom, {layers, filter})
+
+        if (features?.length) {
+            const uniqueFeatures = []
+            features.forEach(f1 => {
+                if (!uniqueFeatures.find(f2 => {
+                    if (f1.source !== f2.source) return false
+                    if (f1.layer.metadata.style !== f2.layer.metadata.style) return false
+                    if (f1.layer.metadata.group !== f2.layer.metadata.group) return false
+                    if (!featuresAreSimilar(f1, f2)) return false
+                    return true
+                })) uniqueFeatures.push(f1)
+            })
+            features = uniqueFeatures
+        }
+
+        if (queryRasters) {
+            console.log('update features with features from rasters i.e. wms, dems, etc.')
+        }
+
+        return features ?? []
+    }
+
+    async createTooltip(e) {
+        this.config.tooltip?.remove()
+
         const map = this.map
 
-        this.config.tooltip?.remove()
+        if (!map.getStyle().layers.find(l => Array('fill', 'line', 'circle', 'symbol', 'heatmap', 'fill-extrusion').includes(l.type))) return
 
         if (!this.config.showTooltip) return
 
-        const feature = map.queryRenderedFeatures(e.point)[0]
+        const feature = await this.queryMapData({geom:e.point})[0]
         if (!feature) return
 
         const popup = this.config.tooltip = new maplibregl.Popup({closeButton: false})
@@ -273,8 +304,7 @@ class GeospatialibControl {
         let lngLat = e.lngLat
 
         if (checkedOptions.includes('layers')) {
-            features = map.queryRenderedFeatures(e.point)
-            console.log('update features with features from wms layers, etc.')
+            features = await this.queryMapData({geom:e.point, queryRasters:true})
             
             features = features.filter(f => {
                 return turf.booleanValid(f) && f.layer.source !== sourceId
@@ -1001,7 +1031,7 @@ class GeospatialibControl {
         return params
     }
     
-    updateGeoJSONLayers(id, params) {
+    updateGeoJSONLayer(id, params) {
         const map = this.map
 
         Object.entries(params.layout ?? {}).forEach(([prop, val]) => {
@@ -1019,6 +1049,14 @@ class GeospatialibControl {
         if (params.minzoom && params.maxzoom) {
             map.setLayerZoomRange(id, params.minzoom, params.maxzoom)
         }
+
+        const layer = map.getLayer(id)
+
+        Object.entries(params.metadata ?? {}).forEach(([prop, val]) => {
+            layer.metadata[prop] = val
+        })
+
+        return layer
     }
 
     addGeoJSONLayers(sourceId, {
@@ -1046,7 +1084,7 @@ class GeospatialibControl {
                     const id = `${layerPrefix}-${groupId}-${type}-${layerName}`
                     
                     if (this.map.getLayer(id)) {
-                        this.updateGeoJSONLayers(id, layerParams)
+                        this.updateGeoJSONLayer(id, layerParams)
                     } else {
                         const properties = {
                             ...layerParams,
@@ -1055,6 +1093,7 @@ class GeospatialibControl {
                             source: sourceId,
                             metadata: {
                                 ...source.metadata,
+                                ...layerParams.metadata,
                                 style: name,
                                 group: groupId,
                                 layer: layerName,
@@ -1094,7 +1133,7 @@ class GeospatialibControl {
             }
         }
 
-        this.updateGeoJSONLayers('basemap', {paint})
+        this.updateGeoJSONLayer('basemap', {paint})
     }
 
     createControl() {
