@@ -39,6 +39,7 @@ const setTheme = (theme) => {
 }
 
 const toggleTheme = () => {
-    const currentTheme = document.documentElement.getAttribute('data-bs-theme')
-    setTheme(currentTheme === 'dark' ? 'light' : 'dark')
+    const currentTheme = document.documentElement.getAttribute('data-bs-theme') ?? getPreferredTheme()
+    const newTheme = currentTheme !== 'light' ? 'light' : 'dark'
+    setTheme(newTheme)
 }

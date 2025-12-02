@@ -5,7 +5,7 @@ class GeospatialibControl {
         
         this.controls = null
         this.config = {
-            basemapGrayscale: getPreferredTheme() === 'dark',
+            basemapGrayscale: getPreferredTheme() !== 'light',
             showTooltip: true,
             tooltip: null,
             renderHillshade: true,
@@ -1171,7 +1171,7 @@ class GeospatialibControl {
     }
 
     createControl() {
-        const isDarkMode = getPreferredTheme() === 'dark'
+        const isDarkMode = getPreferredTheme() !== 'light'
         if (isDarkMode) this.toggleBasemapGrayscale()
 
         const container = this.container = customCreateElement({className: 'maplibregl-ctrl maplibregl-ctrl-group'})
@@ -1341,6 +1341,14 @@ class GeospatialibControl {
                             }
                         }
                     },
+                    theme: {
+                        label: 'Toggle dark mode',
+                        icon: '🌙',
+                        checked: isDarkMode,
+                        events: {
+                            click: toggleTheme,
+                        }
+                    },
                     tooltip: {
                         label: 'Toggle tooltip',
                         icon: '💬',
@@ -1356,14 +1364,13 @@ class GeospatialibControl {
 
                 Object.keys(options).forEach(name => {
                     const params = options[name]
-
                     const input = customCreateElement({
                         tag: 'input',
                         parent: body,
                         attrs: {
                             type: 'checkbox',
                             name,
-                            checked: params.checked
+                            ...(params.checked ? {checked: params.checked} : {})
                         },
                         className: 'btn-check'
                     })
@@ -1491,6 +1498,36 @@ class GeospatialibControl {
         this.map = undefined
     }
 }
+
+// class FitToWorldControl {
+//   onAdd(map) {
+//     this.map = map
+//     this.container = customCreateElement({className:'maplibregl-ctrl maplibregl-ctrl-group'})
+
+//     const button = customCreateElement({
+//         tag:'button',
+//         parent: this.container,
+//         className: 'fs-16',
+//         attrs: {
+//             type: 'button',
+//             title: 'Fit to world'
+//         },
+//         innerText: '🌍',
+//         events: {
+//             click: (e) => {
+//                 this.map.fitBounds([[-180, -85], [180, 85]], {padding:100, maxZoom:11})
+//             }
+//         }
+//     })
+
+//     return this.container
+//   }
+
+//   onRemove() {
+//     this.container.parentNode.removeChild(this.container);
+//     this.map = undefined;
+//   }
+// }
 
 class FitToWorldControl {
   onAdd(map) {
