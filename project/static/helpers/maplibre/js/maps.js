@@ -389,9 +389,7 @@ class GeospatialibControl {
                 className: 'carousel-inner'
             })
 
-            Object.keys(features).forEach(i => {
-                const f = features[i]
-                
+            Object.entries(features).forEach(([i, f]) => {
                 const carouselItem = customCreateElement({
                     parent: carouselInner,
                     className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
