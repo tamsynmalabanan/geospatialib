@@ -556,7 +556,7 @@ const createModal = ({
     parent?.appendChild(modal)
 
     const dialog = document.createElement('div')
-    dialog.className = `modal-dialog modal-dialog-scrollable ${centered ? 'modal-dialog-centered' : ''}`
+    dialog.className = `modal-fullscreen-sm-down modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable ${centered ? 'modal-fullscreen-sm-down modal-dialog-centered' : ''}`
     modal.appendChild(dialog)
 
     const content = document.createElement('div')

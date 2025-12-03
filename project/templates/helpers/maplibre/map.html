@@ -13,7 +13,11 @@
 {% include "helpers/maplibre/modals/user_terms.html" %}
 {% include "helpers/maplibre/modals/privacy_policy.html" %}
 {% include "helpers/maplibre/modals/cookies_policy.html" %}
-{% include "helpers/maplibre/modals/user_settings.html" %}
-{% if not user.is_superuser %}
-    {% include "helpers/maplibre/modals/delete_account.html" %}
+
+{% if user.is_authenticated %}
+    {% include "helpers/maplibre/modals/user_settings.html" %}
+    {% include "helpers/maplibre/modals/user_dashboard.html" %}
+    {% if not user.is_superuser %}
+        {% include "helpers/maplibre/modals/delete_account.html" %}
+    {% endif %}
 {% endif %}

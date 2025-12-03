@@ -6,7 +6,13 @@
 
 <div class="btn-group dropup">
     {% if user.is_authenticated %}
-        <button class="btn btn-{{theme}} bi bi-columns" type="button" style="height:32px;width:32px;"></button>
+        <button 
+            class="btn btn-{{theme}} bi bi-columns" 
+            type="button" 
+            style="height:32px;width:32px;"
+            data-bs-toggle="modal" 
+            data-bs-target="#userDashboardModal"
+        ></button>
     {% else %}
         <a 
             href="{% provider_login_url 'google' %}?next={% url 'main:index' %}" 
@@ -75,7 +81,7 @@
                 <hr>
             {% endif %}
             <div class="d-flex">
-                <p class="text-wrap user-select-none lh-1 m-0 fs-12" style="width:230px;">
+                <p class="text-wrap user-select-none lh-1 m-0 fs-12">
                     <span class="text-bg-{{theme}} text-muted">By using Geospatialib, you agree to comply with our</span> 
                     <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userTermsModal">Terms of Use</span>, 
                     <span class="text-primary" data-bs-toggle="modal" data-bs-target="#userPrivacyPolicyModal">Privacy Policy</span>
