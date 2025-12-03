@@ -75,6 +75,7 @@ class GeospatialibControl {
     configAttributionControl() {
         const control = this.map._controls.find(c => c instanceof maplibregl.AttributionControl)
         const container = control._container
+        container.style.maxWidth = `${window.innerWidth * 0.6}px`
 
         const toggle = container.querySelector(`.maplibregl-ctrl-attrib-button`)
         toggle.innerHTML = `<i class="bi bi-info-circle"></i>`
@@ -356,7 +357,7 @@ class GeospatialibControl {
             lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
         }
 
-        const popupWidth = window.innerWidth * 0.5
+        const popupWidth = window.innerWidth * 0.75
         const popupHeight = window.innerHeight * 0.5
 
         const popup = this.config.popup.control = new maplibregl.Popup()
@@ -469,7 +470,7 @@ class GeospatialibControl {
             parent: container,
             className: 'd-flex flex-wrap gap-2',
             style: {
-                maxWidth: `${popupWidth * 0.5}px`,
+                maxWidth: `${popupWidth}px`,
             }
         })
 
@@ -1554,9 +1555,10 @@ class UserControl {
 
     onAdd(map) {
         this.map = map
+
         const container = this.container = customCreateElement({
             id: `${this.map._container.id}-user-control`,
-            className:'maplibregl-ctrl maplibregl-ctrl-group'
+            // className:'maplibregl-ctrl maplibregl-ctrl-group',
         })
 
         return this.container
