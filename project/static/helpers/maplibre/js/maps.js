@@ -394,7 +394,6 @@ class GeospatialibControl {
             })
 
             const resizeObserver = elementResizeObserver(carouselContainer, (e) => {
-                console.log(carouselContainer.offsetWidth)
                 footer.style.maxWidth = `${carouselContainer.offsetWidth}px`
             })
             popup.on('close', () => resizeObserver.unobserve(carouselContainer))
@@ -412,6 +411,14 @@ class GeospatialibControl {
                 const carouselItem = customCreateElement({
                     parent: carouselInner,
                     className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
+                })
+
+                const page = customCreateElement({
+                    tag: 'span',
+                    className: `fs-12 position-absolute top-0 start-0 m-2 btn btn-sm text-bg-secondary rounded-pill badge text-wrap text-start me-5 pe-none`,
+                    style: {zIndex: 1000},
+                    parent: carouselItem,
+                    innerText: `${Array(Number(i)+1,features.length).join('/')}`,
                 })
 
                 const place = customCreateElement({
