@@ -13,7 +13,7 @@ body {
     height: 7px;
 }
 
-::-webkit-scrollbar-track,
+/* ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-thumb {
     border-radius: 0.5rem;
-}
+} */

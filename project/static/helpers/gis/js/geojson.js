@@ -424,7 +424,7 @@ const createFeaturePropertiesTable = (properties, {
         const theadth = document.createElement('th')
         theadth.setAttribute('scope', 'col')
         theadth.setAttribute('colspan', '2')
-        theadth.className = 'fw-bold text-break text-wrap'
+        theadth.className = 'fw-bold text-break text-wrap p-0'
         theadth.style.textAlign = 'center'
         theadth.innerHTML = header
         theadtr.appendChild(theadth)

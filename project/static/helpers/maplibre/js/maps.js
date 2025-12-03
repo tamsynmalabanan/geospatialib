@@ -394,12 +394,12 @@ class GeospatialibControl {
             })
 
             const resizeObserver = elementResizeObserver(carouselContainer, (e) => {
-                footer.style.maxWidth = carouselContainer.offsetWidth
+                console.log(carouselContainer.offsetWidth)
+                footer.style.maxWidth = `${carouselContainer.offsetWidth}px`
             })
             popup.on('close', () => resizeObserver.unobserve(carouselContainer))
 
             const carousel = customCreateElement({
-                parent: carouselContainer,
                 className: 'carousel slide',
             })
 
@@ -452,13 +452,15 @@ class GeospatialibControl {
                     `
                 }).children).forEach(b => carousel.appendChild(b))
             }
+
+            carouselContainer.appendChild(carousel)
         }
 
         const footer = customCreateElement({
             parent: container,
             className: 'd-flex flex-wrap gap-2',
             style: {
-                maxWidth: `${popupWidth/2}px`,
+                maxWidth: `${popupWidth * 0.5}px`,
             }
         })
 
