@@ -9,16 +9,18 @@
     hx-swap='innerHTML'
 ></div>
 
-{% include "helpers/maplibre/modals/clear_local_data.html" %}
-{% include "helpers/maplibre/modals/user_terms.html" %}
-{% include "helpers/maplibre/modals/privacy_policy.html" %}
-{% include "helpers/maplibre/modals/cookies_policy.html" %}
-{% include "helpers/maplibre/modals/library_form.html" %}
-
-{% if user.is_authenticated %}
-    {% include "helpers/maplibre/modals/user_settings.html" %}
-    {% include "helpers/maplibre/modals/user_dashboard.html" %}
-    {% if not user.is_superuser %}
-        {% include "helpers/maplibre/modals/delete_account.html" %}
+<div id="{{map_id}}Modals">
+    {% include "helpers/maplibre/modals/clear_local_data.html" %}
+    {% include "helpers/maplibre/modals/user_terms.html" %}
+    {% include "helpers/maplibre/modals/privacy_policy.html" %}
+    {% include "helpers/maplibre/modals/cookies_policy.html" %}
+    {% include "helpers/maplibre/modals/library_form.html" %}
+    
+    {% if user.is_authenticated %}
+        {% include "helpers/maplibre/modals/user_settings.html" %}
+        {% include "helpers/maplibre/modals/user_dashboard.html" %}
+        {% if not user.is_superuser %}
+            {% include "helpers/maplibre/modals/delete_account.html" %}
+        {% endif %}
     {% endif %}
-{% endif %}
+</div>

@@ -1192,6 +1192,23 @@ class GeospatialibControl {
         this.updateGeoJSONLayer('basemap', {paint:basemapPaint})
     }
 
+    getMapBbox() {
+        const bounds = this.map.getBounds()
+        let [w,s,e,n] = [
+            'getWest',
+            'getSouth',
+            'getEast',
+            'getNorth',
+        ].map(i => bounds[i]())
+
+        if (w < -180) w = -180
+        if (s < -90) s = -90
+        if (e > 180) e = 180
+        if (n > 90) n = 90
+
+        return [w,s,e,n]
+    }
+
     createControl() {
         const isDarkMode = getPreferredTheme() !== 'light'
         if (isDarkMode) this.toggleBasemapGrayscale()
@@ -1534,6 +1551,20 @@ class GeospatialibControl {
             this.createTooltip(e)
         })
 
+        this.map.on('moveend', (e) => {
+            const geom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
+            this.map._container.nextElementSibling.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
+                el.value = geom
+            })
+        })
+
+        this.map._container.nextElementSibling.addEventListener('htmx:afterSwap', (e) => {
+            const geom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
+            e.target.parentElement.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
+                el.value = geom
+            })
+        })
+
         this.createControl()
 
         this.map.getGeospatialibControl = () => this
@@ -1558,7 +1589,6 @@ class UserControl {
 
         const container = this.container = customCreateElement({
             id: `${this.map._container.id}-user-control`,
-            // className:'maplibregl-ctrl maplibregl-ctrl-group',
         })
 
         return this.container
