@@ -1,0 +1,39 @@
+<div class="modal fade modal-lg" id="searchLibraryModal" tabindex="-1" aria-labelledby="searchLibraryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-fullscreen-sm-down modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <div class="d-flex flex-column w-100 gap-3">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h4 class="modal-title px-3 d-flex flex-nowrap justify-content-between user-select-none" id="searchLibraryModalLabel">
+                        <span>Search library</span>
+                        <button type="button" class="d-flex flex-nowrap gap-2 badge rounded-pill btn btn-sm btn-{{theme}} fs-14 align-items-center">
+                            <i class="bi bi-plus-lg"></i>
+                            <span>Add source</span>
+                        </button>
+                        
+                    </h4>
+                    <form 
+                        id='libraryForm'
+                        x-data x-init="$el.addEventListener('submit', (e) => e.preventDefault())"
+                        class='d-flex flex-column gap-3 mx-3'
+                        hx-get="{% url 'htmx:search_library' %}" 
+                        hx-trigger="submit" 
+                        hx-target="#searchResults"
+                        hx-swap="outerHTML"
+                    >
+                        <div id='libraryFormFields' class="collapse show multi-collapse">
+                            <div class="input-group border-secondary border rounded">
+                                <input type="search" name='query' class="form-control border-0" style="box-shadow:none;">
+                                <button class="btn btn-outline-secondary bi bi-search border-0" type="submit"></button>
+                            </div>
+                        </div>
+                        <div id='searchResultsFiltersContainer'></div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-body" >
+                <div id="searchResults"></div>
+            </div>
+        </div>
+    </div>
+</div>

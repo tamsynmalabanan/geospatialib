@@ -10,19 +10,6 @@ from . import choices
 from helpers.base.utils import dict_to_choices
 from helpers.main.collection import guess_format_from_url
 
-class SearchForm(forms.Form):
-    query = forms.CharField(
-        # label='Search...', 
-        max_length=255, 
-        required=False,
-        widget=forms.TextInput(attrs={
-            'type':'search',
-            'class':'form-control ps-0 border-0 rounded-0 focus-underline-primary box-shadow-none bg-transparent',
-            'placeholder': 'Search...',
-            'title': 'Search the library for datasets',
-        })
-    )
-
 class ValidateCollectionForm(forms.Form):
     url = forms.URLField(
         label='URL',

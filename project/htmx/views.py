@@ -36,7 +36,7 @@ import logging
 logger = logging.getLogger('django')
 
 class LayerList(ListView):
-    template_name = 'main/search/results.html'
+    template_name = 'helpers/maplibre/search/results.html'
     model = Layer
     context_object_name = 'layers'
     paginate_by = 120
