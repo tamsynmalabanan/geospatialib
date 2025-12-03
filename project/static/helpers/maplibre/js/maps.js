@@ -407,7 +407,9 @@ class GeospatialibControl {
                 className: 'carousel-inner'
             })
 
+            console.log('exlude features with no properties and header')
             Object.entries(features).forEach(([i, f]) => {
+
                 const carouselItem = customCreateElement({
                     parent: carouselInner,
                     className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
