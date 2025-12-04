@@ -23,7 +23,7 @@ class GeospatialibControl {
     }
     
     setFullscreenControl({
-        position='bottom-right',
+        position='top-left',
     }={}) {
         const control = new maplibregl.FullscreenControl()
         this.map.addControl(control, position)
@@ -83,10 +83,12 @@ class GeospatialibControl {
         const control = this.map._controls.find(c => c instanceof maplibregl.AttributionControl)
         const container = control._container
         container.style.maxWidth = `${window.innerWidth * 0.6}px`
+        container.style.marginTop = `0px`
 
         const toggle = container.querySelector(`.maplibregl-ctrl-attrib-button`)
-        toggle.innerHTML = `<i class="bi bi-info-circle"></i>`
+        toggle.innerHTML = `<i class="bi bi-info fs-16"></i>`
         toggle.style.backgroundImage = 'none'
+        toggle.style.boxShadow = 'none'
         toggle.classList.add('d-flex', 'justify-content-center', 'align-items-center', `text-bg-${getPreferredTheme()}`)
 
         const inner = container.querySelector(`.maplibregl-ctrl-attrib-inner`)
@@ -1199,10 +1201,9 @@ class GeospatialibControl {
         this.updateGeoJSONLayer('basemap', {paint:basemapPaint})
 
         const source = this.map.getSource('basemap')
-        if (source) {
+        if (source && source.tiles) {
             source.setTiles(source.tiles)
         }
-
     }
 
     getMapBbox() {
@@ -1835,7 +1836,7 @@ const initMapLibreMap = (el) => {
 
     map.on('style.load', () => {
         const control = new GeospatialibControl()
-        map.addControl(control, 'bottom-right') 
+        map.addControl(control, 'bottom-right')
 
         map.getCanvas().classList.add(`bg-${getPreferredTheme()}`)
         map.getContainer().querySelectorAll('.maplibregl-ctrl').forEach(b => b.classList.add(`text-bg-${getPreferredTheme()}`))
