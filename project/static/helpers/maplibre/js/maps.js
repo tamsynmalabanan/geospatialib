@@ -383,8 +383,13 @@ class GeospatialibControl {
         const popupContainer = popup._container
         
         const popupTooltip = popupContainer.querySelector('.maplibregl-popup-tip')
-        popupTooltip.classList.add(`border-top-${getPreferredTheme()}`, `border-bottom-${getPreferredTheme()}`)
-        
+        const style = window.getComputedStyle(popupTooltip)
+        Array('top','bottom', 'left', 'right').forEach(pos => {
+            if (style.getPropertyValue(`border-${pos}-color`) !== 'rgba(0, 0, 0, 0)') {
+                popupTooltip.classList.add(`border-${pos}-${getPreferredTheme()}`)
+            }
+        })
+
         const popupCloseBtn = popupContainer.querySelector('.maplibregl-popup-close-button')
         popupCloseBtn.classList.add(`text-bg-${getPreferredTheme()}`)
         
