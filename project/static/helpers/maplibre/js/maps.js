@@ -1197,6 +1197,12 @@ class GeospatialibControl {
         this.map.setStyle(newStyle)
 
         this.updateGeoJSONLayer('basemap', {paint:basemapPaint})
+
+        const source = this.map.getSource('basemap')
+        if (source) {
+            source.setTiles(source.tiles)
+        }
+
     }
 
     getMapBbox() {
@@ -1379,7 +1385,7 @@ class GeospatialibControl {
                     basemap: {
                         label: 'Toggle grayscale basemap',
                         icon: '🗺️',
-                        checked: isDarkMode,
+                        checked: !isDarkMode,
                         events: {
                             click: (e) => {
                                 this.config.basemapGrayscale = !this.config.basemapGrayscale
