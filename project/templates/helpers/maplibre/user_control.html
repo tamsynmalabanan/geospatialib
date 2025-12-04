@@ -5,14 +5,43 @@
 {% variable request.COOKIES|get:'theme' 'dark' as theme %}
 
 <div class="d-flex flex-column">
-    <div class="maplibregl-ctrl maplibregl-ctrl-group text-bg-{{theme}} d-flex justify-content-center align-items-center rounded-circle" style="width:40px;height:40px;">
+    <div class="maplibregl-ctrl maplibregl-ctrl-group btn-group dropup text-bg-{{theme}} d-flex justify-content-center align-items-center rounded-circle" style="width:40px;height:40px;">
         <button 
             type="button" 
-            class="btn btn-primary mb-1" 
+            class="btn mb-1" 
             style="width:auto;height:auto;font-size:20px"
-            data-bs-toggle='modal'    
-            data-bs-target='#searchLibraryModal '    
+            data-bs-toggle="dropdown" aria-expanded="false"
+            {% comment %} data-bs-toggle='modal'    
+            data-bs-target='#searchLibraryModal '     {% endcomment %}
+
         >📖</button>
+        <div 
+            class="dropdown-menu mb-1 p-2"
+            x-data x-init="$el.addEventListener('show.bs.dropdown', (e) => {console.log($el) ; $el.style.maxHeight = `${window.innerHeight*0.75}px`})"
+        >
+            <div class="d-flex flex-column">
+                <form 
+                    id='libraryForm'
+                    x-data x-init="$el.addEventListener('submit', (e) => e.preventDefault())"
+                    class='d-flex flex-column gap-3'
+                    hx-get="{% url 'htmx:search_library' %}" 
+                    hx-trigger="submit" 
+                    hx-target="#searchResults"
+                    hx-swap="outerHTML"
+                >
+                    <div id='libraryFormFields' class="collapse show multi-collapse">
+                        <div class="input-group border-secondary border rounded">
+                            <input type="search" name='query' class="form-control border-0" placeholder="Search library..." style="box-shadow:none;">
+                            <button class="btn btn-outline-secondary bi bi-search border-0" type="submit"></button>
+                        </div>
+                    </div>
+                    <div id='searchResultsFiltersContainer'></div>
+                </form>
+                <div class="d-flex flex-grow-1 overflow-y-auto">
+                    <div id="searchResults"></div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="maplibregl-ctrl maplibregl-ctrl-group text-bg-{{theme}}">
         <div class="btn-group dropup">

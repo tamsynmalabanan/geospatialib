@@ -14,7 +14,7 @@
     {% include "helpers/maplibre/modals/user_terms.html" %}
     {% include "helpers/maplibre/modals/privacy_policy.html" %}
     {% include "helpers/maplibre/modals/cookies_policy.html" %}
-    {% include "helpers/maplibre/modals/library_form.html" %}
+    {% comment %} {% include "helpers/maplibre/modals/library_form.html" %} {% endcomment %}
     
     {% if user.is_authenticated %}
         {% include "helpers/maplibre/modals/user_settings.html" %}

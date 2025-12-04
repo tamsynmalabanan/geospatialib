@@ -22,6 +22,13 @@ class GeospatialibControl {
         }
     }
     
+    setFullscreenControl({
+        position='bottom-right',
+    }={}) {
+        const control = new maplibregl.FullscreenControl()
+        this.map.addControl(control, position)
+    }
+    
     setGeolocateControl({
         position='top-left',
     }={}) {
@@ -50,11 +57,11 @@ class GeospatialibControl {
 
         const zoomInBtn = control._container.querySelector('.maplibregl-ctrl-zoom-in')
         zoomInBtn.innerHTML = ''
-        zoomInBtn.classList.add('bi', 'bi-plus-lg', 'fs-16', `text-bg-${getPreferredTheme()}`, 'rounded-top')
+        zoomInBtn.classList.add('bi', 'bi-plus', 'fs-16', `text-bg-${getPreferredTheme()}`, 'rounded-top')
         
         const zoomOutBtn = control._container.querySelector('.maplibregl-ctrl-zoom-out')
         zoomOutBtn.innerHTML = ''
-        zoomOutBtn.classList.add('bi', 'bi-dash-lg', 'fs-16', `text-bg-${getPreferredTheme()}`, `border-top-${getPreferredTheme()}`)
+        zoomOutBtn.classList.add('bi', 'bi-dash', 'fs-16', `text-bg-${getPreferredTheme()}`, `border-top-${getPreferredTheme()}`)
         
         const compassBtn = control._container.querySelector('.maplibregl-ctrl-compass')
         compassBtn.classList.add(`text-bg-${getPreferredTheme()}`, `border-top-${getPreferredTheme()}`, 'rounded-bottom')
@@ -1476,7 +1483,7 @@ class GeospatialibControl {
         const menu = customCreateElement({
             tag: 'form',
             parent: dropdown,
-            className: 'dropdown-menu m-1 maplibregl-ctrl maplibregl-ctrl-group'
+            className: 'dropdown-menu mb-1 maplibregl-ctrl maplibregl-ctrl-group'
         })
 
         menu.addEventListener('click', (e) => {
@@ -1540,9 +1547,12 @@ class GeospatialibControl {
         this.setFitToWorldControl()
         this.setUserControl()
         this.setScaleControl()
-
+        this.setFullscreenControl()
         this.configAttributionControl()
 
+        this.createControl()
+        this.map.getGeospatialibControl = () => this
+        
         this.map.on('click', (e) => {
             this.createPopup(e)
         })
@@ -1559,15 +1569,21 @@ class GeospatialibControl {
         })
 
         this.map._container.nextElementSibling.addEventListener('htmx:afterSwap', (e) => {
+            const container = e.target.parentElement
+            
             const geom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
-            e.target.parentElement.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
+            container.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
                 el.value = geom
             })
+
+            container.querySelectorAll(`[data-map-bbox-source]`).forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const bbox = el.getAttribute('data-map-bbox-source')
+                    if (!bbox) return
+                    this.map.fitBounds(JSON.parse(bbox), {padding:100, maxZoom:11})
+                })
+            })
         })
-
-        this.createControl()
-
-        this.map.getGeospatialibControl = () => this
 
         return this.container
     }
