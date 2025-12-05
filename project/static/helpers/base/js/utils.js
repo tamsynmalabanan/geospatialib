@@ -586,3 +586,24 @@ const getSpecialCharacters = (str) => {
   return matches ? [...new Set(matches)] : []
 }
 
+const limitElementDimensions = (el, {
+    top,
+    bottom,
+    left,
+    right,
+    margin=10,
+}={}) => {
+    const elBounds = el.getBoundingClientRect()
+    
+    if (top) {
+        const elTop = elBounds.top
+
+        const topElement = document.querySelector(top)
+        const topBounds = topElement.getBoundingClientRect()
+        const topBottom = topBounds.bottom
+        
+        const elHeight = el.clientHeight
+        const difference = elTop - topBottom - margin
+        el.style.maxHeight = `${elHeight + difference}px`
+    }
+}

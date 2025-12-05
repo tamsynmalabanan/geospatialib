@@ -1,3 +1,10 @@
+.w-auto {
+    width: auto;
+}
+.h-auto {
+    height: auto;
+}
+
 .w-10 {
     width: 10%;
 }
@@ -22,6 +29,10 @@
 
 .fs-14 {
     font-size: 14px;
+}
+
+.fs-20 {
+    font-size: 20px;
 }
 
 .mt-10 {

@@ -43,9 +43,9 @@ const getOverpassQueryBlock = (queryGeom, {
         params = s + ',' + w + ',' + n + ',' + e
     }
 
-    const query = `(
-        ${types.map(type => `${type}${cleanOverpassTags(tags)}(${params});`).join('')}
-    );`
+    const query = `(${types.map(type => {
+        return `${type}${cleanOverpassTags(tags)}(${params});`
+    }).join('')});`
 
     return query
 }

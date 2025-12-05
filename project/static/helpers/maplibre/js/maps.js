@@ -17,13 +17,11 @@ class GeospatialibControl {
             },
         }
 
-        this.constants = {
-            nameProperties: ['display_name', 'name', 'title', 'id'],
-        }
+        this.nameProperties = ['display_name', 'name', 'title', 'id']
     }
     
     setFullscreenControl({
-        position='top-left',
+        position='bottom-right',
     }={}) {
         const control = new maplibregl.FullscreenControl()
         this.map.addControl(control, position)
@@ -205,14 +203,18 @@ class GeospatialibControl {
                         customParams: {
                             'fill' : {
                                 'polygons': {
-                                    render: false,
+                                    render: true,
+                                    params: {
+                                        paint: {
+                                            "fill-color": manageHSLAColor(color).toString({a:0})
+                                        }
+                                    },
                                 },
                             },
                             'line': {
                                 'polygon-outlines': {
                                     render: true,
                                     params: {
-                                        filter: ["==", "$type", "Polygon"],
                                         paint: {
                                             'line-color': color,
                                         },
@@ -292,7 +294,7 @@ class GeospatialibControl {
 
         const popup = this.config.tooltip = new maplibregl.Popup({closeButton: false})
         .setLngLat(e.lngLat)
-        .setHTML(`<span>${label}</span>`)
+        .setHTML(`<span class="text-break">${label}</span>`)
         .addTo(map)
 
         const popupContainer = popup._container
@@ -465,11 +467,11 @@ class GeospatialibControl {
             if (features.length > 1) {
                 Array.from(customCreateElement({
                     innerHTML: `
-                        <button class="carousel-control-prev" type="button" data-bs-target="#${carousel.id}" data-bs-slide="prev">
+                        <button class="carousel-control-prev w-auto h-auto" type="button" data-bs-target="#${carousel.id}" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Previous</span>
                         </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
+                        <button class="carousel-control-next w-auto h-auto" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Next</span>
                         </button>
@@ -546,7 +548,7 @@ class GeospatialibControl {
         console.log('check user defined label properties')
 
         return f.properties[
-            this.constants.nameProperties
+            this.nameProperties
             .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
             ?? Object.keys(f.properties).pop()
         ]
@@ -614,8 +616,9 @@ class GeospatialibControl {
         })
     }
     
-    setBeforeId(layerPrefix, beforeId) {
+    getBeforeId(layerPrefix, beforeId) {
         let fixedLayers = [
+            'searchResultBounds',
             'popupFeature', 
             'placeSearch',
         ]
@@ -633,7 +636,7 @@ class GeospatialibControl {
         beforeId,
     }={}) {
         const layers = this.map.getStyle().layers ?? []
-        beforeId = this.setBeforeId(layerPrefix, beforeId)
+        beforeId = this.getBeforeId(layerPrefix, beforeId)
 
         layers.forEach(l => {
             if (!l.id.startsWith(layerPrefix)) return
@@ -1114,7 +1117,7 @@ class GeospatialibControl {
         if (!source) return
         
         const layerPrefix = `${sourceId}-${name}`
-        beforeId = this.setBeforeId(layerPrefix, beforeId)
+        beforeId = this.getBeforeId(layerPrefix, beforeId)
 
         groups = groups ?? { default: this.getLayerParams() }
         
@@ -1552,6 +1555,8 @@ class GeospatialibControl {
     onAdd(map) {
         this.map = map
 
+        const mapContainer = this.map._container.parentElement
+
         this.setPlaceSearchControl()
         this.setNavControl()
         this.setTerrainControl()
@@ -1575,12 +1580,12 @@ class GeospatialibControl {
 
         this.map.on('moveend', (e) => {
             const geom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
-            this.map._container.nextElementSibling.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
+            mapContainer.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
                 el.value = geom
             })
         })
 
-        this.map._container.nextElementSibling.addEventListener('htmx:afterSwap', (e) => {
+        mapContainer.addEventListener('htmx:afterSwap', (e) => {
             const container = e.target.parentElement
             
             const geom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
@@ -1593,6 +1598,13 @@ class GeospatialibControl {
                     const bbox = el.getAttribute('data-map-bbox-source')
                     if (!bbox) return
                     this.map.fitBounds(JSON.parse(bbox), {padding:100, maxZoom:11})
+                })
+            })
+
+            container.querySelectorAll(`[data-map-layer-source]`).forEach(el => {
+                el.addEventListener('click', (e) => {
+                    const params = JSON.parse(el.getAttribute('data-map-layer-source') ?? '{}')
+                    console.log(params)
                 })
             })
         })
@@ -1610,14 +1622,101 @@ class UserControl {
     constructor(options = {}) {
         this.options = options
         this.container = null
+        this.searchResultsBoundsToggle = null
+        this.toggleSearchResultsBoundsTimeout = null
     }
 
+    toggleSearchResultsBounds() {
+        clearTimeout(this.toggleSearchResultsBoundsTimeout)
+        this.toggleSearchResultsBoundsTimeout = setTimeout(async () => {
+            const sourceId = 'searchResultBounds'
+            const geospatialibControl = this.map.getGeospatialibControl()
+            const searchResults = this.container.querySelector(`#searchResults`)
+
+            let data
+            if (this.searchResultsBoundsToggle.checked) {
+                const features = Array.from(searchResults.querySelectorAll(`[data-map-layer-source]`)).map(el => {
+                    const properties = JSON.parse(el.getAttribute('data-map-layer-source') ?? '{}')
+                    if (!properties.bbox) return
+                    return turf.bboxPolygon(properties.bbox, {properties})
+                }).filter(i => i)
+                
+                if (features.length) {
+                    data = turf.featureCollection(features)
+                }
+            }
+            
+            if (data?.features?.length) {
+                await geospatialibControl.setGeoJSONData(sourceId, {
+                    data, 
+                    metadata: {title: 'Search result bounds'}
+                })
+
+                const groups = Object.fromEntries(Array.from(new Set(data.features.map(f => f.properties.type))).map(i => {
+                    const color = rgbToHSLA(searchResults.querySelector(`[title="${i}"]`).style.backgroundColor)
+                    const params = geospatialibControl.getLayerParams({
+                        filter: ["==", "type", i],
+                        color,
+                        customParams: {
+                            'fill' : {
+                                'polygons': {
+                                    render: true,
+                                    params: {
+                                        paint: {
+                                            "fill-color": manageHSLAColor(color).toString({a:0})
+                                        }
+                                    },
+                                },
+                            },
+                            'line': {
+                                'polygon-outlines': {
+                                    render: true,
+                                    params: {
+                                        paint: {
+                                            'line-color': color,
+                                            'line-width': 3,
+                                            'line-opacity': 0.5,
+                                        },
+                                    }
+                                }
+                            },
+                        }
+                    })
+                    return [i, params]
+                }))
+
+                geospatialibControl.addGeoJSONLayers(sourceId, {groups})
+            } else {
+                geospatialibControl.resetGeoJSONSource(sourceId)
+            }
+        }, 200)
+    }
+
+    handleSearchResultsBoundsToggle() {
+        this.container.addEventListener('htmx:afterSwap', (e) => {
+            const searchResultsBoundsToggle = e.target.parentElement.querySelector(`#searchResultsBoundsToggle`)
+            if (searchResultsBoundsToggle) {
+                this.searchResultsBoundsToggle = searchResultsBoundsToggle
+                this.toggleSearchResultsBounds()
+                searchResultsBoundsToggle.addEventListener('click', (e) => {
+                    this.toggleSearchResultsBounds()
+                })
+            }
+
+            if (e.detail.pathInfo.requestPath.startsWith(`/htmx/library/search/`)) {
+                this.toggleSearchResultsBounds()
+            }
+        })
+    }
+    
     onAdd(map) {
         this.map = map
 
         const container = this.container = customCreateElement({
             id: `${this.map._container.id}-user-control`,
         })
+
+        this.handleSearchResultsBoundsToggle()
 
         return this.container
     }
@@ -1744,14 +1843,18 @@ class PlaceSearchControl {
                                     customParams: {
                                         'fill' : {
                                             'polygons': {
-                                                render: false,
+                                                render: true,
+                                                params: {
+                                                    paint: {
+                                                        "fill-color": manageHSLAColor(color).toString({a:0})
+                                                    }
+                                                },
                                             },
                                         },
                                         'line': {
                                             'polygon-outlines': {
                                                 render: true,
                                                 params: {
-                                                    filter: ["==", "$type", "Polygon"],
                                                     paint: {
                                                         'line-color': color,
                                                     },
