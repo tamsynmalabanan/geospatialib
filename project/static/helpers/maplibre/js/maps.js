@@ -1,4 +1,4 @@
-class GeospatialibControl { 
+class GeospatialibControl {     
     constructor(options = {}) {
         this.options = options
         this.container = null
@@ -15,9 +15,17 @@ class GeospatialibControl {
                 feature: null,
                 toggle: null,
             },
-        }
+            nameProperties: ['display_name', 'name', 'title', 'id'],
+            vectorTypes: [
+                'overpass'
+            ],
+            fixedLayers: [
+                'searchResultBounds',
+                'popupFeature', 
+                'placeSearch',
+            ],
 
-        this.nameProperties = ['display_name', 'name', 'title', 'id']
+        }
     }
     
     setFullscreenControl({
@@ -457,7 +465,7 @@ class GeospatialibControl {
                 const propertiesTable = createFeaturePropertiesTable(f.properties, {
                     parent: carouselItem, 
                     header: tempHeader ?? Array(
-                        f.layer.metadata.title ?? map.getSource(f.layer.source).metadata.title,
+                        f.layer.metadata.params.title ?? map.getSource(f.layer.source).metadata.params.title,
                         this.getFeatureLabel(f)
                     ).filter(i => i).join(': '), 
                     tableClass: `fs-12 table-${getPreferredTheme()}`
@@ -548,7 +556,7 @@ class GeospatialibControl {
         console.log('check user defined label properties')
 
         return f.properties[
-            this.nameProperties
+            this.config.nameProperties
             .find(i => Object.keys(f.properties).find(j => j.includes(i))) 
             ?? Object.keys(f.properties).pop()
         ]
@@ -617,11 +625,7 @@ class GeospatialibControl {
     }
     
     getBeforeId(layerPrefix, beforeId) {
-        let fixedLayers = [
-            'searchResultBounds',
-            'popupFeature', 
-            'placeSearch',
-        ]
+        let fixedLayers = structuredClone(this.config.fixedLayers)
 
         const layerMatch = fixedLayers.find(i => layerPrefix.startsWith(i))
         if (layerMatch) {
@@ -1231,6 +1235,68 @@ class GeospatialibControl {
         return [w,s,e,n]
     }
 
+    addWMSLayer(sourceId, {
+        params,
+    }={}) {
+        const map = this.map
+        
+        let source = map.getSource(sourceId)
+        if (!source) {
+            const getParams = {
+                SERVICE: 'WMS',
+                VERSION: '1.1.1',
+                REQUEST: 'GetMap',
+                LAYERS: params.name,
+                BBOX: "{bbox-epsg-3857}",
+                WIDTH: 256,
+                HEIGHT: 256,
+                SRS: "EPSG:3857",
+                FORMAT: "image/png",
+                TRANSPARENT: true,
+            }
+
+            for (const style in JSON.parse(params.styles ?? '{}')) {
+                getParams.STYLES = style
+                if (getParams.STYLES) break
+            }
+
+            const url = decodeURIComponent(pushQueryParamsToURLString(removeQueryParams(params.url), getParams))
+            console.log(url)
+
+            map.addSource(sourceId, {
+                "type": "raster",
+                "tiles": [url],
+                "tileSize": 256
+            })
+
+            source = map.getSource(sourceId)
+            source.metadata = {params}
+        }
+     
+        if (source) {
+            const id = `${sourceId}-${generateRandomString()}`
+            const beforeId = this.getBeforeId(id)
+
+            map.addLayer({
+                id,
+                type: "raster",
+                source: sourceId,
+            }, beforeId)   
+        }
+    }
+
+    async addLayerFromParams(params) {
+        const sourceId = Array(params.type, await hashJSON({
+            url:params.url,
+            format:params.format,
+            name:params.name,
+        })).join('-')
+
+        if (params.type === 'wms') {
+            this.addWMSLayer(sourceId, {params})
+        }
+    }
+
     createControl() {
         const isDarkMode = getPreferredTheme() !== 'light'
         if (isDarkMode) this.toggleBasemapGrayscale()
@@ -1292,7 +1358,7 @@ class GeospatialibControl {
             popup: ({body, head}={}) => {
                 this.map.getCanvas().style.cursor = 'pointer'
 
-                this.setGeoJSONData('popupFeature', {metadata:{title: 'Popup feature'}})
+                this.setGeoJSONData('popupFeature', {metadata:{params: {title: 'Popup feature'}}})
 
                 head.innerText = 'Popup options'
 
@@ -1604,7 +1670,8 @@ class GeospatialibControl {
             container.querySelectorAll(`[data-map-layer-source]`).forEach(el => {
                 el.addEventListener('click', (e) => {
                     const params = JSON.parse(el.getAttribute('data-map-layer-source') ?? '{}')
-                    console.log(params)
+                    if (!['url', 'format', 'name'].every(i => i in params)) return
+                    this.addLayerFromParams(params)
                 })
             })
         })
@@ -1634,7 +1701,7 @@ class UserControl {
             const searchResults = this.container.querySelector(`#searchResults`)
 
             let data
-            if (this.searchResultsBoundsToggle.checked) {
+            if (this.searchResultsBoundsToggle?.checked) {
                 const features = Array.from(searchResults.querySelectorAll(`[data-map-layer-source]`)).map(el => {
                     const properties = JSON.parse(el.getAttribute('data-map-layer-source') ?? '{}')
                     if (!properties.bbox) return
@@ -1649,7 +1716,7 @@ class UserControl {
             if (data?.features?.length) {
                 await geospatialibControl.setGeoJSONData(sourceId, {
                     data, 
-                    metadata: {title: 'Search result bounds'}
+                    metadata: {params: {title: 'Search result bounds'}}
                 })
 
                 const groups = Object.fromEntries(Array.from(new Set(data.features.map(f => f.properties.type))).map(i => {
@@ -1832,7 +1899,7 @@ class PlaceSearchControl {
                     if (data?.features?.length) {
                         await geospatialibControl.setGeoJSONData(sourceId, {
                             data, 
-                            metadata: {title: 'Place search result'}
+                            metadata: {params: {title: 'Place search result'}}
                         })
 
                         const color = `hsla(70, 100%, 50%, 1.00)`
