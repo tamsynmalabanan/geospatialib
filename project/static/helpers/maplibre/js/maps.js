@@ -1235,11 +1235,26 @@ class GeospatialibControl {
         return [w,s,e,n]
     }
 
-    addWMSLayer(sourceId, {
-        params,
-    }={}) {
+    async addWMSLayer(params, {
+        style
+    } = {}) {
         const map = this.map
         
+        const styleOptions = JSON.parse(params.styles ?? '{}')
+        if (!style || !(style in styleOptions)) {
+            for (const i in styleOptions) {
+                style = i
+                if (style) break
+            }
+        }
+
+        const sourceId = Array(params.type, await hashJSON({
+            url:params.url,
+            format:params.format,
+            name:params.name,
+            style,
+        })).join('-')
+
         let source = map.getSource(sourceId)
         if (!source) {
             const getParams = {
@@ -1253,15 +1268,10 @@ class GeospatialibControl {
                 SRS: "EPSG:3857",
                 FORMAT: "image/png",
                 TRANSPARENT: true,
-            }
-
-            for (const style in JSON.parse(params.styles ?? '{}')) {
-                getParams.STYLES = style
-                if (getParams.STYLES) break
+                ...(style ? {STYLES: style} : {})
             }
 
             const url = decodeURIComponent(pushQueryParamsToURLString(removeQueryParams(params.url), getParams))
-            console.log(url)
 
             map.addSource(sourceId, {
                 "type": "raster",
@@ -1270,7 +1280,7 @@ class GeospatialibControl {
             })
 
             source = map.getSource(sourceId)
-            source.metadata = {params}
+            source.metadata = {params, style}
         }
      
         if (source) {
@@ -1286,14 +1296,8 @@ class GeospatialibControl {
     }
 
     async addLayerFromParams(params) {
-        const sourceId = Array(params.type, await hashJSON({
-            url:params.url,
-            format:params.format,
-            name:params.name,
-        })).join('-')
-
         if (params.type === 'wms') {
-            this.addWMSLayer(sourceId, {params})
+            this.addWMSLayer(params)
         }
     }
 
@@ -1792,6 +1796,22 @@ class UserControl {
         this.container.parentNode.removeChild(this.container);
         this.map = undefined;
     }
+}
+
+class LegendControl {
+  onAdd(map) {
+    this.map = map
+    this.container = customCreateElement({className:'maplibregl-ctrl maplibregl-ctrl-group'})
+
+    
+
+    return this.container
+  }
+
+  onRemove() {
+    this.container.parentNode.removeChild(this.container);
+    this.map = undefined;
+  }
 }
 
 class FitToWorldControl {

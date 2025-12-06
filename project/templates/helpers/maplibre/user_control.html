@@ -7,7 +7,11 @@
 <div class="d-flex flex-column">
     <div class="maplibregl-ctrl maplibregl-ctrl-group btn-group dropup text-bg-{{theme}} d-flex justify-content-center align-items-center rounded-circle" style="width:40px;height:40px;">
         {% random_string as id %}
-        <div class="collapse position-absolute bottom-0 start-0 text-bg-{{theme}} mb-5 rounded border border-2 border-secondary border-opacity-25" id="{{id}}">
+        <div 
+            id="{{id}}"
+            class="collapse position-absolute bottom-0 start-0 text-bg-{{theme}} mb-5 rounded border border-2 border-secondary border-opacity-25" 
+            style="max-width:70vw;"
+        >
             <div 
                 class="d-flex flex-column gap-3 p-3 resizable resizable-top resizable-right" 
                 {% comment %} style="max-height:50vh;max-width:75vw;" {% endcomment %}
