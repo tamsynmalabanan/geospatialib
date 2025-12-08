@@ -4,8 +4,15 @@
     style="min-width:50vw;"
     {% comment %} x-data x-init="makeMovable($el)" {% endcomment %}
 >
+    <div class="d-flex justify-content-end">
+        <button 
+            type="button" 
+            class="btn bg-transparent border-0 bi bi-x" 
+            data-bs-toggle="collapse" data-bs-target="#searchResultsContainer" aria-expanded="false" aria-controls="searchResultsContainer"
+        ></button>
+    </div>
     <div 
-        class="d-flex flex-column gap-3 p-3 pb-4 resizable resizable-top resizable-right" 
+        class="d-flex flex-column gap-3 px-3 pb-4 resizable resizable-top resizable-right" 
         style="max-width:70vw;max-height:60vh;min-width: 50vw;"
     >
         <form 

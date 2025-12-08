@@ -2025,7 +2025,7 @@ class LegendControl {
         const removeLayer = customCreateElement({
             parent: legendMenu,
             tag: 'li',
-            className: 'dropdown-item',
+            className: 'dropdown-item fs-12',
             innerText: 'Remove layer',
             events: {
                 click: () => {
