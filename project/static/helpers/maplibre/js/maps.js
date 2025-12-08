@@ -1910,109 +1910,121 @@ class UserControl {
 }
 
 class LegendControl {
-  onAdd(map) {
-    this.map = map
-    this.container = customCreateElement({
-        className:`maplibregl-ctrl maplibregl-ctrl-group bg-transparent d-flex justify-content-center align-items-center border-0`,
-        style: {
-            boxShadow: 'none'
-        }
-    })
-
-    const collapse = customCreateElement({
-        parent: this.container,
-        className: `position-absolute top-0 end-0 text-bg-${getPreferredTheme()} rounded border border-2 border-secondary border-opacity-25 collapse collapse-top-right`,
-        events: {
-            'show.bs.collapse': (e) => {
-                if (e.target !== collapse) return
-                toggle.classList.add('d-none')
-            },
-            'hide.bs.collapse': (e) => {
-                if (e.target !== collapse) return
-                toggle.classList.remove('d-none')
-            },
-        }
-    })
-    
-    const content = customCreateElement({
-        parent: collapse,
-        className: `d-flex flex-column gap-1 px-2 pb-2`,
-        style: {
-            maxWidth: `70vw`,
-            maxHeight: `60vh`,
-        },
-    })
-    
-    const header = customCreateElement({
-        parent: content,
-        className: `d-flex align-items-center`,
-        style: {minWidth: '240px'}
-    })
-    
-    const title = customCreateElement({
-        tag: 'span',
-        parent: header,
-        className: `me-5 fw-bold`,
-        innerText: 'Legend'
-    })
-    
-    const menuCollapse = customCreateElement({
-        parent: content,
-        className: 'collapse',
-        innerText: 'legend menu',   
-    })
-    
-    const menuToggle = customCreateElement({
-        tag: 'button',
-        parent: header,
-        className: `ms-auto bi bi-three-dots text-end`,
-        attrs: {
-            type: 'button',
-            'data-bs-toggle': 'collapse',
-            'data-bs-target': `#${menuCollapse.id}`,
-            'aria-controls': menuCollapse.id,
-            'aria-expanded': false,
-        },
-    })
-    
-    const collapseToggle = customCreateElement({
-        tag: 'button',
-        parent: header,
-        className: `bi bi-x text-end border-0`,
-        attrs: {
-            type: 'button',
-            'data-bs-toggle': 'collapse',
-            'data-bs-target': `#${collapse.id}`,
-            'aria-controls': collapse.id,
-            'aria-expanded': false,
-        },
-    })
-
-    const toggle = customCreateElement({
-        tag: 'button',
-        parent: this.container,
-        attrs: {
-            type: 'button',
-            'data-bs-toggle': 'collapse',
-            'data-bs-target': `#${collapse.id}`,
-            'aria-controls': collapse.id,
-            'aria-expanded': false,
-        },
-        innerText: '📚',
-        className: `btn fs-20 rounded-circle text-bg-${getPreferredTheme()} rounded-circle border border-2 border-opacity-50`,
+    createControl() {
+        const collapse = customCreateElement({
+            parent: this.container,
+            className: `position-absolute top-0 end-0 text-bg-${getPreferredTheme()} rounded border border-2 border-secondary border-opacity-25 collapse collapse-top-right`,
+            events: {
+                'show.bs.collapse': (e) => {
+                    if (e.target !== collapse) return
+                    toggle.classList.add('d-none')
+                },
+                'hide.bs.collapse': (e) => {
+                    if (e.target !== collapse) return
+                    toggle.classList.remove('d-none')
+                },
+            }
+        })
+        
+        const content = customCreateElement({
+            parent: collapse,
+            className: `d-flex flex-column gap-1 p-2`,
             style: {
-            width:'42px',
-            height:'40px',
+                maxWidth: `70vw`,
+                maxHeight: `60vh`,
+            },
+        })
+        
+        const header = customCreateElement({
+            parent: content,
+            className: `d-flex align-items-center gap-2`,
+            style: {minWidth: '240px'}
+        })
+        
+        const title = customCreateElement({
+            tag: 'span',
+            parent: header,
+            className: `me-5 fw-bold`,
+            innerText: 'Legend'
+        })
+        
+        const menuCollapse = customCreateElement({
+            parent: content,
+            className: 'collapse',
+            innerText: 'legend menu',   
+        })
+        
+        const menuToggle = customCreateElement({
+            tag: 'button',
+            parent: header,
+            className: `ms-auto bi bi-list text-end w-auto h-auto`,
+            attrs: {
+                type: 'button',
+                'data-bs-toggle': 'collapse',
+                'data-bs-target': `#${menuCollapse.id}`,
+                'aria-controls': menuCollapse.id,
+                'aria-expanded': false,
+            },
+        })
+        
+        const collapseToggle = customCreateElement({
+            tag: 'button',
+            parent: header,
+            className: `bi bi-x text-end border-0 w-auto h-auto`,
+            attrs: {
+                type: 'button',
+                'data-bs-toggle': 'collapse',
+                'data-bs-target': `#${collapse.id}`,
+                'aria-controls': collapse.id,
+                'aria-expanded': false,
+            },
+        })
+
+        const toggle = customCreateElement({
+            tag: 'button',
+            parent: this.container,
+            attrs: {
+                type: 'button',
+                'data-bs-toggle': 'collapse',
+                'data-bs-target': `#${collapse.id}`,
+                'aria-controls': collapse.id,
+                'aria-expanded': false,
+            },
+            innerText: '📚',
+            className: `btn fs-20 rounded-circle text-bg-${getPreferredTheme()} rounded-circle border border-2 border-opacity-50`,
+                style: {
+                width:'42px',
+                height:'40px',
+            }
+        })
+
+        const layers = this.layers = customCreateElement({
+            parent: content,
+            className: 'd-flex flex-column gap-2 pe-2 overflow-y-auto',
+        })
+
+        return layers
+    }
+
+    getLayerLegend(layer) {
+        const metadata = layer.metadata
+        const params = metadata.params
+        const type = params.type
+        if (Array('wms').includes(type)) {
+            return customCreateElement({
+                tag: 'img',
+                attrs: {
+                    src: JSON.parse(params.styles ?? '{}')[metadata.style]?.legend,
+                    alt: params.title,
+                }
+            })
         }
-    })
+    }
 
-    const layers = this.layers = customCreateElement({
-        parent: content,
-        className: 'd-flex flex-column gap-3',
-    })
-
-    this.map.on('layeradded', (e) => {
+    addLayerLegend(e) {
         if (this.map.getSettingsControl().config.fixedLayers.find(i => e.layer.id.startsWith(i))) return
+
+        console.log('check if vector layer and legendContainer already exists')
 
         const legendContainer = customCreateElement({
             className: 'd-flex flex-column',
@@ -2020,22 +2032,36 @@ class LegendControl {
                 'data-map-layer-id': e.layer.id
             }
         })
+        this.layers.insertBefore(legendContainer, this.layers.firstChild)
 
         const legendHeader = customCreateElement({
             parent: legendContainer,
-            className: 'd-flex align-items-center'
+            className: 'd-flex align-items-top justify-content-between'
+        })
+
+        const legendStyle = customCreateElement({
+            parent: legendContainer,
+            className: 'collapse show user-select-none',
+            innerHTML: this.getLayerLegend(e.layer)
         })
 
         const legendTitle = customCreateElement({
             parent: legendHeader,
             tag: 'span',
-            innerText: e.layer.metadata.params.title
+            className: `user-select-none`,
+            innerText: e.layer.metadata.params.title,
+            attrs: {
+                'data-bs-toggle': "collapse",
+                'data-bs-target': `#${legendStyle.id}`,
+                'aria-expanded': "true",
+                'aria-controls': legendStyle.id,
+            }
         })
 
         const legendMenuToggle = customCreateElement({
             parent: legendHeader,
             tag: 'button',
-            className: 'ms-auto bi bi-three-dots text-end',
+            className: 'bi bi-three-dots text-end ms-5',
             attrs: {
                 'data-bs-toggle':"dropdown", 
                 'aria-expanded':"false",
@@ -2059,21 +2085,33 @@ class LegendControl {
                 }
             }
         })
+
         
-        layers.insertBefore(legendContainer, layers.firstChild)
-    })
+        
+    }
 
-    this.map.on('layerremoved', (e) => {
-        layers.querySelector(`[data-map-layer-id="${e.layerId}"]`)?.remove()
-    })
+    removeLayerLegend(e) {
+        this.layers.querySelector(`[data-map-layer-id="${e.layerId}"]`)?.remove()
+    }
 
-    return this.container
-  }
+    onAdd(map) {
+        this.map = map
+        this.container = customCreateElement({
+            className:`maplibregl-ctrl maplibregl-ctrl-group bg-transparent d-flex justify-content-center align-items-center border-0`,
+            style: { boxShadow: 'none' }
+        })
 
-  onRemove() {
-    this.container.parentNode.removeChild(this.container);
-    this.map = undefined;
-  }
+        this.createControl()
+        this.map.on('layeradded', (e) => this.addLayerLegend(e))
+        this.map.on('layerremoved', (e) => this.removeLayerLegend(e))
+
+        return this.container
+    }
+
+    onRemove() {
+        this.container.parentNode.removeChild(this.container);
+        this.map = undefined;
+    }
 }
 
 class FitToWorldControl {
