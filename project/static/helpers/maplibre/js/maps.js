@@ -1913,21 +1913,30 @@ class LegendControl {
   onAdd(map) {
     this.map = map
     this.container = customCreateElement({
-        className:`maplibregl-ctrl maplibregl-ctrl-group dropdown text-bg-${getPreferredTheme()} d-flex justify-content-center align-items-center rounded-circle`,
+        className:`maplibregl-ctrl maplibregl-ctrl-group bg-transparent d-flex justify-content-center align-items-center border-0`,
         style: {
-            width:'42px',
-            height:'40px',
+            boxShadow: 'none'
         }
     })
 
     const collapse = customCreateElement({
         parent: this.container,
         className: `position-absolute top-0 end-0 text-bg-${getPreferredTheme()} rounded border border-2 border-secondary border-opacity-25 collapse collapse-top-right`,
+        events: {
+            'show.bs.collapse': (e) => {
+                if (e.target !== collapse) return
+                toggle.classList.add('d-none')
+            },
+            'hide.bs.collapse': (e) => {
+                if (e.target !== collapse) return
+                toggle.classList.remove('d-none')
+            },
+        }
     })
     
     const content = customCreateElement({
         parent: collapse,
-        className: `d-flex flex-column p-3 pt-4 gap-1`,
+        className: `d-flex flex-column gap-1 px-2 pb-2`,
         style: {
             maxWidth: `70vw`,
             maxHeight: `60vh`,
@@ -1965,6 +1974,19 @@ class LegendControl {
             'aria-expanded': false,
         },
     })
+    
+    const collapseToggle = customCreateElement({
+        tag: 'button',
+        parent: header,
+        className: `bi bi-x text-end border-0`,
+        attrs: {
+            type: 'button',
+            'data-bs-toggle': 'collapse',
+            'data-bs-target': `#${collapse.id}`,
+            'aria-controls': collapse.id,
+            'aria-expanded': false,
+        },
+    })
 
     const toggle = customCreateElement({
         tag: 'button',
@@ -1977,7 +1999,11 @@ class LegendControl {
             'aria-expanded': false,
         },
         innerText: '📚',
-        className: 'btn mb-1 h-auto w-auto fs-20 rounded-circle z-1',
+        className: `btn fs-20 rounded-circle text-bg-${getPreferredTheme()} rounded-circle border border-2 border-opacity-50`,
+            style: {
+            width:'42px',
+            height:'40px',
+        }
     })
 
     const layers = this.layers = customCreateElement({
