@@ -95,3 +95,49 @@
 .active-border-none:active {
     border-color: transparent !important;
 }
+
+.collapse-bottom-left.collapsing {
+  position: relative;
+  height: auto;       /* override Bootstrap height animation */
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  transform-origin: bottom left;   /* anchor at top-right */
+  transform: scale(0);           /* collapsed state */
+  opacity: 0;
+}
+
+.collapse-bottom-left.collapse.show {
+  transform: scale(1);           /* expanded state */
+  opacity: 1;
+  transform-origin: bottom left;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+
+}
+
+.collapse-bottom-left.collapse {
+  transform: scale(0);
+  opacity: 0;
+  transform-origin: bottom left;
+}
+
+.collapse-top-right.collapsing {
+  position: relative;
+  height: auto;       /* override Bootstrap height animation */
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  transform-origin: top right;   /* anchor at top-right */
+  transform: scale(0);           /* collapsed state */
+  opacity: 0;
+}
+
+.collapse-top-right.collapse.show {
+  transform: scale(1);           /* expanded state */
+  opacity: 1;
+  transform-origin: top right;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+
+}
+
+.collapse-top-right.collapse {
+  transform: scale(0);
+  opacity: 0;
+  transform-origin: top right;
+}

@@ -34,6 +34,10 @@ def field_name(exp):
     return exp.split('__')[-1]
 
 @register.filter
+def startswith(v1, v2):
+    return v1.startswith(v2)
+
+@register.filter
 def sub_bool(value, sub):
     if isinstance(value, bool):
         if value:

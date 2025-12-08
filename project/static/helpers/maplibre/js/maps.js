@@ -1,4 +1,4 @@
-class GeospatialibControl {     
+class SettingsControl {     
     constructor(options = {}) {
         this.options = options
         this.container = null
@@ -149,6 +149,13 @@ class GeospatialibControl {
 
         const event = new Event('userControlInit')
         this.map._container.dispatchEvent(event)
+    }
+    
+    setLegendControl({
+        position='top-right',
+    }={}) {
+        const control = new LegendControl()
+        this.map.addControl(control, position)
     }
 
     setTerrainSource({
@@ -323,6 +330,12 @@ class GeospatialibControl {
 
         const container = popupContent.firstChild
         container.style.color = getPreferredTheme() === 'light' ? 'hsla(0, 0%, 0%, 1)' : 'hsla(0, 0%, 100%, 1)'
+    }
+
+    configTooltip() {
+        this.map.on('mousemove', (e) => {
+            this.createTooltip(e)
+        })
     }
     
     async createPopup(e) { 
@@ -552,6 +565,12 @@ class GeospatialibControl {
         }
     }
     
+    configPopup() {
+        this.map.on('click', (e) => {
+            this.createPopup(e)
+        })
+    }
+
     getFeatureLabel(f) {
         console.log('check user defined label properties')
 
@@ -1235,7 +1254,16 @@ class GeospatialibControl {
         return [w,s,e,n]
     }
 
-    async addWMSLayer(params, {
+    configBboxFiels() {
+        this.map.on('moveend', (e) => {
+            const geom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
+            this.map._container.parentElement.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
+                el.value = geom
+            })
+        })
+    }
+
+    async addWMSLayer(sourcePrefix, params, {
         style
     } = {}) {
         const map = this.map
@@ -1248,12 +1276,7 @@ class GeospatialibControl {
             }
         }
 
-        const sourceId = Array(params.type, await hashJSON({
-            url:params.url,
-            format:params.format,
-            name:params.name,
-            style,
-        })).join('-')
+        const sourceId = Array(sourcePrefix, style).join('-')
 
         let source = map.getSource(sourceId)
         if (!source) {
@@ -1291,13 +1314,93 @@ class GeospatialibControl {
                 id,
                 type: "raster",
                 source: sourceId,
+                metadata: {
+                    ...source.metadata
+                }
             }, beforeId)   
+
         }
     }
 
-    async addLayerFromParams(params) {
+    async addLegendLayer(params) {
+        const sourcePrefix = Array(params.type, await hashJSON({
+            url:params.url,
+            format:params.format,
+            name:params.name,
+        })).join('-')
+
         if (params.type === 'wms') {
-            this.addWMSLayer(params)
+            this.addWMSLayer(sourcePrefix, params)
+        }
+    }
+
+    handleHTMXContent() {
+        this.map._container.parentElement.addEventListener('htmx:afterSwap', (e) => {
+            const container = e.target.parentElement
+            
+            const bboxGeom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
+            container.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
+                el.value = bboxGeom
+            })
+
+            container.querySelectorAll(`[data-map-bbox-source]`).forEach(el => {
+                const bbox = el.getAttribute('data-map-bbox-source')
+                if (!bbox) return
+                
+                el.addEventListener('click', (e) => {
+                    this.map.fitBounds(JSON.parse(bbox), {padding:100, maxZoom:11})
+                })
+            })
+
+            container.querySelectorAll(`[data-map-layer-source]`).forEach(async el => {
+                const params = JSON.parse(el.getAttribute('data-map-layer-source') ?? '{}')
+                if (!['url', 'format', 'name'].every(i => i in params)) return
+                
+                el.addEventListener('click', (e) => {
+                    el.classList.add('text-success')
+                    this.addLegendLayer(params)
+                })
+
+                const sourcePrefix = Array(params.type, await hashJSON({
+                    url:params.url,
+                    format:params.format,
+                    name:params.name,
+                })).join('-')
+
+                if (this.map.getStyle().layers.find(l => l.source.startsWith(sourcePrefix))) {
+                    el.classList.add('text-success')
+                }
+                
+                this.map.on('layerremoved', (e) => {
+                    if (!e.layerId.startsWith(sourcePrefix)) return
+
+                    if (this.map.getStyle().layers.find(l => l.source.startsWith(sourcePrefix))) {
+                        el.classList.add('text-success')
+                    } else {
+                        el.classList.remove('text-success')
+                    }
+                })
+            })
+        })
+    }
+
+    configMapAddLayer() {
+        const originalAddLayer = this.map.addLayer.bind(this.map)
+
+        this.map.addLayer = (layer, beforeId) => {
+            const result = originalAddLayer(layer, beforeId)
+            this.map.fire('layeradded', { layer })
+            return result
+        }
+    }
+
+    configRemoveLayer() {
+        const originalRemoveLayer = this.map.removeLayer.bind(this.map)
+
+        this.map.removeLayer = (layerId) => {
+            const result = originalRemoveLayer(layerId)
+            this.map.fire('layerremoved', { layerId })
+            return result
         }
     }
 
@@ -1625,60 +1728,28 @@ class GeospatialibControl {
     onAdd(map) {
         this.map = map
 
-        const mapContainer = this.map._container.parentElement
-
         this.setPlaceSearchControl()
         this.setNavControl()
         this.setTerrainControl()
         this.setGeolocateControl()
         this.setFitToWorldControl()
         this.setUserControl()
+        this.setLegendControl()
         this.setScaleControl()
         this.setFullscreenControl()
         this.configAttributionControl()
 
+        this.configPopup()
+        this.configTooltip()
+
+        this.configBboxFiels()
+        this.handleHTMXContent()
+
+        this.configMapAddLayer()
+        this.configRemoveLayer()
+
         this.createControl()
-        this.map.getGeospatialibControl = () => this
-        
-        this.map.on('click', (e) => {
-            this.createPopup(e)
-        })
-
-        this.map.on('mousemove', (e) => {
-            this.createTooltip(e)
-        })
-
-        this.map.on('moveend', (e) => {
-            const geom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
-            mapContainer.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
-                el.value = geom
-            })
-        })
-
-        mapContainer.addEventListener('htmx:afterSwap', (e) => {
-            const container = e.target.parentElement
-            
-            const geom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
-            container.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
-                el.value = geom
-            })
-
-            container.querySelectorAll(`[data-map-bbox-source]`).forEach(el => {
-                el.addEventListener('click', (e) => {
-                    const bbox = el.getAttribute('data-map-bbox-source')
-                    if (!bbox) return
-                    this.map.fitBounds(JSON.parse(bbox), {padding:100, maxZoom:11})
-                })
-            })
-
-            container.querySelectorAll(`[data-map-layer-source]`).forEach(el => {
-                el.addEventListener('click', (e) => {
-                    const params = JSON.parse(el.getAttribute('data-map-layer-source') ?? '{}')
-                    if (!['url', 'format', 'name'].every(i => i in params)) return
-                    this.addLayerFromParams(params)
-                })
-            })
-        })
+        this.map.getSettingsControl = () => this
 
         return this.container
     }
@@ -1694,14 +1765,16 @@ class UserControl {
         this.options = options
         this.container = null
         this.searchResultsBoundsToggle = null
+        this.searchResultsThumbnailsToggle = null
         this.toggleSearchResultsBoundsTimeout = null
+        this.toggleSearchResultsThumbnailsTimeout = null
     }
 
     toggleSearchResultsBounds() {
         clearTimeout(this.toggleSearchResultsBoundsTimeout)
         this.toggleSearchResultsBoundsTimeout = setTimeout(async () => {
             const sourceId = 'searchResultBounds'
-            const geospatialibControl = this.map.getGeospatialibControl()
+            const SettingsControl = this.map.getSettingsControl()
             const searchResults = this.container.querySelector(`#searchResults`)
 
             let data
@@ -1718,14 +1791,14 @@ class UserControl {
             }
             
             if (data?.features?.length) {
-                await geospatialibControl.setGeoJSONData(sourceId, {
+                await SettingsControl.setGeoJSONData(sourceId, {
                     data, 
                     metadata: {params: {title: 'Search result bounds'}}
                 })
 
                 const groups = Object.fromEntries(Array.from(new Set(data.features.map(f => f.properties.type))).map(i => {
                     const color = rgbToHSLA(searchResults.querySelector(`[title="${i}"]`).style.backgroundColor)
-                    const params = geospatialibControl.getLayerParams({
+                    const params = SettingsControl.getLayerParams({
                         filter: ["==", "type", i],
                         color,
                         customParams: {
@@ -1756,9 +1829,9 @@ class UserControl {
                     return [i, params]
                 }))
 
-                geospatialibControl.addGeoJSONLayers(sourceId, {groups})
+                SettingsControl.addGeoJSONLayers(sourceId, {groups})
             } else {
-                geospatialibControl.resetGeoJSONSource(sourceId)
+                SettingsControl.resetGeoJSONSource(sourceId)
             }
         }, 200)
     }
@@ -1779,6 +1852,41 @@ class UserControl {
             }
         })
     }
+
+    toggleSearchResultsThumbnails() {
+        clearTimeout(this.toggleSearchResultsThumbnailsTimeout)
+        this.toggleSearchResultsThumbnailsTimeout = setTimeout(async () => {
+            const searchResults = this.container.querySelector(`#searchResults`)
+            const thumbnails = Array.from(searchResults.querySelectorAll(`.carousel`))
+
+            if (this.searchResultsThumbnailsToggle?.checked) {
+                thumbnails.forEach(el => {
+                    el.classList.remove('d-none')
+                })
+            } else {
+                thumbnails.forEach(el => {
+                    el.classList.add('d-none')
+                })
+            }
+        }, 200)
+    }
+
+    handleSearchResultsThumbnailsToggle() {
+        this.container.addEventListener('htmx:afterSwap', (e) => {
+            const searchResultsThumbnailsToggle = e.target.parentElement.querySelector(`#searchResultsThumbnailsToggle`)
+            if (searchResultsThumbnailsToggle) {
+                this.searchResultsThumbnailsToggle = searchResultsThumbnailsToggle
+                this.toggleSearchResultsThumbnails()
+                searchResultsThumbnailsToggle.addEventListener('click', (e) => {
+                    this.toggleSearchResultsThumbnails()
+                })
+            }
+
+            if (e.detail.pathInfo.requestPath.startsWith(`/htmx/library/search/`)) {
+                this.toggleSearchResultsThumbnails()
+            }
+        })
+    }
     
     onAdd(map) {
         this.map = map
@@ -1788,6 +1896,7 @@ class UserControl {
         })
 
         this.handleSearchResultsBoundsToggle()
+        this.handleSearchResultsThumbnailsToggle()
 
         return this.container
     }
@@ -1801,9 +1910,133 @@ class UserControl {
 class LegendControl {
   onAdd(map) {
     this.map = map
-    this.container = customCreateElement({className:'maplibregl-ctrl maplibregl-ctrl-group'})
+    this.container = customCreateElement({
+        className:`maplibregl-ctrl maplibregl-ctrl-group dropdown text-bg-${getPreferredTheme()} d-flex justify-content-center align-items-center rounded-circle`,
+        style: {
+            width:'42px',
+            height:'40px',
+        }
+    })
 
+    const collapse = customCreateElement({
+        parent: this.container,
+        className: `position-absolute top-0 end-0 text-bg-${getPreferredTheme()} rounded border border-2 border-secondary border-opacity-25 collapse collapse-top-right`,
+    })
     
+    const content = customCreateElement({
+        parent: collapse,
+        className: `d-flex flex-column p-3 pt-4 gap-1`,
+        style: {
+            maxWidth: `70vw`,
+            maxHeight: `60vh`,
+        },
+    })
+    
+    const header = customCreateElement({
+        parent: content,
+        className: `d-flex align-items-center`,
+        style: {minWidth: '240px'}
+    })
+    
+    const title = customCreateElement({
+        tag: 'span',
+        parent: header,
+        className: `me-5 fw-bold`,
+        innerText: 'Legend'
+    })
+    
+    const menuCollapse = customCreateElement({
+        parent: content,
+        className: 'collapse',
+        innerText: 'legend menu',   
+    })
+    
+    const menuToggle = customCreateElement({
+        tag: 'button',
+        parent: header,
+        className: `ms-auto bi bi-three-dots text-end`,
+        attrs: {
+            type: 'button',
+            'data-bs-toggle': 'collapse',
+            'data-bs-target': `#${menuCollapse.id}`,
+            'aria-controls': menuCollapse.id,
+            'aria-expanded': false,
+        },
+    })
+
+    const toggle = customCreateElement({
+        tag: 'button',
+        parent: this.container,
+        attrs: {
+            type: 'button',
+            'data-bs-toggle': 'collapse',
+            'data-bs-target': `#${collapse.id}`,
+            'aria-controls': collapse.id,
+            'aria-expanded': false,
+        },
+        innerText: '📚',
+        className: 'btn mb-1 h-auto w-auto fs-20 rounded-circle z-1',
+    })
+
+    const layers = this.layers = customCreateElement({
+        parent: content,
+        className: 'd-flex flex-column gap-3',
+    })
+
+    this.map.on('layeradded', (e) => {
+        if (this.map.getSettingsControl().config.fixedLayers.find(i => e.layer.id.startsWith(i))) return
+
+        const legendContainer = customCreateElement({
+            parent: layers,
+            className: 'd-flex flex-column',
+            attrs: {
+                'data-map-layer-id': e.layer.id
+            }
+        })
+
+        const legendHeader = customCreateElement({
+            parent: legendContainer,
+            className: 'd-flex align-items-center'
+        })
+
+        const legendTitle = customCreateElement({
+            parent: legendHeader,
+            tag: 'span',
+            innerText: e.layer.metadata.params.title
+        })
+
+        const legendMenuToggle = customCreateElement({
+            parent: legendHeader,
+            tag: 'button',
+            className: 'ms-auto bi bi-three-dots text-end',
+            attrs: {
+                'data-bs-toggle':"dropdown", 
+                'aria-expanded':"false",
+            }
+        })
+
+        const legendMenu = customCreateElement({
+            parent: legendHeader,
+            tag: 'ul',
+            className: 'dropdown-menu'
+        })
+
+        const removeLayer = customCreateElement({
+            parent: legendMenu,
+            tag: 'li',
+            className: 'dropdown-item',
+            innerText: 'Remove layer',
+            events: {
+                click: () => {
+                    this.map.removeLayer(e.layer.id)
+                }
+            }
+        })
+    })
+
+    this.map.on('layerremoved', (e) => {
+        layers.querySelector(`[data-map-layer-id="${e.layerId}"]`)?.remove()
+    })
 
     return this.container
   }
@@ -1889,8 +2122,8 @@ class PlaceSearchControl {
                 change: async (e) => {
                     const sourceId = 'placeSearch'
 
-                    const geospatialibControl = this.map.getGeospatialibControl()
-                    geospatialibControl.resetGeoJSONSource(sourceId)
+                    const SettingsControl = this.map.getSettingsControl()
+                    SettingsControl.resetGeoJSONSource(sourceId)
                     
                     const value = input.value.trim()
                     if (value === '') return
@@ -1917,15 +2150,15 @@ class PlaceSearchControl {
                     }
 
                     if (data?.features?.length) {
-                        await geospatialibControl.setGeoJSONData(sourceId, {
+                        await SettingsControl.setGeoJSONData(sourceId, {
                             data, 
                             metadata: {params: {title: 'Place search result'}}
                         })
 
                         const color = `hsla(70, 100%, 50%, 1.00)`
-                        geospatialibControl.addGeoJSONLayers(sourceId, {
+                        SettingsControl.addGeoJSONLayers(sourceId, {
                             groups:  {
-                                default: geospatialibControl.getLayerParams({
+                                default: SettingsControl.getLayerParams({
                                     color,
                                     customParams: {
                                         'fill' : {
@@ -2030,7 +2263,7 @@ const initMapLibreMap = (el) => {
     })
 
     map.on('style.load', () => {
-        const control = new GeospatialibControl()
+        const control = new SettingsControl()
         map.addControl(control, 'bottom-right')
 
         map.getCanvas().classList.add(`bg-${getPreferredTheme()}`)

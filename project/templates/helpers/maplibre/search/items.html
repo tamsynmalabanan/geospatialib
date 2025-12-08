@@ -21,7 +21,7 @@
         <div class="card w-100 border border-2 border-secondary border-opacity-25 rounded">
             {% if thumbnails %}
                 {% random_string as thumbnails_id %}
-                <div id="{{thumbnails_id}}" class="carousel slide bg-light ignore-theme rounded-top">
+                <div id="{{thumbnails_id}}" class="carousel slide bg-light ignore-theme rounded-top d-none">
                     <div class= "carousel-inner">
                         {% for i in thumbnails  %}
                             <div class="carousel-item {% if forloop.first %}active{% endif %}">
@@ -39,9 +39,26 @@
                             <span class="visually-hidden">Next</span>
                         </button>           
                     {% endif %}
+                </div>
+            {% endif %}
+            <div class="card-body w-100 d-flex flex-column p-2 gap-2">
+                <h6 class="card-title fs-12 fw-bold m-0">{{data.title}}</h6>
+                {% if collection.format|startswith:'ogc-' %}
+                    <h6 class="card-subtitle fw-bold text-body-secondary fs-12">{{data.name}}</h6>
+                {% endif %}
+                <a 
+                    class="text-muted text-decoration-none mt-auto text-nowrap text-truncate" 
+                    href="{{url}}" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    title="Go to {{url}}"
+                >{{url|subdomain}}</a>
+            </div>
+            <div class="card-footer d-flex p-0">
+                <div class='d-flex align-items-center ps-2 pe-1'>
                     {% variable 360|divided_by:11 as color_section %}
-                    <span
-                        class="badge font-monospace align-top user-select-none fs-10 position-absolute top-0 left-0 m-2"
+                    <span   
+                        class="badge font-monospace align-top user-select-none fs-10"
                         title="{{type}}" 
                         style="background-color:hsla(
                             {% if type == 'wms' %}
@@ -70,17 +87,9 @@
                         , 100%, 25%, 1);"
                     >{{type}}</span>
                 </div>
-            {% endif %}
-            <div class="card-body w-100 d-flex flex-column p-2 gap-2">
-                <h6 class="card-title fs-12 fw-bold m-0">{{data.title}}</h6>
-                {% if type == 'wms' or type == 'wfs' %}
-                    <h6 class="card-subtitle text-body-secondary fs-12">{{data.name}}</h6>
-                {% endif %}
-            </div>
-            <div class="card-footer d-flex p-0"> 
                 <button 
                     title='Add layer to map'
-                    class="bg-transparent border-0 p-0 fs-14 add-layer-button bi bi-plus-lg" 
+                    class="bg-transparent border-0 p-0 fs-12 add-layer-button bi bi-plus-circle-fill" 
                     tabindex="-1"
                     data-map-layer-source="{{data|dump_json}}"
                 ></button>
@@ -97,21 +106,13 @@
                     data-bs-toggle="modal"
                     data-bs-target="#layerInfoModal"
                 ></button> {% endcomment %}
-                <a 
-                    class="bi bi-box-arrow-up-right text-reset text-decoration-none text-center pt-1" 
-                    href="{{url}}" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    title="Go to {{url}}"
-                    style="height:29px;width:29px;"
-                ></a>
             </div>
         </div>
     </li>
     {% if forloop.last and page_obj.has_next %}
         <li id="searchResultsSpinner-{{page_obj.number}}" class="list-group-item htmx-indicator col-12">
             <div class='d-flex justify-content-center gap-3'>
-                {% with spinner_class="spinner-grow spinner-grow-sm text-primary my-3" %}
+                {% with spinner_class="spinner-grow spinner-grow-sm text-secondary my-3" %}
                     <div class="{{spinner_class}}" role="status"></div>
                     <div class="{{spinner_class}}" role="status"></div>
                     <div class="{{spinner_class}}" role="status"></div>

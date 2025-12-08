@@ -88,7 +88,9 @@ const hashJSON = async (jsonObj) => {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
-const generateRandomColor = () => `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
+const generateRandomColor = () => {
+    return `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
+}
 
 const parseNumberFromString = (string) => {
     const regex = /\d+(\.\d+)?/;
@@ -361,7 +363,9 @@ const relationHandlers = (name) => {
     }[name]
 }
 
-const removeWhitespace = (str) => (str.replaceAll(/\s{2,}/g, ' ')).trim()
+const removeWhitespace = (str) => {
+    return (str.replaceAll(/\s{2,}/g, ' ')).trim()
+}
 
 const makeMovable = (element) => {
     let isDragging = false, offsetX, offsetY

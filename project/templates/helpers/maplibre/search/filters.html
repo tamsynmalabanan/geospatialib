@@ -61,9 +61,24 @@
                 Results for "{{request.GET.query}}" ({{count|format_number}})
             </span>
             <div class="ms-auto d-flex flex-nowrap gap-3">
-                <input type="checkbox" class="btn-check" id="searchResultsBoundsToggle" autocomplete="off">
-                <label class="bi bi-intersect p-0" for="searchResultsBoundsToggle" title='Togle search result bounds'></label>
-                <button class="border-0 bg-transparent px-0 bi bi-chevron-bar-up fs-14 d-flex justify-content-end pt-1 w-auto h-auto" tabindex="-1" type="button" data-bs-toggle="collapse" data-bs-target=".multi-collapse" aria-expanded="true" aria-controls="libraryFormFields libraryFormFilters" title='Toggle search form'></button>
+                <div>
+                    <input type="checkbox" class="btn-check" id="searchResultsThumbnailsToggle" autocomplete="off" checked>
+                    <label class="bi bi-image p-0" for="searchResultsThumbnailsToggle" title='Togle search result thumbnails'></label>
+                </div>
+                <div>
+                    <input type="checkbox" class="btn-check" id="searchResultsBoundsToggle" autocomplete="off">
+                    <label class="bi bi-intersect p-0" for="searchResultsBoundsToggle" title='Togle search result bounds'></label>
+                </div>
+                <button 
+                    class="border-0 bg-transparent px-0 bi bi-chevron-bar-up fs-14 d-flex justify-content-end pt-1 w-auto h-auto" 
+                    tabindex="-1" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target=".multi-collapse" 
+                    aria-expanded="true" 
+                    aria-controls="libraryFormFields libraryFormFilters" 
+                    title='Toggle search form'
+                ></button>
             </div>
         {% else %}
             <span class='text-break mb-3'>No results found for "{{request.GET.query}}"</span>
