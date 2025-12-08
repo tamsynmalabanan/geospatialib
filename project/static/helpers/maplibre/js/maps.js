@@ -2008,8 +2008,8 @@ class LegendControl {
 
     getLayerLegend(layer) {
         const metadata = layer.metadata
-        const params = metadata.params
-        const type = params.type
+        const params = metadata?.params
+        const type = params?.type
         if (Array('wms').includes(type)) {
             return customCreateElement({
                 tag: 'img',
