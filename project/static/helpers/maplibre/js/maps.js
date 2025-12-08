@@ -1257,7 +1257,7 @@ class SettingsControl {
     configBboxFiels() {
         this.map.on('moveend', (e) => {
             const geom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
-            this.map._container.parentElement.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
+            this.map._container.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
                 el.value = geom
             })
         })
@@ -1335,7 +1335,7 @@ class SettingsControl {
     }
 
     handleHTMXContent() {
-        this.map._container.parentElement.addEventListener('htmx:afterSwap', (e) => {
+        this.map._container.addEventListener('htmx:afterSwap', (e) => {
             const container = e.target.parentElement
             
             const bboxGeom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
@@ -1775,7 +1775,7 @@ class UserControl {
         this.toggleSearchResultsBoundsTimeout = setTimeout(async () => {
             const sourceId = 'searchResultBounds'
             const SettingsControl = this.map.getSettingsControl()
-            const searchResults = this.container.querySelector(`#searchResults`)
+            const searchResults = this.map._container.querySelector(`#searchResults`)
 
             let data
             if (this.searchResultsBoundsToggle?.checked) {
@@ -1837,8 +1837,9 @@ class UserControl {
     }
 
     handleSearchResultsBoundsToggle() {
-        this.container.addEventListener('htmx:afterSwap', (e) => {
-            const searchResultsBoundsToggle = e.target.parentElement.querySelector(`#searchResultsBoundsToggle`)
+        const mapContainer = this.map._container
+        mapContainer.addEventListener('htmx:afterSwap', (e) => {
+            const searchResultsBoundsToggle = mapContainer.querySelector(`#searchResultsBoundsToggle`)
             if (searchResultsBoundsToggle) {
                 this.searchResultsBoundsToggle = searchResultsBoundsToggle
                 this.toggleSearchResultsBounds()
@@ -1856,7 +1857,7 @@ class UserControl {
     toggleSearchResultsThumbnails() {
         clearTimeout(this.toggleSearchResultsThumbnailsTimeout)
         this.toggleSearchResultsThumbnailsTimeout = setTimeout(async () => {
-            const searchResults = this.container.querySelector(`#searchResults`)
+            const searchResults = this.map._container.querySelector(`#searchResults`)
             const thumbnails = Array.from(searchResults.querySelectorAll(`.carousel`))
 
             if (this.searchResultsThumbnailsToggle?.checked) {
@@ -1872,8 +1873,9 @@ class UserControl {
     }
 
     handleSearchResultsThumbnailsToggle() {
-        this.container.addEventListener('htmx:afterSwap', (e) => {
-            const searchResultsThumbnailsToggle = e.target.parentElement.querySelector(`#searchResultsThumbnailsToggle`)
+        const mapContainer = this.map._container
+        mapContainer.addEventListener('htmx:afterSwap', (e) => {
+            const searchResultsThumbnailsToggle = mapContainer.querySelector(`#searchResultsThumbnailsToggle`)
             if (searchResultsThumbnailsToggle) {
                 this.searchResultsThumbnailsToggle = searchResultsThumbnailsToggle
                 this.toggleSearchResultsThumbnails()
@@ -1987,7 +1989,6 @@ class LegendControl {
         if (this.map.getSettingsControl().config.fixedLayers.find(i => e.layer.id.startsWith(i))) return
 
         const legendContainer = customCreateElement({
-            parent: layers,
             className: 'd-flex flex-column',
             attrs: {
                 'data-map-layer-id': e.layer.id
@@ -2032,6 +2033,8 @@ class LegendControl {
                 }
             }
         })
+        
+        layers.insertBefore(legendContainer, layers.firstChild)
     })
 
     this.map.on('layerremoved', (e) => {

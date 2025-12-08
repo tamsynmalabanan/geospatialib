@@ -1,15 +1,13 @@
-<div>
-    <div 
-        id="{{map_id}}" 
-        x-data x-init="initMapLibreMap($el)"
-        class="vh-100 position-relative {{container_class}}"
-    
-        hx-get="{% url 'htmx:user_control' %}"
-        hx-trigger="userControlInit"
-        hx-target="#{{map_id}}-user-control"
-        hx-swap='innerHTML'
-    ></div>
-    
+<div 
+    id="{{map_id}}" 
+    x-data x-init="initMapLibreMap($el)"
+    class="vh-100 position-relative {{container_class}}"
+
+    hx-get="{% url 'htmx:user_control' %}"
+    hx-trigger="userControlInit"
+    hx-target="#{{map_id}}-user-control"
+    hx-swap='innerHTML'
+>
     {% include "helpers/maplibre/search/collapse.html" %}
     {% include "helpers/maplibre/modals/clear_local_data.html" %}
     {% include "helpers/maplibre/modals/user_terms.html" %}
