@@ -140,7 +140,7 @@ const handleLeafletDrawBtns = (map, {
                     metadata[propKey] = index
                     metadata[`exploded_feature${count ? `_${count}` : ''}`] = feature.metadata.gsl_id
                     
-                    await generateFeatureMetadataId(newFeature)
+                    await assignFeatureMetadataId(newFeature)
                 }
             }
             
@@ -216,7 +216,7 @@ const handleLeafletDrawBtns = (map, {
                         metadata[propKey] = metadata.gsl_id ?? ''
                         metadata[`copy_id${count ? `_${count}` : ''}`] = copyId
                         
-                        await generateFeatureMetadataId(f)
+                        await assignFeatureMetadataId(f)
                     })
 
                     const {gisData, queryExtent} = await getFromGISDB(dbKey)

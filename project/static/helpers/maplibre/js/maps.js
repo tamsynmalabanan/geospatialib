@@ -24,7 +24,8 @@ class SettingsControl {
                 'popupFeature', 
                 'placeSearch',
             ],
-
+            popupLayers: null,
+            tooltipLayers: null,
         }
     }
     
@@ -258,14 +259,65 @@ class SettingsControl {
     }
 
     async queryMapData({
-        geom,
+        event,
+        bbox, // [[50, 50], [200, 200]]
+        point,
         layers,
         filter,
         queryRasters=false,
     }) {
-        let features = this.map.queryRenderedFeatures(geom, {layers, filter})
-        
-        if (features?.length) {
+        const pos = bbox ?? point ?? event?.point
+        if (!pos) return []
+
+        let features = this.map.queryRenderedFeatures(pos, {layers, filter})
+
+        if (queryRasters) {
+            console.log('update features with features from rasters i.e. wms, dems, etc.')
+
+            const sources = {}
+ 
+            this.map.getStyle().layers.forEach(l => {
+                if (layers?.length && !layers.includes(l.id)) return
+                if (l.source in sources) return
+                sources[l.source] = this.map.getSource(l.source)
+            })
+
+            for (const source of Object.values(sources)) {
+                const metadata = source.metadata
+                const params = metadata?.params
+
+                let refFeature
+                if (bbox) {
+                    const [w,n] = Object.values(this.map.unproject(bbox[0]))
+                    const [e,s] = Object.values(this.map.unproject(bbox[1]))
+                    refFeature = turf.bboxPolygon([w,s,e,n])
+                } else {
+                    refFeature = turf.point(Object.values(point ? this.map.unproject(point) : event?.lngLat))
+                }
+
+                if (!turf.booleanIntersects(refFeature, turf.bboxPolygon(params?.bbox ?? [-180, -90, 180, 90]))) continue
+
+                let data
+
+                if (Array('wms').includes(params?.type)) {
+                    data = await fetchWMSData(params, {
+                        style: metadata.style,
+                        event,
+                    })
+                }
+                
+                if (data?.features?.length) {
+                    await normalizeGeoJSON(data)
+    
+                    features = [
+                        ...features,
+                        ...(data.features ?? [])
+                    ]
+                }
+            }
+        }
+
+        if (features?.length && features.length > 1) {
             const uniqueFeatures = []
             features.forEach(f1 => {
                 if (!uniqueFeatures.find(f2 => {
@@ -277,10 +329,6 @@ class SettingsControl {
                 })) uniqueFeatures.push(f1)
             })
             features = uniqueFeatures
-        }
-
-        if (queryRasters) {
-            console.log('update features with features from rasters i.e. wms, dems, etc.')
         }
 
         return features
@@ -296,7 +344,8 @@ class SettingsControl {
 
         if (!map.getStyle().layers.find(l => Array('fill', 'line', 'circle', 'symbol', 'heatmap', 'fill-extrusion').includes(l.type))) return
         
-        const features = await this.queryMapData({geom:e.point})
+        console.log('filter layers with active tooltip')
+        const features = await this.queryMapData({event:e})
         if (!features?.length) return
 
         let label
@@ -356,13 +405,14 @@ class SettingsControl {
         let lngLat = e.lngLat
 
         if (checkedOptions.includes('layers')) {
-            features = await this.queryMapData({geom:e.point, queryRasters:true})
+            console.log('filter layers with active popup')
+            features = await this.queryMapData({queryRasters:true, event:e})
             
-            features = features.filter(f => {
-                return turf.booleanValid(f) && f.layer.source !== sourceId
+            features = features?.filter(f => {
+                return turf.booleanValid(f) && f.layer?.source !== sourceId
             })
             
-            if (features.length > 1) {
+            if (features?.length > 1) {
                 const point = turf.point(Object.values(lngLat))
                 const intersectedFeatures = features.filter(f => turf.booleanIntersects(f, point))
                 if (intersectedFeatures.length) {
@@ -385,7 +435,7 @@ class SettingsControl {
             }
         }
 
-        if (features.length === 1) {
+        if (features?.length === 1) {
             lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
         }
 
@@ -425,7 +475,7 @@ class SettingsControl {
         container.style.maxHeight = `${popupHeight-10-12-24}px`
         container.style.maxWidth = `${popupWidth-12-12}px`
         
-        if (features.length) {
+        if (features?.length) {
             const carouselContainer = customCreateElement({
                 parent: container,
                 className: 'd-flex overflow-auto'
