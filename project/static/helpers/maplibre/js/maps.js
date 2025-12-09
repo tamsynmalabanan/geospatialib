@@ -196,7 +196,7 @@ class SettingsControl {
         return this.config.projection
     }
     
-    togglePopupFeature(feature, {toggle}={}) {
+    async togglePopupFeature(feature, {toggle}={}) {
         const popupFeature = this.config.popup.feature
         const popupToggle = this.config.popup.toggle
         
@@ -209,7 +209,7 @@ class SettingsControl {
         } else {
             this.config.popup.feature = feature
             this.map.fitBounds(feature.bbox ?? turf.bbox(feature), {padding:100, maxZoom:11})
-            this.setGeoJSONData(sourceId, {data: turf.featureCollection([feature])})
+            await this.setGeoJSONData(sourceId, {data: turf.featureCollection([feature])})
 
             const color = `hsla(180, 100%, 50%, 1.00)`
             this.addGeoJSONLayers(sourceId, {
@@ -639,13 +639,18 @@ class SettingsControl {
         this.setGeoJSONData(sourceId)
     }
     
-    setGeoJSONData(sourceId, {
-        data=turf.featureCollection([]),
+    async setGeoJSONData(sourceId, {
+        data,
         metadata,
         attribution,
     }={}) {
         const map = this.map
-        console.log('normalize geojson data')
+        
+        if (data) {
+            await normalizeGeoJSON(data)
+        } else {
+            data = turf.featureCollection([])
+        }
 
         let source = map.getSource(sourceId)
         if (source) {
