@@ -258,7 +258,7 @@ class SettingsControl {
         return !toggleOff
     }
 
-    async queryMapData({
+    async getCanvasData({
         event,
         bbox, // [[50, 50], [200, 200]]
         point,
@@ -283,6 +283,8 @@ class SettingsControl {
             })
 
             for (const source of Object.values(sources)) {
+                console.log(source)
+
                 const metadata = source.metadata
                 const params = metadata?.params
 
@@ -345,7 +347,7 @@ class SettingsControl {
         if (!map.getStyle().layers.find(l => Array('fill', 'line', 'circle', 'symbol', 'heatmap', 'fill-extrusion').includes(l.type))) return
         
         console.log('filter layers with active tooltip')
-        const features = await this.queryMapData({event:e})
+        const features = await this.getCanvasData({event:e})
         if (!features?.length) return
 
         let label
@@ -401,43 +403,7 @@ class SettingsControl {
 
         const sourceId = 'popupFeature'
 
-        let features = []
         let lngLat = e.lngLat
-
-        if (checkedOptions.includes('layers')) {
-            console.log('filter layers with active popup')
-            features = await this.queryMapData({queryRasters:true, event:e})
-            
-            features = features?.filter(f => {
-                return turf.booleanValid(f) && f.layer?.source !== sourceId
-            })
-            
-            if (features?.length > 1) {
-                const point = turf.point(Object.values(lngLat))
-                const intersectedFeatures = features.filter(f => turf.booleanIntersects(f, point))
-                if (intersectedFeatures.length) {
-                    features = intersectedFeatures
-                } else {
-                    const polygonFeatures = features.map(f => {
-                        if (f.geometry.type.includes('Polygon')) return f
-                        f = turf.clone(f)
-                        f.geometry = turf.buffer(f, 10, { units: "meters" }).geometry
-                        return f
-                    })
-                    features = polygonFeatures.map(f1 => polygonFeatures.filter(f2 => turf.booleanIntersects(f1, f2))).reduce((a, b) => (b.length > a.length ? b : a))
-                    if (features.length > 1) {
-                        try {
-                            const intersection = turf.intersect(turf.featureCollection(features))
-                            lngLat = new maplibregl.LngLat(...turf.pointOnFeature(intersection).geometry.coordinates)
-                        } catch (error) {console.log(error)}
-                    }
-                }
-            }
-        }
-
-        if (features?.length === 1) {
-            lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
-        }
 
         const popupWidth = window.innerWidth * 0.75
         const popupHeight = window.innerHeight * 0.5
@@ -474,12 +440,112 @@ class SettingsControl {
         container.className = `d-flex flex-column gap-3`
         container.style.maxHeight = `${popupHeight-10-12-24}px`
         container.style.maxWidth = `${popupWidth-12-12}px`
+
+        const footer = customCreateElement({
+            parent: container,
+            className: 'd-flex flex-wrap gap-2',
+            style: {
+                maxWidth: `${popupWidth/3}px`,
+            }
+        })
+
+        const zoom = customCreateElement({
+            tag: 'button',
+            className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12',
+            parent: footer,
+            innerText: '🔍',
+            events: {
+                click: (e) => {
+                    map.flyTo({
+                        center: Object.values(lngLat),
+                        zoom: 11,
+                    })
+                }
+            }
+        })
+
+        if (checkedOptions.includes('coords')) {
+            const coordsValues = Object.values(lngLat).map(i => i.toFixed(6))    
+
+            const coords = customCreateElement({
+                tag: 'button',
+                className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12 flex-grow-1',
+                parent: footer,
+                innerHTML: `<span>📋</span><span>${coordsValues[0]}</span><span>${coordsValues[1]}</span>`,
+                events: {
+                    click: (e) => {
+                        navigator.clipboard.writeText(coordsValues.join(' '))
+                    }
+                }
+            })
+        }
+        
+        if (checkedOptions.includes('osm')) {
+            const data = await fetchReverseNominatim({
+                queryGeom: turf.point(Object.values(lngLat)),
+                zoom: map.getZoom(),
+            })
+            
+            if (data?.features?.length) {
+                const feature = data.features[0]
+                const place = customCreateElement({
+                    tag: 'button',
+                    className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap align-items-center gap-2 fs-12 pe-3 flex-grow-1',
+                    parent: footer,
+                    innerHTML: `<span>📍</span><span class="text-wrap text-break text-start">${feature.properties.display_name}</span>`,
+                    events: {
+                        click: async (e) => {
+                            this.togglePopupFeature(feature, {toggle:place})
+                        }
+                    }
+                })
+            }
+        }
+
+        let features = []
+
+        if (checkedOptions.includes('layers')) {
+            console.log('filter layers with active popup')
+            features = await this.getCanvasData({queryRasters:true, event:e})
+            
+            features = features?.filter(f => {
+                return turf.booleanValid(f) && f.layer?.source !== sourceId
+            })
+            
+            if (features?.length > 1) {
+                const point = turf.point(Object.values(lngLat))
+                const intersectedFeatures = features.filter(f => turf.booleanIntersects(f, point))
+                if (intersectedFeatures.length) {
+                    features = intersectedFeatures
+                } else {
+                    const polygonFeatures = features.map(f => {
+                        if (f.geometry.type.includes('Polygon')) return f
+                        f = turf.clone(f)
+                        f.geometry = turf.buffer(f, 10, { units: "meters" }).geometry
+                        return f
+                    })
+                    features = polygonFeatures.map(f1 => polygonFeatures.filter(f2 => turf.booleanIntersects(f1, f2))).reduce((a, b) => (b.length > a.length ? b : a))
+                    if (features.length > 1) {
+                        try {
+                            const intersection = turf.intersect(turf.featureCollection(features))
+                            lngLat = new maplibregl.LngLat(...turf.pointOnFeature(intersection).geometry.coordinates)
+                        } catch (error) {console.log(error)}
+                    }
+                }
+            }
+        }
+
+        if (features?.length === 1) {
+            lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
+        }
+
+        popup.setLngLat(lngLat)
         
         if (features?.length) {
             const carouselContainer = customCreateElement({
-                parent: container,
                 className: 'd-flex overflow-auto'
             })
+            container.insertBefore(carouselContainer, footer)
 
             const resizeObserver = elementResizeObserver(carouselContainer, (e) => {
                 footer.style.maxWidth = `${carouselContainer.offsetWidth}px`
@@ -551,67 +617,6 @@ class SettingsControl {
             }
 
             carouselContainer.appendChild(carousel)
-        }
-
-        const footer = customCreateElement({
-            parent: container,
-            className: 'd-flex flex-wrap gap-2',
-            style: {
-                maxWidth: `${popupWidth}px`,
-            }
-        })
-
-        const zoom = customCreateElement({
-            tag: 'button',
-            className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12',
-            parent: footer,
-            innerText: '🔍',
-            events: {
-                click: (e) => {
-                    map.flyTo({
-                        center: Object.values(lngLat),
-                        zoom: 11,
-                    })
-                }
-            }
-        })
-
-        if (checkedOptions.includes('coords')) {
-            const coordsValues = Object.values(lngLat).map(i => i.toFixed(6))    
-
-            const coords = customCreateElement({
-                tag: 'button',
-                className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12 flex-grow-1',
-                parent: footer,
-                innerHTML: `<span>📋</span><span>${coordsValues[0]}</span><span>${coordsValues[1]}</span>`,
-                events: {
-                    click: (e) => {
-                        navigator.clipboard.writeText(coordsValues.join(' '))
-                    }
-                }
-            })
-        }
-        
-        if (checkedOptions.includes('osm')) {
-            const data = await fetchReverseNominatim({
-                queryGeom: turf.point(Object.values(lngLat)),
-                zoom: map.getZoom(),
-            })
-            
-            if (data?.features?.length) {
-                const feature = data.features[0]
-                const place = customCreateElement({
-                    tag: 'button',
-                    className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap align-items-center gap-2 fs-12 pe-3 flex-grow-1',
-                    parent: footer,
-                    innerHTML: `<span>📍</span><span class="text-wrap text-break text-start">${feature.properties.display_name}</span>`,
-                    events: {
-                        click: async (e) => {
-                            this.togglePopupFeature(feature, {toggle:place})
-                        }
-                    }
-                })
-            }
         }
     }
     
@@ -2005,8 +2010,27 @@ class LegendControl {
         
         const menuCollapse = customCreateElement({
             parent: content,
-            className: 'collapse',
-            innerText: 'legend menu',   
+            className: 'collapse show',
+        })
+
+        const menuContent = customCreateElement({
+            parent: menuCollapse,
+            className: `d-flex flex-wrap gap-2`,
+        })
+
+        const visibilityBtn = customCreateElement({
+            parent: menuContent,
+            tag: 'button',
+            className: `bi bi-eye`,
+            events: {
+                click: (e) => {
+                    Array.from(layers.querySelectorAll(`[data-map-layer-id]`)).forEach(el => {
+                        const layerId = el.getAttribute('data-map-layer-id')
+                        const layer = this.map.getLayer(layerId)
+                        console.log(layer)
+                    })
+                }
+            }
         })
         
         const menuToggle = customCreateElement({
@@ -2018,7 +2042,7 @@ class LegendControl {
                 'data-bs-toggle': 'collapse',
                 'data-bs-target': `#${menuCollapse.id}`,
                 'aria-controls': menuCollapse.id,
-                'aria-expanded': false,
+                'aria-expanded': true,
             },
         })
         
