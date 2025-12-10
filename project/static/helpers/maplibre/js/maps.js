@@ -283,8 +283,6 @@ class SettingsControl {
             })
 
             for (const source of Object.values(sources)) {
-                console.log(source)
-
                 const metadata = source.metadata
                 const params = metadata?.params
 
@@ -324,8 +322,8 @@ class SettingsControl {
             features.forEach(f1 => {
                 if (!uniqueFeatures.find(f2 => {
                     if (f1.source !== f2.source) return false
-                    if (f1.layer.metadata.style !== f2.layer.metadata.style) return false
-                    if (f1.layer.metadata.group !== f2.layer.metadata.group) return false
+                    if (f1.layer?.metadata?.style !== f2.layer?.metadata?.style) return false
+                    if (f1.layer?.metadata?.group !== f2.layer?.metadata?.group) return false
                     if (!featuresAreSimilar(f1, f2)) return false
                     return true
                 })) uniqueFeatures.push(f1)
@@ -1973,7 +1971,7 @@ class LegendControl {
     createControl() {
         const collapse = customCreateElement({
             parent: this.container,
-            className: `position-absolute top-0 end-0 text-bg-${getPreferredTheme()} rounded border border-2 border-secondary border-opacity-25 collapse collapse-top-right`,
+            className: `position-absolute top-0 end-0 text-bg-${getPreferredTheme()} rounded border border-2 border-secondary border-opacity-25 collapse collapse-top-right show`,
             events: {
                 'show.bs.collapse': (e) => {
                     if (e.target !== collapse) return
@@ -1988,7 +1986,7 @@ class LegendControl {
         
         const content = customCreateElement({
             parent: collapse,
-            className: `d-flex flex-column gap-1 p-2`,
+            className: `d-flex flex-column gap-1 p-2 gap-2`,
             style: {
                 maxWidth: `70vw`,
                 maxHeight: `60vh`,
@@ -2013,22 +2011,23 @@ class LegendControl {
             className: 'collapse show',
         })
 
-        const menuContent = customCreateElement({
+        const menuContent = this.menu = customCreateElement({
             parent: menuCollapse,
-            className: `d-flex flex-wrap gap-2`,
+            className: `d-flex flex-wrap gap-2 border rounded`,
         })
 
         const visibilityBtn = customCreateElement({
             parent: menuContent,
             tag: 'button',
             className: `bi bi-eye`,
+            attrs: {
+                disabled: true,
+            },
             events: {
                 click: (e) => {
-                    Array.from(layers.querySelectorAll(`[data-map-layer-id]`)).forEach(el => {
-                        const layerId = el.getAttribute('data-map-layer-id')
-                        const layer = this.map.getLayer(layerId)
-                        console.log(layer)
-                    })
+                    const legendContainers = Array.from(layers.querySelectorAll(`[data-map-layer-id]`))
+                    const visibility = legendContainers.some(el => this.map.getLayoutProperty(el.getAttribute('data-map-layer-id'), 'visibility') === 'none') ? 'visible' : 'none'
+                    legendContainers.forEach(el => this.map.setLayoutProperty(el.getAttribute('data-map-layer-id'), 'visibility', visibility))
                 }
             }
         })
@@ -2067,10 +2066,10 @@ class LegendControl {
                 'data-bs-toggle': 'collapse',
                 'data-bs-target': `#${collapse.id}`,
                 'aria-controls': collapse.id,
-                'aria-expanded': false,
+                'aria-expanded': true,
             },
             innerText: '📚',
-            className: `btn fs-20 rounded-circle text-bg-${getPreferredTheme()} rounded-circle border border-2 border-opacity-50`,
+            className: `btn fs-20 rounded-circle text-bg-${getPreferredTheme()} rounded-circle border border-2 border-opacity-50 d-none`,
                 style: {
                 width:'42px',
                 height:'40px',
@@ -2101,14 +2100,15 @@ class LegendControl {
     }
 
     addLayerLegend(e) {
-        if (this.map.getSettingsControl().config.fixedLayers.find(i => e.layer.id.startsWith(i))) return
+        const layer = e.layer
+        if (this.map.getSettingsControl().config.fixedLayers.find(i => layer.id.startsWith(i))) return
 
-        console.log('check if vector layer and legendContainer already exists')
+        console.log('check if vector layer and if legendContainer already exists')
 
         const legendContainer = customCreateElement({
             className: 'd-flex flex-column',
             attrs: {
-                'data-map-layer-id': e.layer.id
+                'data-map-layer-id': layer.id
             }
         })
         this.layers.insertBefore(legendContainer, this.layers.firstChild)
@@ -2121,14 +2121,14 @@ class LegendControl {
         const legendStyle = customCreateElement({
             parent: legendContainer,
             className: 'collapse show user-select-none',
-            innerHTML: this.getLayerLegend(e.layer)
+            innerHTML: this.getLayerLegend(layer)
         })
 
         const legendTitle = customCreateElement({
             parent: legendHeader,
             tag: 'span',
             className: `user-select-none`,
-            innerText: e.layer.metadata.params.title,
+            innerText: layer.metadata.params.title,
             attrs: {
                 'data-bs-toggle': "collapse",
                 'data-bs-target': `#${legendStyle.id}`,
@@ -2140,7 +2140,7 @@ class LegendControl {
         const legendMenuToggle = customCreateElement({
             parent: legendHeader,
             tag: 'button',
-            className: 'bi bi-three-dots text-end ms-5',
+            className: 'bi bi-three-dots ms-5',
             attrs: {
                 'data-bs-toggle':"dropdown", 
                 'aria-expanded':"false",
@@ -2150,27 +2150,51 @@ class LegendControl {
         const legendMenu = customCreateElement({
             parent: legendHeader,
             tag: 'ul',
-            className: 'dropdown-menu'
+            className: 'dropdown-menu user-select-none'
         })
 
-        const removeLayer = customCreateElement({
-            parent: legendMenu,
-            tag: 'li',
-            className: 'dropdown-item fs-12',
-            innerText: 'Remove layer',
-            events: {
-                click: () => {
-                    this.map.removeLayer(e.layer.id)
+        const layerMenu = {
+            visibility: {
+                innerHTML: 'Hide layer',
+                events: {
+                    click: (e) => {
+                        const visibility = this.map.getLayoutProperty(layer.id, 'visibility') === 'none' ? 'visible' : 'none'
+                        this.map.setLayoutProperty(layer.id, 'visibility', visibility)
+                        e.target.innerHTML = `${visibility === 'visible' ? 'Hide' : 'Show'} layer`
+                    }
                 }
-            }
+            },
+            remove: {
+                innerHTML: 'Remove layer',
+                events: {
+                    click: (e) => {
+                        this.map.removeLayer(layer.id)
+                    }
+                }
+            },
+        }
+
+        Object.entries(layerMenu).forEach(([name, params]) => {
+            const button = customCreateElement({
+                parent: legendMenu,
+                tag: 'li',
+                className: 'dropdown-item fs-12',
+                innerHTML: params.innerHTML,
+                events: params.events,
+            })
         })
 
-        
-        
+        this.toggleMenuBtns()
+    }
+
+    toggleMenuBtns() {
+        const disable = this.layers.innerHTML === ''
+        Array.from(this.menu.querySelectorAll(`button`)).forEach(el => el.disabled = disable)
     }
 
     removeLayerLegend(e) {
         this.layers.querySelector(`[data-map-layer-id="${e.layerId}"]`)?.remove()
+        this.toggleMenuBtns()
     }
 
     onAdd(map) {
