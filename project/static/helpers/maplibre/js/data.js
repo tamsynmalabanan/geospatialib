@@ -1,17 +1,16 @@
-const fetchSearchNominatim = async (q, {
-    format='geojson',
-    limit=100,
+const fetchSearchNominatim = async (params, {
     abortBtns,
     controller,
 } = {}) => {
+    let q = params.q
     if (!q) return
     q = q.toLowerCase()
 
     const url = pushURLParams('https://nominatim.openstreetmap.org/search?', {
-        q, format, limit
+        q, format:'geojson', limit:params.limit ?? 100
     })
     
-    const id = `nominatim-search;${JSON.stringify({params:{url}})}`
+    const id = await hashJSON({type:'nominatim-search', params})
     const geojson = (await getFromGISDB(id))?.gisData
     if (geojson?.features.length) {
         return geojson
@@ -40,9 +39,7 @@ const fetchReverseNominatim = async ({
 } = {}) => {
     const [lon, lat] = turf.centroid(queryGeom).geometry.coordinates
     
-    if (zoom > 18) {
-        zoom = 18
-    }
+    if (zoom > 18) zoom = 18
     zoom = Math.round(zoom)
 
     const url = pushURLParams('https://nominatim.openstreetmap.org/reverse?', {

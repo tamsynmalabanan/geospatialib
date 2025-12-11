@@ -2310,12 +2310,12 @@ class PlaceSearchControl {
                     const SettingsControl = this.map.getSettingsControl()
                     SettingsControl.resetGeoJSONSource(sourceId)
                     
-                    const value = input.value.trim()
-                    if (value === '') return
+                    const q = input.value.trim()
+                    if (q === '') return
                     
                     let data = turf.featureCollection([])
 
-                    const coords = isLngLatString(value)
+                    const coords = isLngLatString(q)
                     if (coords) {
                         map.flyTo({
                             center: coords,
@@ -2323,7 +2323,7 @@ class PlaceSearchControl {
                         })
                         data = turf.featureCollection([turf.point(coords)])
                     } else {
-                        data = await fetchSearchNominatim(value)
+                        data = await fetchSearchNominatim({q})
                         if (data?.features?.length) {
                             const bbox = (
                                 data.features.length === 1 
