@@ -1947,14 +1947,29 @@ class UserControl {
             }
         })
     }
+
+    handleSearchResultsContainer() {
+        const container = this.map._container.querySelector(`#searchResultsContainer`)
+
+        container.addEventListener('shown.bs.collapse', (e) => {
+            container.querySelector(`input[name='query']`).focus()
+        })
+        
+        // this.map._container.addEventListener('pointerup', (e) => {
+        //     if (!container.classList.contains('show')) return
+        //     if (document.elementsFromPoint(e.clientX, e.clientY).includes(container)) return
+        //     bootstrap.Collapse.getOrCreateInstance(container).hide()
+        // })
+    }
     
     onAdd(map) {
         this.map = map
 
-        const container = this.container = customCreateElement({
+        this.container = customCreateElement({
             id: `${this.map._container.id}-user-control`,
         })
 
+        this.handleSearchResultsContainer()
         this.handleSearchResultsBoundsToggle()
         this.handleSearchResultsThumbnailsToggle()
 
