@@ -10,7 +10,7 @@ const fetchSearchNominatim = async (params, {
         q, format:'geojson', limit:params.limit ?? 100
     })
     
-    const id = await hashJSON({type:'nominatim-search', params})
+    const id = Array('nominatim', (await hashJSON({params}))).join('-')
     const geojson = (await getFromGISDB(id))?.gisData
     if (geojson?.features.length) {
         return geojson

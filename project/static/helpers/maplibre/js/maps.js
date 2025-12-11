@@ -615,6 +615,8 @@ class SettingsControl {
             }
 
             carouselContainer.appendChild(carousel)
+
+            this.handleLayerSourceElements(popupContainer)
         }
     }
     
@@ -1380,7 +1382,7 @@ class SettingsControl {
         }
     }
 
-    async addLegendLayer(params) {
+    async addLayerFromParams(params) {
         const sourcePrefix = Array(params.type, await hashJSON({
             url:params.url,
             format:params.format,
@@ -1391,6 +1393,40 @@ class SettingsControl {
             this.addWMSLayer(sourcePrefix, params)
         }
     }
+
+    handleLayerSourceElements(container) {
+        container.querySelectorAll(`[data-map-layer-source]`).forEach(async el => {
+            const params = JSON.parse(el.getAttribute('data-map-layer-source') ?? '{}')
+            if (!['url', 'format', 'name'].every(i => i in params)) return
+            
+            el.addEventListener('click', (e) => {
+                this.addLayerFromParams(params)
+            })
+
+            const sourcePrefix = Array(params.type, await hashJSON({
+                url:params.url,
+                format:params.format,
+                name:params.name,
+            })).join('-')
+            
+            if (this.map.getStyle().layers.find(l => l.source.startsWith(sourcePrefix))) {
+                el.classList.add('text-success')
+            }
+            
+            Array('layeradded', 'layerremoved').forEach(type => {
+                this.map.on(type, (e) => {
+                    const layerId = e.type === 'layeradded' ? e.layer.id : e.layerId
+                    if (!layerId.startsWith(sourcePrefix)) return
+    
+                    if (this.map.getStyle().layers.find(l => l.source.startsWith(sourcePrefix))) {
+                        el.classList.add('text-success')
+                    } else {
+                        el.classList.remove('text-success')
+                    }
+                })
+            })
+        })
+    } 
 
     handleHTMXContent() {
         this.map._container.addEventListener('htmx:afterSwap', (e) => {
@@ -1410,35 +1446,7 @@ class SettingsControl {
                 })
             })
 
-            container.querySelectorAll(`[data-map-layer-source]`).forEach(async el => {
-                const params = JSON.parse(el.getAttribute('data-map-layer-source') ?? '{}')
-                if (!['url', 'format', 'name'].every(i => i in params)) return
-                
-                el.addEventListener('click', (e) => {
-                    el.classList.add('text-success')
-                    this.addLegendLayer(params)
-                })
-
-                const sourcePrefix = Array(params.type, await hashJSON({
-                    url:params.url,
-                    format:params.format,
-                    name:params.name,
-                })).join('-')
-
-                if (this.map.getStyle().layers.find(l => l.source.startsWith(sourcePrefix))) {
-                    el.classList.add('text-success')
-                }
-                
-                this.map.on('layerremoved', (e) => {
-                    if (!e.layerId.startsWith(sourcePrefix)) return
-
-                    if (this.map.getStyle().layers.find(l => l.source.startsWith(sourcePrefix))) {
-                        el.classList.add('text-success')
-                    } else {
-                        el.classList.remove('text-success')
-                    }
-                })
-            })
+            this.handleLayerSourceElements(container)
         })
     }
 
@@ -1838,8 +1846,25 @@ class UserControl {
             let data
             if (this.searchResultsBoundsToggle?.checked) {
                 const features = Array.from(searchResults.querySelectorAll(`[data-map-layer-source]`)).map(el => {
-                    const properties = JSON.parse(el.getAttribute('data-map-layer-source') ?? '{}')
+                    const layerSource = el.getAttribute('data-map-layer-source') ?? '{}'
+                    const properties = JSON.parse(layerSource)
                     if (!properties.bbox) return
+
+                    const menu = customCreateElement({
+                        className: 'd-flex gap-2'
+                    })
+
+                    const addBtn = customCreateElement({
+                        tag: 'button',
+                        parent: menu,
+                        className: `btn btn-sm bg-transparent border w-auto h-auto fs-10`,
+                        innerText: 'Add layer',
+                        attrs: {
+                            'data-map-layer-source': layerSource
+                        }
+                    })
+
+                    properties.menu = menu.outerHTML
                     return turf.bboxPolygon(properties.bbox, {properties})
                 }).filter(i => i)
                 
@@ -1862,7 +1887,7 @@ class UserControl {
                         customParams: {
                             'fill' : {
                                 'polygons': {
-                                    render: true,
+                                    render: false,
                                     params: {
                                         paint: {
                                             "fill-color": manageHSLAColor(color).toString({a:0})
