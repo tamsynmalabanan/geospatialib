@@ -8,6 +8,7 @@ const customCreateElement = ({
     attrs = {},
     events = {},
     parent,
+    handlers = {},
 } = {}) => {
     const element = document.createElement(tag)
     element.id = id
@@ -25,6 +26,7 @@ const customCreateElement = ({
         element.addEventListener(k, events[k])
     })
     
+    
     if (innerHTML) {
         if (innerHTML instanceof Element) {
             element.appendChild(innerHTML)
@@ -40,6 +42,10 @@ const customCreateElement = ({
     if (parent && parent instanceof Element) {
         parent.appendChild(element)
     }
+
+    Object.values(handlers).forEach(handler => {
+        handler(element)
+    })
 
     return element
 }

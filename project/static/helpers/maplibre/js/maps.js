@@ -1996,10 +1996,6 @@ class UserControl {
 }
 
 class LegendControl {
-    toggleLayerVisibility(layerId, {visibility}={}) {
-        this.map.setLayoutProperty(layerId, 'visibility', visibility ?? this.map.getLayoutProperty(layerId, 'visibility') === 'none' ? 'visible' : 'none')
-    }
-
     createControl() {
         const collapse = customCreateElement({
             parent: this.container,
@@ -2045,27 +2041,56 @@ class LegendControl {
 
         const menuContent = this.menu = customCreateElement({
             parent: menuCollapse,
-            className: `d-flex flex-wrap gap-2 border rounded`,
+            className: `d-flex flex-wrap gap-2`,
         })
 
-        const visibilityBtn = customCreateElement({
-            parent: menuContent,
-            tag: 'button',
-            className: `bi bi-eye`,
-            attrs: {
-                disabled: true,
-            },
-            events: {
-                click: (e) => {
-                    const legendContainers = Array.from(layers.querySelectorAll(`[data-map-layer-id]`))
-                    const visibility = legendContainers.some(el => this.map.getLayoutProperty(el.getAttribute('data-map-layer-id'), 'visibility') === 'none') ? 'visible' : 'none'
-                    legendContainers.forEach(el => {
-                        this.map.setLayoutProperty(el.getAttribute('data-map-layer-id'), 'visibility', visibility)
-                        el.lastElementChild.classList.toggle('d-none', visibility === 'none')
-                    })
-
+        const menuBtns = {
+            section1: {
+                visibility: {
+                    className: `bi bi-eye`,
+                    events: {
+                        click: (e) => {
+                            const legendContainers = Array.from(layers.querySelectorAll(`[data-map-layer-id]`))
+                            const visibility = legendContainers.some(el => this.map.getLayoutProperty(el.getAttribute('data-map-layer-id'), 'visibility') === 'none') ? 'visible' : 'none'
+                            legendContainers.forEach(el => {
+                                this.map.setLayoutProperty(el.getAttribute('data-map-layer-id'), 'visibility', visibility)
+                                el.lastElementChild.classList.toggle('d-none', visibility === 'none')
+                            })
+        
+                        }
+                    },
                 }
-            }
+            },
+            section2: {
+                clear: {
+                    className: `bi bi-trash`,
+                    events: {
+                        click: (e) => {
+                            Array.from(layers.querySelectorAll(`[data-map-layer-id]`)).forEach(el => this.map.removeLayer(el.getAttribute('data-map-layer-id')))
+                        }
+                    },
+                }
+            },
+        }
+
+        Object.entries(menuBtns).forEach(([section, btns]) => {
+            const sectionContainer = customCreateElement({
+                parent: menuContent,
+                className: 'd-flex flex-nowrap gap-2 border rounded'
+            })
+
+            Object.entries(btns).forEach(([name, params]) => {
+                const btn = customCreateElement({
+                    parent: sectionContainer,
+                    tag: 'button',
+                    attrs: {
+                        disabled: true,
+                        ...(params.attrs ?? {})
+                    },
+                    ...params
+                })
+
+            })
         })
         
         const menuToggle = customCreateElement({
@@ -2135,8 +2160,7 @@ class LegendControl {
         }
     }
 
-    addLayerLegend(e) {
-        const layer = e.layer
+    addLayerLegend(layer) {
         if (this.map.getSettingsControl().config.fixedLayers.find(i => layer.id.startsWith(i))) return
 
         console.log('check if vector layer and if legendContainer already exists')
@@ -2198,6 +2222,13 @@ class LegendControl {
                         this.map.setLayoutProperty(layer.id, 'visibility', visibility)
                         e.target.innerHTML = `${visibility === 'visible' ? 'Hide' : 'Show'} layer`
                         legendStyle.classList.toggle('d-none', visibility === 'none')
+                    },
+                },
+                handlers: {
+                    test: (el) => {
+                        this.map.on('styledata', (e) => {
+                            el.innerHTML = this.map.getLayoutProperty(layer.id, 'visibility') === 'none' ? 'Show layer' : 'Hide layer'
+                        })
                     }
                 }
             },
@@ -2212,12 +2243,11 @@ class LegendControl {
         }
 
         Object.entries(layerMenu).forEach(([name, params]) => {
-            const button = customCreateElement({
+            const li = customCreateElement({
                 parent: legendMenu,
                 tag: 'li',
                 className: 'dropdown-item fs-12',
-                innerHTML: params.innerHTML,
-                events: params.events,
+                ...params,
             })
         })
 
@@ -2229,8 +2259,8 @@ class LegendControl {
         Array.from(this.menu.querySelectorAll(`button`)).forEach(el => el.disabled = disable)
     }
 
-    removeLayerLegend(e) {
-        this.layers.querySelector(`[data-map-layer-id="${e.layerId}"]`)?.remove()
+    removeLayerLegend(layerId) {
+        this.layers.querySelector(`[data-map-layer-id="${layerId}"]`)?.remove()
         this.toggleMenuBtns()
     }
 
@@ -2242,8 +2272,8 @@ class LegendControl {
         })
 
         this.createControl()
-        this.map.on('layeradded', (e) => this.addLayerLegend(e))
-        this.map.on('layerremoved', (e) => this.removeLayerLegend(e))
+        this.map.on('layeradded', (e) => this.addLayerLegend(e.layer))
+        this.map.on('layerremoved', (e) => this.removeLayerLegend(e.layerId))
 
         return this.container
     }
