@@ -2214,42 +2214,57 @@ class LegendControl {
         })
 
         const layerMenu = {
-            visibility: {
-                innerHTML: 'Hide layer',
-                events: {
-                    click: (e) => {
-                        const visibility = this.map.getLayoutProperty(layer.id, 'visibility') === 'none' ? 'visible' : 'none'
-                        this.map.setLayoutProperty(layer.id, 'visibility', visibility)
-                        e.target.innerHTML = `${visibility === 'visible' ? 'Hide' : 'Show'} layer`
-                        legendStyle.classList.toggle('d-none', visibility === 'none')
+            section1: {
+                visibility: {
+                    innerHTML: 'Hide layer',
+                    events: {
+                        click: (e) => {
+                            const visibility = this.map.getLayoutProperty(layer.id, 'visibility') === 'none' ? 'visible' : 'none'
+                            this.map.setLayoutProperty(layer.id, 'visibility', visibility)
+                            e.target.innerHTML = `${visibility === 'visible' ? 'Hide' : 'Show'} layer`
+                            legendStyle.classList.toggle('d-none', visibility === 'none')
+                        },
                     },
+                    handlers: {
+                        test: (el) => {
+                            this.map.on('styledata', (e) => {
+                                if (!this.map.getLayer(layer.id)) return
+                                el.innerHTML = this.map.getLayoutProperty(layer.id, 'visibility') === 'none' ? 'Show layer' : 'Hide layer'
+                            })
+                        }
+                    }
                 },
-                handlers: {
-                    test: (el) => {
-                        this.map.on('styledata', (e) => {
-                            el.innerHTML = this.map.getLayoutProperty(layer.id, 'visibility') === 'none' ? 'Show layer' : 'Hide layer'
-                        })
-                    }
-                }
             },
-            remove: {
-                innerHTML: 'Remove layer',
-                events: {
-                    click: (e) => {
-                        this.map.removeLayer(layer.id)
+            section2: {
+                remove: {
+                    innerHTML: 'Remove layer',
+                    events: {
+                        click: (e) => {
+                            this.map.removeLayer(layer.id)
+                        }
                     }
-                }
+                },
             },
         }
 
-        Object.entries(layerMenu).forEach(([name, params]) => {
-            const li = customCreateElement({
+        Object.entries(layerMenu).forEach(([section, items]) => {
+            Object.entries(items).forEach(([name, params]) => {
+                const li = customCreateElement({
+                    parent: legendMenu,
+                    tag: 'li',
+                    className: 'dropdown-item fs-12',
+                    ...params,
+                })
+            })
+
+            customCreateElement({
                 parent: legendMenu,
                 tag: 'li',
-                className: 'dropdown-item fs-12',
-                ...params,
+                innerHTML: `<hr class="dropdown-divider">`
             })
         })
+
+        legendMenu.lastElementChild.remove()
 
         this.toggleMenuBtns()
     }
