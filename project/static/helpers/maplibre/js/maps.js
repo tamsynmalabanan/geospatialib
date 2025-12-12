@@ -2008,6 +2008,10 @@ class UserControl {
 }
 
 class LegendControl {
+    toggleLayerVisibility(layerId, {visibility}={}) {
+        this.map.setLayoutProperty(layerId, 'visibility', visibility ?? this.map.getLayoutProperty(layerId, 'visibility') === 'none' ? 'visible' : 'none')
+    }
+
     createControl() {
         const collapse = customCreateElement({
             parent: this.container,
@@ -2067,7 +2071,11 @@ class LegendControl {
                 click: (e) => {
                     const legendContainers = Array.from(layers.querySelectorAll(`[data-map-layer-id]`))
                     const visibility = legendContainers.some(el => this.map.getLayoutProperty(el.getAttribute('data-map-layer-id'), 'visibility') === 'none') ? 'visible' : 'none'
-                    legendContainers.forEach(el => this.map.setLayoutProperty(el.getAttribute('data-map-layer-id'), 'visibility', visibility))
+                    legendContainers.forEach(el => {
+                        this.map.setLayoutProperty(el.getAttribute('data-map-layer-id'), 'visibility', visibility)
+                        el.lastElementChild.classList.toggle('d-none', visibility === 'none')
+                    })
+
                 }
             }
         })
@@ -2201,6 +2209,7 @@ class LegendControl {
                         const visibility = this.map.getLayoutProperty(layer.id, 'visibility') === 'none' ? 'visible' : 'none'
                         this.map.setLayoutProperty(layer.id, 'visibility', visibility)
                         e.target.innerHTML = `${visibility === 'visible' ? 'Hide' : 'Show'} layer`
+                        legendStyle.classList.toggle('d-none', visibility === 'none')
                     }
                 }
             },
