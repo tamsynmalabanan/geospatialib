@@ -1,0 +1,25 @@
+<form 
+    id='libraryForm'
+    class='d-flex flex-column gap-3 w-100'
+    hx-get="{% url 'htmx:search_library' %}" 
+    hx-trigger="submit" 
+    hx-target="#searchResults"
+    hx-swap="outerHTML"
+    x-data x-init="$el.addEventListener('htmx:configRequest', (e) => {if (!e.detail.parameters.query.trim()) e.preventDefault()})"
+>
+    <div id='libraryFormFields' class="collapse show multi-collapse w-100">
+        <div class="input-group border-secondary border rounded d-flex flex-nowrap border-opacity-25 border-2 w-100">
+            <input 
+                type="search" 
+                name='query' 
+                class="form-control form-control-sm border-0 fs-12 flex-grow-1 fs-12" 
+                placeholder="Search library..." 
+                style="box-shadow:none;"
+                data-input-last-value=''
+                x-data x-init="$el.addEventListener('change', (e) => {if ($el.value.trim()) {$el.setAttribute('data-input-last-value', $el.value.trim())} else if ($el.getAttribute('data-input-last-value')) {$el.value = $el.getAttribute('data-input-last-value')}})"
+            >
+            <button class="btn btn-sm btn-outline-secondary bi bi-search border-0 fs-12 rounded-circle m-1 fs-12" type="submit"></button>
+        </div>
+    </div>
+    <div id='searchResultsFiltersContainer'></div>
+</form>

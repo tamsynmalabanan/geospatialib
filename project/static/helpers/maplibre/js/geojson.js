@@ -118,3 +118,12 @@ const assignFeatureMetadataId = async (feature) => {
     feature.metadata.gsl_id = await hashJSON({...feature.properties, ...feature.metadata})
     return feature
 }
+
+const repairFeatureGeometry = (feature) => {
+    const fc = turf.featureCollection([feature])
+    fc.features = fc.features.flatMap(f => turf.flatten(f).features).flatMap(f => {
+        if (!f.geometry.type.includes('Polygon')) return f
+        return turf.unkinkPolygon(f).features
+    })
+    return fc
+}

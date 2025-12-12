@@ -308,7 +308,6 @@ class SettingsControl {
                 
                 if (data?.features?.length) {
                     await normalizeGeoJSON(data)
-    
                     features = [
                         ...features,
                         ...(data.features ?? [])
@@ -504,12 +503,7 @@ class SettingsControl {
 
         if (checkedOptions.includes('layers')) {
             console.log('filter layers with active popup')
-            features = await this.getCanvasData({queryRasters:true, event:e})
-            
-            features = features?.filter(f => {
-                return turf.booleanValid(f) && f.layer?.source !== sourceId
-            })
-            
+            features = (await this.getCanvasData({queryRasters:true, event:e}))?.filter(f => f.geometry && f.layer?.source !== sourceId)
             if (features?.length > 1) {
                 const point = turf.point(Object.values(lngLat))
                 const intersectedFeatures = features.filter(f => turf.booleanIntersects(f, point))
