@@ -1967,18 +1967,12 @@ class UserControl {
         })
     }
 
-    handleSearchResultsContainer() {
-        const container = this.map._container.querySelector(`#searchResultsContainer`)
+    handleLayerFormsContainer() {
+        const container = this.map._container.querySelector(`#layerFormsContainer`)
 
         container.addEventListener('shown.bs.collapse', (e) => {
             container.querySelector(`input[name='query']`).focus()
         })
-        
-        // this.map._container.addEventListener('pointerup', (e) => {
-        //     if (!container.classList.contains('show')) return
-        //     if (document.elementsFromPoint(e.clientX, e.clientY).includes(container)) return
-        //     bootstrap.Collapse.getOrCreateInstance(container).hide()
-        // })
     }
     
     onAdd(map) {
@@ -1988,7 +1982,7 @@ class UserControl {
             id: `${this.map._container.id}-user-control`,
         })
 
-        this.handleSearchResultsContainer()
+        this.handleLayerFormsContainer()
         this.handleSearchResultsBoundsToggle()
         this.handleSearchResultsThumbnailsToggle()
 
