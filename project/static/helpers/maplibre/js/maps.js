@@ -419,10 +419,12 @@ class SettingsControl {
         const popupContainer = popup._container
         
         const popupTooltip = popupContainer.querySelector('.maplibregl-popup-tip')
+        
         const style = window.getComputedStyle(popupTooltip)
         Array('top','bottom', 'left', 'right').forEach(pos => {
             if (style.getPropertyValue(`border-${pos}-color`) !== 'rgba(0, 0, 0, 0)') {
-                popupTooltip.classList.add(`border-${pos}-${getPreferredTheme()}`)
+                const bsPos = Array('top', 'bottom').includes(pos) ? pos : pos === 'left' ? 'start' : 'end'
+                popupTooltip.classList.add(`border-${bsPos}-${getPreferredTheme()}`)
             }
         })
 
