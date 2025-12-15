@@ -2362,6 +2362,75 @@ class PlaceSearchControl {
             className: 'd-flex flex-no-wrap gap-1 align-items-center d-none'
         })
 
+        const handler = async (e) => {
+            const sourceId = 'placeSearch'
+
+            const SettingsControl = this.map.getSettingsControl()
+            SettingsControl.resetGeoJSONSource(sourceId)
+            
+            const q = input.value.trim()
+            if (q === '') return
+            
+            let data = turf.featureCollection([])
+
+            const coords = isLngLatString(q)
+            if (coords) {
+                map.flyTo({
+                    center: coords,
+                    zoom: 11,
+                })
+                data = turf.featureCollection([turf.point(coords)])
+            } else {
+                data = await fetchSearchNominatim({q})
+                if (data?.features?.length) {
+                    const bbox = (
+                        data.features.length === 1 
+                        ? data.features[0].bbox ?? turf.bbox(data.features[0]) 
+                        : data.bbox ?? turf.bbox(data)
+                    )
+                    map.fitBounds(bbox, {padding:100, maxZoom:11})
+                }
+            }
+
+            if (data?.features?.length) {
+                await SettingsControl.setGeoJSONData(sourceId, {
+                    data, 
+                    metadata: {params: {title: 'Place search result'}}
+                })
+
+                const color = `hsla(70, 100%, 50%, 1.00)`
+                SettingsControl.addGeoJSONLayers(sourceId, {
+                    groups:  {
+                        default: SettingsControl.getLayerParams({
+                            color,
+                            customParams: {
+                                'fill' : {
+                                    'polygons': {
+                                        render: true,
+                                        params: {
+                                            paint: {
+                                                "fill-color": manageHSLAColor(color).toString({a:0})
+                                            }
+                                        },
+                                    },
+                                },
+                                'line': {
+                                    'polygon-outlines': {
+                                        render: true,
+                                        params: {
+                                            paint: {
+                                                'line-color': color,
+                                            },
+                                        }
+                                    }
+                                },
+                            }
+                        }
+                    )}
+                })
+            }
+        }
+
         const input = customCreateElement({
             tag: 'input',
             parent: collapse,
@@ -2371,74 +2440,11 @@ class PlaceSearchControl {
                 tabindex: '-1',
             },
             events: {
-                change: async (e) => {
-                    const sourceId = 'placeSearch'
-
-                    const SettingsControl = this.map.getSettingsControl()
-                    SettingsControl.resetGeoJSONSource(sourceId)
-                    
-                    const q = input.value.trim()
-                    if (q === '') return
-                    
-                    let data = turf.featureCollection([])
-
-                    const coords = isLngLatString(q)
-                    if (coords) {
-                        map.flyTo({
-                            center: coords,
-                            zoom: 11,
-                        })
-                        data = turf.featureCollection([turf.point(coords)])
-                    } else {
-                        data = await fetchSearchNominatim({q})
-                        if (data?.features?.length) {
-                            const bbox = (
-                                data.features.length === 1 
-                                ? data.features[0].bbox ?? turf.bbox(data.features[0]) 
-                                : data.bbox ?? turf.bbox(data)
-                            )
-                            map.fitBounds(bbox, {padding:100, maxZoom:11})
-                        }
-                    }
-
-                    if (data?.features?.length) {
-                        await SettingsControl.setGeoJSONData(sourceId, {
-                            data, 
-                            metadata: {params: {title: 'Place search result'}}
-                        })
-
-                        const color = `hsla(70, 100%, 50%, 1.00)`
-                        SettingsControl.addGeoJSONLayers(sourceId, {
-                            groups:  {
-                                default: SettingsControl.getLayerParams({
-                                    color,
-                                    customParams: {
-                                        'fill' : {
-                                            'polygons': {
-                                                render: true,
-                                                params: {
-                                                    paint: {
-                                                        "fill-color": manageHSLAColor(color).toString({a:0})
-                                                    }
-                                                },
-                                            },
-                                        },
-                                        'line': {
-                                            'polygon-outlines': {
-                                                render: true,
-                                                params: {
-                                                    paint: {
-                                                        'line-color': color,
-                                                    },
-                                                }
-                                            }
-                                        },
-                                    }
-                                }
-                            )}
-                        })
-                    }
-                }
+                change: handler,
+                keydown: (e) => {
+                    if (e.key !== 'Enter') return
+                    handler(e)
+                },
             }
         })
 
