@@ -2,59 +2,61 @@
 
 <div 
     id="layerFormsContainer"
-    class="collapse collapse-bottom-left text-bg-{{theme}} rounded border border-2 border-secondary border-opacity-25 position-absolute top-50 start-50 translate-middle z-3 shadow-lg"
-    {% comment %} style="top:50%;left-50%;transform:translate(-50%,-50%)" {% endcomment %}
+    class="collapse collapse-bottom-left text-bg-{{theme}} rounded border border-2 border-secondary border-opacity-25 position-absolute top-50 start-50 translate-middle z-3 shadow-lg hw-sm-100"
+    style="max-width:80vw;min-width:300px;"
 >
-    <div class="d-flex justify-content-end">
-        <button 
-            type="button" 
-            class="btn bg-transparent border-0 bi bi-x p-0 me-2 mt-1" 
-            data-bs-toggle="collapse" data-bs-target="#layerFormsContainer" aria-expanded="false" aria-controls="layerFormsContainer"
-        ></button>
-    </div>
-    <div 
-        id='layerFormsAccordion'
-        class="accordion d-flex flex-column gap-3"
-        style="max-width:80vw;min-width:40vw;"
-    >
-        {% variable 'd-flex flex-nowrap justify-content-end gap-3 align-items-center' as footer_class %}
-        {% variable 'd-flex flex-column gap-3 p-3' as container_class %}
-        <div
-            id='searchLibraryCollapse'
-            class='accordion-collapse collapse show'
-            data-bs-parent="#layerFormsAccordion"
-            >
-            <div class="{{container_class}}">
-                {% include "helpers/maplibre/search/search_form.html" %}
-                <div class="{{footer_class}}">
-                    <span class='fst-italic text-muted user-select-none'>Add a local file layer or onboard a new layer source URL</span>
-                    <button 
-                        type="button"
-                        class="btn btn-sm fs-12 btn-success d-flex flex-nowrap gap-1 align-items-center"
-                        data-bs-toggle="collapse" data-bs-target="#addLayerCollapse" aria-expanded="false" aria-controls="addLayerCollapse"
-                    >
-                        <i class="bi bi-plus-lg"></i>
-                        <span class='d-lg-block d-none text-nowrap'>Add layer</span>
-                    </button>
-                </div>
-            </div>
+    <div class="d-flex flex-column h-100 w-100">
+        <div class="d-flex justify-content-end">
+            <button 
+                type="button" 
+                class="btn bg-transparent border-0 bi bi-x p-0 me-2 mt-1" 
+                data-bs-toggle="collapse" data-bs-target="#layerFormsContainer" aria-expanded="false" aria-controls="layerFormsContainer"
+            ></button>
         </div>
         <div 
-            id='addLayerCollapse'
-            class='accordion-collapse collapse'
-            data-bs-parent="#layerFormsAccordion"
+            id='layerFormsAccordion'
+            class="accordion d-flex flex-column gap-3 flex-grow-1"
         >
-            <div class="{{container_class}}">
-                {% include "helpers/maplibre/add_layer/add_layer_form.html" %}
-                <div class="{{footer_class}}">
-                    <button 
-                        type="button"
-                        class="btn btn-sm fs-12 btn-success d-flex flex-nowrap gap-1 align-items-center"
-                        data-bs-toggle="collapse" data-bs-target="#searchLibraryCollapse" aria-expanded="true" aria-controls="searchLibraryCollapse"
-                    >
-                        <i class="bi bi-book"></i>
-                        <span class='d-lg-block d-none text-nowrap'>Search library</span>
-                    </button>
+        {% variable 'd-flex flex-column gap-3 p-3 flex-grow-1' as container_class %}
+        {% variable 'd-flex flex-nowrap justify-content-end gap-3 align-items-center mt-auto' as footer_class %}
+            <div
+                id='searchLibraryCollapse'
+                class='accordion-collapse collapse flex-grow-1 show'
+                data-bs-parent="#layerFormsAccordion"
+            >
+                <div class="{{container_class}}">
+                    {% include "helpers/maplibre/search/search_form.html" %}
+                    <div id="searchResults" class='flex-grow-1'></div>
+                    <div class="{{footer_class}}">
+                        <span class='fst-italic text-muted user-select-none'>Import a map, add a local file layer or onboard a new layer source URL</span>
+                        <button 
+                            type="button"
+                            class="btn btn-sm fs-12 btn-success d-flex flex-nowrap gap-1 align-items-center"
+                            data-bs-toggle="collapse" data-bs-target="#addLayerCollapse" aria-expanded="false" aria-controls="addLayerCollapse"
+                        >
+                            <i class="bi bi-plus-lg"></i>
+                            <span class='d-lg-block d-none text-nowrap'>Add layers</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div 
+                id='addLayerCollapse'
+                class='accordion-collapse collapse flex-grow-1'
+                data-bs-parent="#layerFormsAccordion"
+            >
+                <div class="{{container_class}}">
+                    {% include "helpers/maplibre/add_layer/add_layer_form.html" %}
+                    <div class="{{footer_class}}">
+                        <button 
+                            type="button"
+                            class="btn btn-sm fs-12 btn-success d-flex flex-nowrap gap-1 align-items-center"
+                            data-bs-toggle="collapse" data-bs-target="#searchLibraryCollapse" aria-expanded="true" aria-controls="searchLibraryCollapse"
+                        >
+                            <i class="bi bi-book"></i>
+                            <span class='d-lg-block d-none text-nowrap'>Search library</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

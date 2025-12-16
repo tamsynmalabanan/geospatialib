@@ -1854,7 +1854,7 @@ class UserControl {
                         tag: 'button',
                         parent: menu,
                         className: `btn btn-sm bg-transparent border w-auto h-auto fs-10`,
-                        innerText: 'Add layer',
+                        innerText: 'Add layers',
                         attrs: {
                             'data-map-layer-source': layerSource
                         }
