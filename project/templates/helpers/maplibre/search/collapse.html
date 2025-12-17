@@ -15,10 +15,10 @@
         </div>
         <div 
             id='layerFormsAccordion'
-            class="accordion d-flex flex-column gap-3 flex-grow-1"
+            class="accordion d-flex flex-column flex-grow-1"
         >
-        {% variable 'd-flex flex-column gap-3 p-3 flex-grow-1' as container_class %}
-        {% variable 'd-flex flex-nowrap justify-content-end gap-3 align-items-center mt-auto' as footer_class %}
+        {% variable 'd-flex flex-column flex-grow-1' as container_class %}
+        {% variable 'd-flex flex-nowrap justify-content-end gap-3 align-items-start mt-auto p-3 border-top' as footer_class %}
             <div
                 id='searchLibraryCollapse'
                 class='accordion-collapse collapse flex-grow-1 show'
@@ -26,7 +26,9 @@
             >
                 <div class="{{container_class}}">
                     {% include "helpers/maplibre/search/search_form.html" %}
-                    <div id="searchResults" class='flex-grow-1'></div>
+                    <div class="d-flex flex-grow-1 px-3">
+                        <ul id="searchResults" class='flex-grow-1'></ul>
+                    </div>
                     <div class="{{footer_class}}">
                         <span class='fst-italic text-muted user-select-none'>Import a map, add a local file layer or onboard a new layer source URL</span>
                         <button 
@@ -47,6 +49,9 @@
             >
                 <div class="{{container_class}}">
                     {% include "helpers/maplibre/add_layer/add_layer_form.html" %}
+                    <div class="d-flex flex-grow-1">
+                        {% comment %} results {% endcomment %}
+                    </div>
                     <div class="{{footer_class}}">
                         <button 
                             type="button"

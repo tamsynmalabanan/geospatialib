@@ -1843,7 +1843,7 @@ class UserControl {
             if (this.searchResultsBoundsToggle?.checked) {
                 const features = Array.from(searchResults.querySelectorAll(`[data-map-layer-source]`)).map(el => {
                     const layerSource = el.getAttribute('data-map-layer-source') ?? '{}'
-                    const properties = JSON.parse(layerSource)
+                    let properties = JSON.parse(layerSource)
                     if (!properties.bbox) return
 
                     const menu = customCreateElement({
@@ -1860,7 +1860,10 @@ class UserControl {
                         }
                     })
 
-                    properties.menu = menu.outerHTML
+                    properties = {
+                        menu: menu.outerHTML,
+                        ...properties,
+                    }
                     return turf.bboxPolygon(properties.bbox, {properties})
                 }).filter(i => i)
                 

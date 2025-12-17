@@ -8,8 +8,8 @@
     {% variable data.type as type %}
     {% variable collection.url.path as url %}
     <li 
-        class="list-group-item d-flex border-0 col-xxl-2 col-xl-3 col-lg-5 col-12 p-0 gap-3 flex-grow-1"
-        style='min-width:150px;max-width:370px;'
+        class="list-group-item d-flex border-0 col-xxl-2 col-xl-3 col-lg-5 col-12 p-0 gap-3 flex-grow-1 mb-3"
+        style='min-width:150px;max-width:350px;'
         {% if forloop.last and page_obj.has_next  %}
             hx-get="{% url 'htmx:search_library' %}{% querystring request page=page_obj.number|add:1 %}"
             hx-trigger="intersect once"
@@ -112,7 +112,7 @@
     {% if forloop.last and page_obj.has_next %}
         <li id="searchResultsSpinner-{{page_obj.number}}" class="list-group-item htmx-indicator col-12">
             <div class='d-flex justify-content-center gap-3'>
-                {% with spinner_class="spinner-grow spinner-grow-sm text-secondary my-3" %}
+                {% with spinner_class="spinner-grow spinner-grow-sm text-secondary mb-3" %}
                     <div class="{{spinner_class}}" role="status"></div>
                     <div class="{{spinner_class}}" role="status"></div>
                     <div class="{{spinner_class}}" role="status"></div>

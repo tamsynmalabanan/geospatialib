@@ -9,7 +9,7 @@
 
 {% if page_obj.number %}
     {% if page_obj.number == 1 %}
-        <ul id='searchResults' class="d-flex flex-grow-1 overflow-y-auto flex-wrap gap-2 w-100 px-0 overflow-x-hidden pe-1 m-0" style="max-height:60vh;">
+        <ul id='searchResults' class="d-flex flex-grow-1 overflow-y-auto flex-wrap gap-2 w-100 px-0 overflow-x-hidden pe-2 m-0" style="max-height:60vh;">
             {% include "helpers/maplibre/search/items.html" %}
         </ul>
     {% else %}
