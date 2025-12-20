@@ -59,6 +59,7 @@ class URL(models.Model):
         return urlparse(self.path).netloc
 
 class Collection(models.Model):
+    added_by = models.ForeignKey("customuser.User", verbose_name='Added by', on_delete=models.DO_NOTHING, blank=True, null=True)
     url:URL = models.ForeignKey("main.URL", verbose_name='URL', on_delete=models.CASCADE)
     format = models.CharField('Format', max_length=16, choices=dict_to_choices(choices.COLLECTION_FORMATS))
     dynamic = models.BooleanField('Dynamic', default=False)

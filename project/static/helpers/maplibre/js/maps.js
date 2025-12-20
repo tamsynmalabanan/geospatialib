@@ -1438,7 +1438,12 @@ class SettingsControl {
                 if (!bbox) return
                 
                 el.addEventListener('click', (e) => {
-                    this.map.fitBounds(JSON.parse(bbox), {padding:100, maxZoom:11})
+                    try {
+                        this.map.fitBounds(JSON.parse(bbox), {padding:100, maxZoom:11})
+                    } catch (error) {
+                        console.log(error)
+                        console.log(bbox)
+                    }
                 })
             })
 
@@ -1979,6 +1984,48 @@ class UserControl {
             container.querySelector(`input[name='query']`).focus()
         })
     }
+
+    handleAddLayersForm() {
+        const form = this.map._container.querySelector(`#addLayersForm`)
+        if (!form) return
+
+        const sourceRadios = Array.from(form.elements.source)
+        const mapInput = form.elements.map
+        const filesInput = form.elements.files
+        
+        const getURLInput = () => form.elements.url
+        const getFormatInput = () => form.elements.format
+        
+        const resetBtn = form.elements.reset
+        const vectorBtn = form.elements.vector
+        const addBtn = form.elements.add
+
+        sourceRadios.forEach(el => {
+            el.parentElement.addEventListener('click', (e) => {
+                sourceRadios.forEach(i => {
+                    const fields = form.querySelector(`#${i.id.split('-source-').join('-fields-')}`)
+                    fields.classList.toggle('d-none', el !== i)
+                    
+                    const results = form.querySelector(`#${i.id.split('-source-').join('-results-')}`)
+                    results.classList.toggle('d-none', el !== i)
+                })
+            })
+        })
+
+        resetBtn.addEventListener('click', (e) => {
+            mapInput.value = ''
+            filesInput.value = ''
+            getURLInput().value = ''
+            getFormatInput().value = ''
+
+            sourceRadios.forEach(el => {
+                const results = form.querySelector(`#${el.id.split('-source-').join('-results-')}`)
+                results.innerHTML = ''
+            })
+
+            addBtn.disabled = true
+        })
+    }
     
     onAdd(map) {
         this.map = map
@@ -1990,6 +2037,7 @@ class UserControl {
         this.handleLayerFormsContainer()
         this.handleSearchResultsBoundsToggle()
         this.handleSearchResultsThumbnailsToggle()
+        this.handleAddLayersForm()
 
         return this.container
     }

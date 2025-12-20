@@ -76,7 +76,12 @@ const generateRandomString = (length=16) => {
 }
 
 const canonicalize = (obj) => {
-    return JSON.stringify(obj, Object.keys(obj).sort())
+    const jsonStr = JSON.stringify(obj, Object.keys(obj).sort())
+    if (_.isEqual(obj, JSON.parse(jsonStr))) {
+        return jsonStr
+    } else {
+        return JSON.stringify(obj)
+    }
 }
 
 const hashJSON = async (jsonObj) => {

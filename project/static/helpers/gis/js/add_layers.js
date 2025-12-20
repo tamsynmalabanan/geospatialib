@@ -148,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (source === 'url') {
             const url = form.elements.url.value
             const format = form.elements.format.value
+    
             for (const name in includedLayers) {
                 const params = {...includedLayers[name], url, format, name}
                 urlToLeafletLayer({

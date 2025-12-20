@@ -5,7 +5,7 @@ const handleGSLLayers = (layers, container) => {
 
     const selectAllDiv = customCreateElement({
         parent: container,
-        className: `d-flex gap-2 align-items-center sticky-top text-bg-${getPreferredTheme()} pt-2`
+        className: `d-flex gap-2 align-items-center sticky-top text-bg-${getPreferredTheme()}`
     })
 
     const selectAllCheckbox = customCreateElement({

@@ -16,11 +16,12 @@ class ValidateCollectionForm(forms.Form):
         required=True,
         widget=forms.URLInput(attrs={
             'type':'search',
-            'class':'form-control rounded-end',
+            'class':'form-control form-control-sm fs-12 rounded-end',
             'hx-get':reverse_lazy('htmx:validate_collection'),
             'hx-trigger':'change',
-            'hx-target':'#addLayersForm-urlFields',
+            'hx-target':'#addLayersForm-fields-url',
             'hx-swap': 'innerHTML',
+            'hx-indicator': '#addLayersForm-indicator',
         })
     )
 
@@ -33,11 +34,12 @@ class ValidateCollectionForm(forms.Form):
         },
         widget=forms.Select(attrs={
             'disabled': True,
-            'class':'form-select rounded-end',
+            'class':'form-select rounded-end form-select-sm fs-12',
             'hx-get':reverse_lazy('htmx:validate_collection'),
             'hx-trigger':'change',
-            'hx-target':'#addLayersForm-urlFields',
+            'hx-target':'#addLayersForm-fields-url',
             'hx-swap': 'innerHTML',
+            'hx-indicator': '#addLayersForm-indicator',
         })
     )        
 
@@ -45,7 +47,7 @@ class ValidateCollectionForm(forms.Form):
         url = self.cleaned_data.get("url")
         if url:
             del self.fields['format'].widget.attrs['disabled']
-
+        
         format = self.cleaned_data.get("format") if url else ''
         if url and not format:
             format = guess_format_from_url(url)

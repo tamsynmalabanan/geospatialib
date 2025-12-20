@@ -2,5 +2,5 @@
 {% load utility_tags %}
 
 {% if field %}
-    <label for="{% get_field_id field %}">{{field.label}}</label>
+    <label class="{{labelClass}}" for="{% get_field_id field %}">{{field.label}}</label>
 {% endif %}

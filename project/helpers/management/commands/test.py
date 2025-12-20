@@ -8,7 +8,6 @@ from helpers.main.ogc import get_ogc_layers, get_layers_via_et
 from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
 from main.tasks import onboard_collection
 from main.models import URL, Collection, Layer
-from main.forms import ValidateCollectionForm
 from main.agent import create_thematic_map
 from helpers.main.utils import get_srtm_elevation
 

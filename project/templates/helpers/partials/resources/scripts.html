@@ -16,8 +16,9 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js" integrity="sha256-NVP7i99bgATOVTHmgn6ByLNOezmSZ3lndUVEBk6XsBY=" crossorigin="anonymous"></script>
 
 {% comment %} htmx {% endcomment %}
-<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+{% comment %} <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script> {% endcomment %}
 {% comment %} <script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.js" integrity="sha384-oeUn82QNXPuVkGCkcrInrS1twIxKhkZiFfr2TdiuObZ3n3yIeMiqcRzkIcguaof1" crossorigin="anonymous"></script> {% endcomment %}
+<script type="text/javascript" src="{% static 'plugins/htmx/js/htmx.min.js' %}"></script>
 <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/ws.js"></script>
 
 {% comment %} jszip {% endcomment %}
@@ -79,6 +80,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 {% compress js %}
+    {% comment %} htmx {% endcomment %}
+    {% comment %} <script type="text/javascript" src="{% static 'plugins/htmx/js/htmx.min.js' %}"></script> {% endcomment %}
+
     {% comment %} leaflet {% endcomment %}
     <script type="text/javascript" src="{% static 'plugins/leaflet-polygon-fillPattern-canvas-main/leaflet-polygon.fillPattern-canvas.js' %}"></script>
     <script type="text/javascript" src="{% static 'plugins/leaflet-line-measurement/Leaflet.LinearMeasurement.js' %}"></script>

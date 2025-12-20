@@ -1,0 +1,33 @@
+{% load widget_tweaks %}
+{% load utility_tags %}
+{% load static %}
+
+<div class='d-flex flex-column gap-2'>
+    {% variable "fs-12" as labelClass %}
+    
+    {% csrf_token %}
+    
+    {% with field=form.url %}
+        <div class="input-group ">
+            <div class="input-group-text">
+                {% include "helpers/partials/form/label.html" %}
+            </div>
+            {% include "helpers/partials/form/field.html" %}
+        </div>
+    {% endwith %}
+    
+    {% with field=form.format %}
+        <div class="input-group ">
+            <div class="input-group-text">
+                {% include "helpers/partials/form/label.html" %}
+            </div>
+            {% include "helpers/partials/form/field.html" %}
+        </div>
+    {% endwith %}
+</div>
+
+{% if layers %}
+    <div id='addLayersForm-results-url' hx-swap-oob="true" class='d-flex flex-column gap-2 flex-grow-1'>
+        {% include "helpers/maplibre/add_layers/layer_forms.html" %}
+    </div>
+{% endif %}

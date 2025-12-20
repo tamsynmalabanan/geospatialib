@@ -104,12 +104,15 @@ def validate_collection(request):
             raw_format = data.get('format')
             form.data.update({'format':raw_format})
             if raw_format:
-                form.add_error('format', 'No layers retrieved.')
+                form.add_error('format', 'No layers retrieved in selected format.')
         else:
-            form.data.update({'url':context['url']})
+            form.data.update({
+                'url':context['url'],
+                'format':context['format'],
+            })
             context['layers'] = sort_layers(layers)
     context['form'] = form
-    return render(request, 'helpers/partials/add_layers/url_fields.html', context)
+    return render(request, 'helpers/maplibre/add_layers/url_fields.html', context)
 
 @require_http_methods(['POST'])
 def update_collection(request):
@@ -178,4 +181,4 @@ def srs_wkt(request, srid):
     return HttpResponse(srs.srtext, content_type='text/plain')
 
 def get_user_control(request):
-    return render(request, 'helpers/maplibre/user_control.html')
+    return render(request, 'helpers/maplibre/user_control/container.html')
