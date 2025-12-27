@@ -286,10 +286,13 @@ const createFeaturePropertiesTable = (properties, {
     tableClass = '',
     parent,
 } = {}) => {
+    const container = customCreateElement()
+
     const table = document.createElement('table')
     table.className = removeWhitespace(`
         table table-sm table-striped m-0 ${tableClass}
     `)
+    container.appendChild(table)
 
     if (header) {
         const thead = document.createElement('thead')
@@ -301,9 +304,10 @@ const createFeaturePropertiesTable = (properties, {
         const theadth = document.createElement('th')
         theadth.setAttribute('scope', 'col')
         theadth.setAttribute('colspan', '2')
-        theadth.className = 'fw-bold text-break text-wrap p-0'
+        theadth.className = 'fw-bold text-break text-wrap p-0 text-start'
         theadth.style.textAlign = 'center'
         theadth.innerHTML = header
+        theadth.style.maxWidth = `${window.innerWidth * 0.25}px`
         theadtr.appendChild(theadth)
     }
 
@@ -330,10 +334,10 @@ const createFeaturePropertiesTable = (properties, {
     })
 
     if (parent && parent instanceof Element) {
-        parent.appendChild(table)
+        parent.appendChild(container)
     }
 
-    return table
+    return container
 }
 
 const fetchGeoJSONHandlers = (name) => {

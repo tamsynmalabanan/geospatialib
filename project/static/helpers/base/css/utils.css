@@ -75,11 +75,11 @@
     user-select: none;
 }
 
-.onblur-fade {
+.fade-onblur {
     opacity: 10%;
 }
 
-.onblur-fade:hover {
+.fade-onblur:hover {
     opacity: 100%;
 }
 

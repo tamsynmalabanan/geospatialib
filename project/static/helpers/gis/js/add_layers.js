@@ -20,7 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
         map = getLeafletMap(e.relatedTarget.closest('.leaflet-container').id)
     })
 
-    const getLayerNamesContainer = (source) => form.querySelector(`#${formId}-${source}-layerNames`)
+    const getLayerNamesContainer = (source) => {
+        form.querySelector(`#${formId}-${source}-layerNames`)
+    }
     
     const getFileSource = () => sourceRadios.find(i => i.checked).value
     

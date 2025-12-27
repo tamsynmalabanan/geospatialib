@@ -7,17 +7,17 @@
     <div class='d-flex flex-nowrap gap-3'>
         <div class="form-check">
             {% variable "addLayersForm-source-map" as id %}
-            <input class="form-check-input" type="radio" name="source" id="{{id}}" checked>
+            <input class="form-check-input" type="radio" name="source" id="{{id}}" value='map' checked>
             <label class="form-check-label" for="{{id}}">Import a map</label>
         </div>
         <div class="form-check">
             {% variable "addLayersForm-source-files" as id %}
-            <input class="form-check-input" type="radio" name="source" id="{{id}}">
+            <input class="form-check-input" type="radio" name="source" id="{{id}}" value='files'>
             <label class="form-check-label" for="{{id}}">Upload local files</label>
         </div>
         <div class="form-check">
             {% variable "addLayersForm-source-url" as id %}
-            <input class="form-check-input" type="radio" name="source" id="{{id}}">
+            <input class="form-check-input" type="radio" name="source" id="{{id}}" value='url'>
             <label class="form-check-label" for="{{id}}">Onboard a layer source URL</label>
         </div>
     </div>

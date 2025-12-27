@@ -80,7 +80,7 @@ const fetchWMSData = async (params, {style, abortBtns, controller, event} = {}) 
         SRS: "EPSG:4326",
         CRS: 'EPSG:4326',
         
-        BBOX: map.getSettingsControl().getMapBbox(),
+        BBOX: map._settingsControl.getMapBbox(),
         WIDTH: map.getCanvas().width,
         HEIGHT: map.getCanvas().height,
         X: Math.floor(event.point.x),
