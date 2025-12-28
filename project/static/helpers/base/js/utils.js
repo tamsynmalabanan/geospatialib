@@ -5,21 +5,48 @@ const elementResizeObserver = (element, callback, {
 } = {}) => {
     let resizeTimeout
     
-    const resizeObserver = new ResizeObserver(entries => {
+    const observer = new ResizeObserver(entries => {
         for (const entry of entries) {
             if (entry.target === element) {
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
-                    if (once) resizeObserver.unobserve(element)
+                    if (once) observer.unobserve(element)
                     callback(element)
                 }, 100)
             }
         }
     });
 
-    resizeObserver.observe(element)
+    observer.observe(element)
 
-    return resizeObserver
+    return observer
+}
+
+const elementMutationObserver = (element, callback, {
+    attributes = true,
+    attributeFilter,
+    once = false,
+    timeout = 100
+}={}) => {
+    let mutationTimeout
+
+    const observer = new MutationObserver(mutations => {
+        for (const mutation of mutations) {
+            clearTimeout(mutationTimeout)
+            mutationTimeout = setTimeout(() => {
+                if (once) observer.disconnect()
+                callback(mutation)
+            }, timeout);
+        }
+    })
+
+    observer.observe(element, {
+        attributes,
+        attributeFilter,
+    })
+
+    return observer
+
 }
 
 const animateElement = (element, animation, {

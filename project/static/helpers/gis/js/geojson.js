@@ -284,9 +284,13 @@ const createPointCoordinatesTable = (ptFeature, {precision = 6}={}) => {
 const createFeaturePropertiesTable = (properties, {
     header,
     tableClass = '',
+    containerClass = '',
     parent,
 } = {}) => {
-    const container = customCreateElement()
+    const container = customCreateElement({
+        parent, 
+        className: `${containerClass}`,
+    })
 
     const table = document.createElement('table')
     table.className = removeWhitespace(`
@@ -332,10 +336,6 @@ const createFeaturePropertiesTable = (properties, {
         value.innerHTML = isNaN(data) ? data : formatNumberWithCommas(Number(data))
         tr.appendChild(value)
     })
-
-    if (parent && parent instanceof Element) {
-        parent.appendChild(container)
-    }
 
     return container
 }

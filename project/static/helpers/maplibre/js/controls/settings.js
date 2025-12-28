@@ -378,19 +378,14 @@ class SettingsControl {
 
         const popupContainer = popup._container
 
-        const bgColor = getPreferredTheme() === 'light' ? 'hsla(0, 0%, 100%, 0.5)' : 'hsla(0, 0%, 0%, 0.5)'
-
-        const popupTooltip = popupContainer.querySelector('.maplibregl-popup-tip')
-        const style = window.getComputedStyle(popupTooltip)
-        Array('Top','Bottom', 'Left', 'Right').forEach(pos => {
-            if (style.getPropertyValue(`border-${pos.toLocaleLowerCase()}-color`) !== 'rgba(0, 0, 0, 0)') {
-                popupTooltip.style[`border${pos}Color`] = bgColor
-            }
+        this.configPopupTooltip(popup, {
+            darkColor: 'hsla(0, 0%, 0%, 0.5)',
+            lightColor: 'hsla(0, 0%, 100%, 0.5)',
         })
-        
+
         const popupContent = popupContainer.querySelector('.maplibregl-popup-content')
         popupContent.classList.add('p-2')
-        popupContent.style.backgroundColor = bgColor
+        popupContent.style.backgroundColor = getPreferredTheme() === 'light' ? 'hsla(0, 0%, 100%, 0.5)' : 'hsla(0, 0%, 0%, 0.5)'
 
         const container = popupContent.firstChild
         container.style.color = getPreferredTheme() === 'light' ? 'hsla(0, 0%, 0%, 1)' : 'hsla(0, 0%, 100%, 1)'
@@ -406,6 +401,85 @@ class SettingsControl {
                 this.createTooltip(e)
             }, 100);
         })
+    }
+
+    featurePropertiesToTable(properties, {
+        parent,
+        tableClass = '',
+        containerClass = '',
+    } = {}) {
+        const container = customCreateElement({
+            parent, 
+            className: `${containerClass}`,
+        })
+
+        const table = customCreateElement({
+            tag: 'table',
+            className: `table ${tableClass}`,
+            parent: container,
+        })
+
+        const tbody = customCreateElement({
+            tag: 'tbody',
+            parent: table,
+        })
+        
+        Object.keys(properties).forEach(property => {
+            const data = properties[property] ?? null
+
+            const tr = customCreateElement({
+                tag: 'tr',
+                parent: tbody
+            })
+            
+            const key = customCreateElement({
+                tag: 'td',
+                parent: tr,
+                className: `fw-medium pe-3`,
+                innerText: property,
+                attrs: {'scope': 'row'},
+            })
+            
+            const value = customCreateElement({
+                tag: 'td',
+                parent: tr,
+                className: 'text-wrap',
+                style: {maxWidth: `${window.innerWidth * 0.25}px`},
+                innerHTML: data   
+            })
+        })
+
+        return container
+    }
+
+    configPopupTooltip(popup, {
+        darkColor,
+        lightColor,
+    }={}) {
+        const popupContainer = popup._container
+        const popupTooltip = popupContainer.querySelector('.maplibregl-popup-tip')
+        
+        const handler = () => {
+            popupTooltip.removeAttribute('style')
+            const style = window.getComputedStyle(popupTooltip)
+            Array('Top', 'Bottom', 'Left', 'Right').forEach(pos => {
+                const lowerPos = pos.toLowerCase()
+                if (style.getPropertyValue(`border-${lowerPos}-color`) === `rgb(255, 255, 255)`) {
+                    popupTooltip.style[`border${pos}Color`] = (
+                        getPreferredTheme() === 'dark' 
+                        ? darkColor ?? `rgba(var(--bs-dark-rgb)` 
+                        : lightColor ?? `rgba(var(--bs-light-rgb)`
+                    )
+                }
+            })
+        }
+
+        handler()
+        const mutationObserver = elementMutationObserver(popupContainer, handler, {
+            attributesFilter: ['class'], timeout: 0,
+        })
+
+        document.addEventListener('setTheme', handler)
     }
     
     async createPopup(e) { 
@@ -439,16 +513,7 @@ class SettingsControl {
         })
         
         const popupContainer = popup._container
-        
-        const popupTooltip = popupContainer.querySelector('.maplibregl-popup-tip')
-        
-        const style = window.getComputedStyle(popupTooltip)
-        Array('top','bottom', 'left', 'right').forEach(pos => {
-            if (style.getPropertyValue(`border-${pos}-color`) !== 'rgba(0, 0, 0, 0)') {
-                const bsPos = Array('top', 'bottom').includes(pos) ? pos : pos === 'left' ? 'start' : 'end'
-                popupTooltip.classList.add(`border-${bsPos}-${getPreferredTheme()}`)
-            }
-        })
+        this.configPopupTooltip(popup)
 
         const popupCloseBtn = popupContainer.querySelector('.maplibregl-popup-close-button')
         popupCloseBtn.classList.add(`text-bg-${getPreferredTheme()}`)
@@ -459,7 +524,7 @@ class SettingsControl {
         
         const container = popupContent.firstChild
         container.className = `d-flex flex-column gap-3`
-        container.style.maxHeight = `${popupHeight-10-12-24}px`
+        // container.style.maxHeight = `${popupHeight-10-12-24}px`
         container.style.maxWidth = `${popupWidth-12-12}px`
 
         const footer = customCreateElement({
@@ -562,15 +627,16 @@ class SettingsControl {
         
         if (features?.length) {
             const carouselContainer = customCreateElement({
-                className: 'd-flex'
+                className: 'd-flex',
+                style: {maxWidth: `400px`,}
                 // className: 'd-flex overflow-auto pe-1'
             })
             container.insertBefore(carouselContainer, footer)
 
-            // const resizeObserver = elementResizeObserver(carouselContainer, (e) => {
-            //     footer.style.maxWidth = `${carouselContainer.offsetWidth}px`
-            // })
-            // popup.on('close', () => resizeObserver.unobserve(carouselContainer))
+            const resizeObserver = elementResizeObserver(carouselContainer, (e) => {
+                footer.style.maxWidth = `${carouselContainer.offsetWidth}px`
+            })
+            popup.on('close', () => resizeObserver.unobserve(carouselContainer))
 
             const carousel = customCreateElement({
                 className: 'carousel slide',
@@ -589,9 +655,15 @@ class SettingsControl {
                     className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
                 })
 
-                const menu = customCreateElement({
+                const content = customCreateElement({
                     parent: carouselItem,
-                    className: 'd-flex flex-nowrap justify-content-between mb-2'
+                    className: `d-flex flex-column gap-2`,
+                    style: {maxHeight: `50vh`}
+                })
+
+                const menu = customCreateElement({
+                    parent: content,
+                    className: 'd-flex flex-nowrap justify-content-between'
                 })
 
                 const page = customCreateElement({
@@ -615,26 +687,35 @@ class SettingsControl {
                     }
                 })
 
-                const tempHeader = null
-                '<img src="https://th.bing.com/th/id/OSK.HEROlJnsXcA4gu9_6AQ2NKHnHukTiry1AIf99BWEqfbU29E?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM">'
-                const propertiesTable = createFeaturePropertiesTable(f.properties, {
-                    parent: carouselItem, 
-                    header: tempHeader ?? Array(
+                let tempHeader = null
+                // tempHeader = '<img width="400" src="https://th.bing.com/th/id/OSK.HEROlJnsXcA4gu9_6AQ2NKHnHukTiry1AIf99BWEqfbU29E?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM">'
+                
+                const header = customCreateElement({
+                    parent: content,
+                    className: `fw-bold text-break text-wrap text-start fs-14`,
+                    style: {maxWidth:`400px`},
+                    innerHTML: tempHeader ?? Array(
                         this.getLayerTitle(f.layer),
                         this.getTooltipContent(f)
-                    ).filter(i => i).join(': '), 
-                    tableClass: `fs-12 table-${getPreferredTheme()}`
+                    ).filter(i => i).join(': ')
                 })
+
+                const propertiesTable = this.featurePropertiesToTable(f.properties, {
+                    parent: content, 
+                    tableClass: `table-sm table-striped m-0 fs-12 table-${getPreferredTheme()}`,
+                    containerClass: `overflow-y-auto flex-grow-1`,
+                })
+
             })
             
             if (features.length > 1) {
                 Array.from(customCreateElement({
                     innerHTML: `
-                        <button class="carousel-control-prev w-auto h-auto" type="button" data-bs-target="#${carousel.id}" data-bs-slide="prev">
+                        <button class="carousel-control-prev w-auto h-auto mt-2" type="button" data-bs-target="#${carousel.id}" data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Previous</span>
                         </button>
-                        <button class="carousel-control-next w-auto h-auto" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
+                        <button class="carousel-control-next w-auto h-auto me-2" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="visually-hidden">Next</span>
                         </button>
