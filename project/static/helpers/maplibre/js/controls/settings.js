@@ -1759,7 +1759,7 @@ class SettingsControl {
                         }
                     },
                     basemap: {
-                        label: 'Toggle grayscale basemap',
+                        label: 'Toggle colored basemap',
                         icon: '🗺️',
                         checked: !isDarkMode,
                         events: {
