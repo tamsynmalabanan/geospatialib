@@ -261,7 +261,39 @@ class UserControl {
             ).find(i => i.checked) ? false : true
         }
 
-        // switching sources
+        const resetFormatField = () => {
+            const formatField = form.elements.format
+            formatField.value = ''
+            formatField.disabled = true
+            formatField.classList.remove('is-invalid')
+        }
+        
+        const resetUrlField = () => {
+            const urlField = form.elements.url
+            urlField.value = ''
+            urlField.classList.remove('is-invalid')
+            resetFormatField()
+        }
+        
+        const getSelectedLayers = () => {
+            const layerCheckboxes = Array.from(
+                getActiveResultsContainer().querySelectorAll('.form-check-input')
+            ).slice(1).filter(i => i.checked)
+            
+            const layers = {}
+   
+            layerCheckboxes.forEach(i => {
+                const params = {}
+                Array.from(i.parentElement.querySelectorAll('[name]')).forEach(j => {
+                    if (i === j) return
+                    params[j.getAttribute('name')] = j.value
+                })
+                layers[i.value] = params
+            })
+            
+            return layers
+        }
+
         sourceRadios.forEach(el => {
             el.parentElement.addEventListener('click', (e) => {
                 sourceRadios.forEach(i => {
@@ -277,21 +309,6 @@ class UserControl {
             })
         })
 
-        const resetFormatField = () => {
-            const formatField = form.elements.format
-            formatField.value = ''
-            formatField.disabled = true
-            formatField.classList.remove('is-invalid')
-        }
-
-        const resetUrlField = () => {
-            const urlField = form.elements.url
-            urlField.value = ''
-            urlField.classList.remove('is-invalid')
-            resetFormatField()
-        }
-
-        // reset form
         resetBtn.addEventListener('click', (e) => {
             sourceRadios.forEach(el => {
                 const fields = form.querySelector(`#addLayersForm-fields-${el.value}`)
@@ -307,7 +324,6 @@ class UserControl {
             toggleAddBtn()
         })
 
-        // layer checkbox click
         form.addEventListener('click', (e) => {
             const resultsContainer = getActiveResultsContainer()
             const checkboxSelector = `#${resultsContainer.id} .form-check-input[type="checkbox"]`
@@ -432,6 +448,12 @@ class UserControl {
                 mapInput.parentElement.querySelector(`.invalid-feedback ul`).innerText = err.message
                 mapInput.classList.add('is-invalid')
             }
+        })
+
+        addBtn.addEventListener('click', async (e) => {
+            const source = getActiveSourceRadio().value
+            const layers = getSelectedLayers()
+            console.log(source, layers)
         })
     }
 

@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!i.checked) return
     
             const params = {}
-            Array.from(i.parentElement.querySelectorAll('input')).forEach(j => {
+            Array.from(i.parentElement.querySelectorAll('[name]')).forEach(j => {
                 if (i === j) return
     
                 const name = j.getAttribute('name')
