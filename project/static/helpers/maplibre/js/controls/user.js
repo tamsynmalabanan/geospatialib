@@ -156,6 +156,85 @@ class UserControl {
         })
     }
 
+    handleImportedMap(layers) {
+        const container = document.querySelector(`#addLayersForm-results-map`)
+        container.innerHTML = ''
+    
+        if (!Object.keys(layers).length) return
+
+        const selectAllDiv = customCreateElement({
+            parent: container,
+            className: `d-flex gap-2 align-items-center sticky-top text-bg-${getPreferredTheme()}`
+        })
+
+        const selectAllCheckbox = customCreateElement({
+            parent: selectAllDiv,
+            tag: 'input',
+            className: 'form-check-input mt-0 fs-12',
+            attrs: {
+                type: 'checkbox',
+                value: 'all',
+                checked: true,
+            },
+        })
+
+        const selectAllLabel = customCreateElement({
+            parent: selectAllDiv,
+            tag: 'input',
+            className: 'form-control border-0 box-shadow-none fs-12',
+            attrs: {
+                readonly: true,
+                value: `Select all layers (${Object.keys(layers).length})`
+            },
+        })
+
+        const layersContainer = customCreateElement({
+            parent: container,
+            className: 'd-flex flex-column gap-2',
+        })
+
+        Object.keys(layers).reverse().forEach(i => {
+            const data = layers[i]
+            console.log(data)
+
+            const layerContainer = customCreateElement({
+                parent: layersContainer,
+                className: 'd-flex align-items-center'
+            })
+
+            const checkbox = customCreateElement({
+                parent: layerContainer,
+                tag: 'input',
+                className: 'form-check-input mt-0 fs-12',
+                attrs: {
+                    type: 'checkbox',
+                    value: i,
+                    checked: true,
+                }
+            })
+
+            const titleField = createFormFloating({
+                parent: layerContainer,
+                containerClass: 'flex-grow-1 ms-2 w-50',
+                fieldClass: 'fs-12',
+                fieldAttrs: {
+                    type: 'text',
+                    name: 'title',
+                    title: data.params.name,
+                    value: data.params.title,
+                },
+                labelText: 'Title',
+                events: {
+                    change: (e) => {
+                        const value = e.target.value.trim()
+                        if (value === '') return
+                        layers[i].params.title = value
+                    }
+                }
+            })
+        })
+    }
+
     handleAddLayersForm() {
         const form = this.map._container.querySelector(`#addLayersForm`)
         if (!form) return
@@ -163,9 +242,6 @@ class UserControl {
         const sourceRadios = Array.from(form.elements.source)
         const mapInput = form.elements.map
         const filesInput = form.elements.files
-        
-        const getURLInput = () => form.elements.url
-        const getFormatInput = () => form.elements.format
         
         const resetBtn = form.elements.reset
         const vectorBtn = form.elements.vector
@@ -180,7 +256,9 @@ class UserControl {
         }
 
         const toggleAddBtn = () => {
-            addBtn.disabled = Array.from(getActiveResultsContainer().querySelectorAll('.form-check-input')).find(i => i.checked) ? false : true
+            addBtn.disabled = Array.from(
+                getActiveResultsContainer().querySelectorAll('.form-check-input')
+            ).find(i => i.checked) ? false : true
         }
 
         // switching sources
@@ -199,29 +277,52 @@ class UserControl {
             })
         })
 
+        const resetFormatField = () => {
+            const formatField = form.elements.format
+            formatField.value = ''
+            formatField.disabled = true
+            formatField.classList.remove('is-invalid')
+        }
+
+        const resetUrlField = () => {
+            const urlField = form.elements.url
+            urlField.value = ''
+            urlField.classList.remove('is-invalid')
+            resetFormatField()
+        }
+
         // reset form
         resetBtn.addEventListener('click', (e) => {
-            mapInput.value = ''
-            filesInput.value = ''
-            getURLInput().value = ''
-
-            const formatInput = getFormatInput()
-            formatInput.value = ''
-            formatInput.disabled = true
-
             sourceRadios.forEach(el => {
+                const fields = form.querySelector(`#addLayersForm-fields-${el.value}`)
+                Array.from(fields.querySelectorAll(`[name]`)).forEach(el => {
+                    el.value = ''
+                    el.classList.remove('is-invalid')
+                    if (el.getAttribute('name') === 'format') el.disabled = true
+                })
+
                 const results = form.querySelector(`#addLayersForm-results-${el.value}`)
                 results.innerHTML = ''
             })
-
-            addBtn.disabled = true
-
             toggleAddBtn()
         })
 
         // layer checkbox click
         form.addEventListener('click', (e) => {
-            if (!e.target.matches(`#${getActiveResultsContainer().id} .form-check-input`)) return
+            const resultsContainer = getActiveResultsContainer()
+            const checkboxSelector = `#${resultsContainer.id} .form-check-input[type="checkbox"]`
+            if (!e.target.matches(checkboxSelector)) return
+            
+            const [selectAllCheckbox, ...layerCheckboxes] = Array.from(
+                resultsContainer.querySelectorAll(checkboxSelector)
+            )
+
+            if (e.target === selectAllCheckbox) {
+                layerCheckboxes.forEach(i => i.checked = e.target.checked)
+            } else {
+                selectAllCheckbox.checked = layerCheckboxes.every(i => i.checked)
+            }
+            
             toggleAddBtn()
         })
         
@@ -234,8 +335,106 @@ class UserControl {
             })
             settings.addGeoJSONLayers(sourceId)
         })
-    }
+
+        form.addEventListener('htmx:configRequest', (e) => {
+            if (e.target.matches(`#${form.querySelector(`#addLayersForm-fields-url`).id} [name]`)) {
+                form.querySelector(`#addLayersForm-results-url`).innerHTML = ''
+                toggleAddBtn()
+                e.target.classList.remove('is-invalid')
+
+                const urlField = form.elements.url
+                const formatField = form.elements.format
+
+                try {
+                    urlField.value = (new URL(urlField.value)).href
+                    
+                    if (e.target === urlField) {
+                        resetFormatField()
+                    }
+                    
+                    if (e.target === formatField) {
+                        e.detail.parameters['url'] = urlField.value
+                    }
+                } catch {
+                    e.preventDefault()
+
+                    if (urlField.value === '') {
+                        resetUrlField()
+                    } else {
+                        urlField.parentElement.querySelector('.invalid-feedback ul').innerText = 'Please enter a valid URL.'
+                        urlField.classList.add('is-invalid')
+                        resetFormatField()
+                    }
+                }
+            }
+        })
+        
+        form.addEventListener('htmx:afterSwap', (e) => {
+            toggleAddBtn()
+        })
     
+        form.addEventListener('htmx:responseError', (e) => {
+            if (e.detail.pathInfo.requestPath !== '/htmx/collection/validate/') return
+
+            e.target.classList.add('is-invalid')
+            
+            if (e.target.name === 'url') {
+                e.target.nextElementSibling.querySelector('ul').innerText = 'Unable to inspect URL content.'
+                resetFormatField()
+            }
+            
+            if (e.target.name === 'format') {
+                e.target.nextElementSibling.querySelector('ul').innerText = 'Unable to retrieve layers.'
+                resetUrlField()
+            }
+        })
+
+        filesInput.addEventListener('change', async (e) => {
+            filesInput.classList.remove('is-invalid')
+            form.querySelector(`#addLayersForm-results-files`).innerHTML = ''
+            toggleAddBtn()
+                                                                                                                                                                                                            
+            const fileList = Array.from(filesInput.files)
+            if (!fileList.length) return
+        
+            try {
+                const filesArray = await getValidLayersArray(fileList)
+                if (!filesArray?.length) {
+                    throw new Error('No valid layers found.')
+                }
+
+                const layerNames = filesArray.map(i => i.name)
+                filesInput.setAttribute('hx-vals', JSON.stringify({layerNames: JSON.stringify(layerNames)}))
+                filesInput.dispatchEvent(new Event("get-layer-forms", { bubbles: true }))
+            } catch (err) {
+                filesInput.parentElement.querySelector(`.invalid-feedback ul`).innerText = err.message
+                filesInput.classList.add('is-invalid')
+            }
+        })
+
+        mapInput.addEventListener('change', async (e) => {
+            form.querySelector(`#addLayersForm-results-map`).innerHTML = ''
+            mapInput.classList.remove('is-invalid')
+            toggleAddBtn()
+
+            if (!mapInput.files.length) return
+            
+            try {
+                const rawData = await getFileRawData(mapInput.files[0])
+                const layers = compressJSON.decompress(JSON.parse(rawData))
+                if (!Object.keys(layers).length) {
+                    throw new Error('No layers found.')
+                }
+
+                this.handleImportedMap(layers)
+                toggleAddBtn()
+            } catch (err) {
+                mapInput.parentElement.querySelector(`.invalid-feedback ul`).innerText = err.message
+                mapInput.classList.add('is-invalid')
+            }
+        })
+    }
+
     onAdd(map) {
         this.map = map
 

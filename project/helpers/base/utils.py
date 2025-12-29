@@ -118,7 +118,6 @@ def get_response(
                 response = cache.get(create_cache_key(['get_response', url, i, data_str]))
                 if response:
                     break
-        logger.info(f'cached_response: {response}')
 
     if not response:
         try:

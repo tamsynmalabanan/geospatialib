@@ -527,24 +527,28 @@ const getValidLayersArray = async (filesArray) => {
 
     const handler = async (filesArray) => {
         for (const file of filesArray) {
-            if (isCompressedFile(file)) {
-                const zippedFiles = await getZippedFiles(file, file.name)
-                await handler(zippedFiles)
-            } else if (isSqliteFile(file)) {
-                const arrayBuffer = await file.arrayBuffer()
-
-                const db = new SQL.Database(new Uint8Array(arrayBuffer))
-                const result = db.exec("SELECT name FROM sqlite_master WHERE type='table';")
-                const tables = result[0].values.flatMap(i => i).filter(i => !isDefaultSqliteTable(i))
-                
-                tables.forEach(tableName => {
-                    files.push(new File([file], `${file.name}/${tableName}`, {
-                        type: file.type,
-                        lastModified: file.lastModified
-                    }))
-                })
-            } else {
-                files.push(file)
+            try {
+                if (isCompressedFile(file)) {
+                    const zippedFiles = await getZippedFiles(file, file.name)
+                    await handler(zippedFiles)
+                } else if (isSqliteFile(file)) {
+                    const arrayBuffer = await file.arrayBuffer()
+    
+                    const db = new SQL.Database(new Uint8Array(arrayBuffer))
+                    const result = db.exec("SELECT name FROM sqlite_master WHERE type='table';")
+                    const tables = result[0].values.flatMap(i => i).filter(i => !isDefaultSqliteTable(i))
+                    
+                    tables.forEach(tableName => {
+                        files.push(new File([file], `${file.name}/${tableName}`, {
+                            type: file.type,
+                            lastModified: file.lastModified
+                        }))
+                    })
+                } else {
+                    files.push(file)
+                }
+            } catch (err) {
+                throw new Error(`Encountered an error with ${file.name}. ${err.message}`)
             }
         }
     }

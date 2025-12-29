@@ -138,7 +138,7 @@ def get_layer_forms(request):
             'type': type, 
         }
     layers = sort_layers(layers)
-    return render(request, 'helpers/partials/add_layers/layer_forms.html', {
+    return render(request, 'helpers/maplibre/add_layers/layer_forms.html', {
         'layers': layers,
     })
     

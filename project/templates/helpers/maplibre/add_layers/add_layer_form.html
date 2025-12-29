@@ -24,6 +24,7 @@
     <div class='d-flex flex-column'>
         <div id="addLayersForm-fields-map">
             <input name="map" class="form-control form-control-sm fs-12" type="file" accept=".gsl">
+            <div class="invalid-feedback"><ul class="unordered-list p-0 m-0"></ul></div>
         </div>
         <div id="addLayersForm-fields-files" class='d-none'>
             <input 
@@ -32,8 +33,9 @@
                 type="file"
                 multiple="true" 
                 hx-post="/htmx/forms/layers/" 
-                hx-trigger="get-file-forms" 
-                hx-target="#addLayersForm-results-file"
+                hx-trigger="get-layer-forms" 
+                hx-target="#addLayersForm-results-files"
+                hx-indicator='#addLayersForm-indicator',
                 hx-swap="innerHTML" 
                 hx-params="not files" 
                 accept="
@@ -55,6 +57,7 @@
                     .sqlite,
                 "
             >
+            <div class="invalid-feedback"><ul class="unordered-list p-0 m-0"></ul></div>
         </div>
         <div id="addLayersForm-fields-url" class='d-none'>
             {% include "helpers/maplibre/add_layers/url_fields.html" with form=validate_collection_form %}          
@@ -66,9 +69,9 @@
         </div>
     </div>
     <div class="d-flex flex-grow-1">
-        <div id='addLayersForm-results-map'></div>
-        <div id='addLayersForm-results-files' class='d-none'></div>
-        <div id='addLayersForm-results-url' class='d-none'></div>
+        <div id='addLayersForm-results-map' class='w-100'></div>
+        <div id='addLayersForm-results-files' class='d-none w-100'></div>
+        <div id='addLayersForm-results-url' class='d-none w-100'></div>
     </div>
     <div class="d-flex flex-nowrap gap-2">
         <button type="button" name='vector' class="btn btn-success btn-sm fs-12" tabindex="-1">Create vector layer</button>
