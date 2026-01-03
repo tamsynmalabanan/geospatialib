@@ -9,7 +9,6 @@ from helpers.main.collection import get_collection_data, get_layers, get_file_na
 from main.tasks import onboard_collection
 from main.models import URL, Collection, Layer
 from main.agent import create_thematic_map
-from helpers.main.utils import get_srtm_elevation
 
 from htmx.models import SRTMBoundingBox
 
