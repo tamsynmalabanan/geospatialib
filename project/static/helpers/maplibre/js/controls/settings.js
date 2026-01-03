@@ -1496,6 +1496,10 @@ class SettingsControl {
                 source: sourceId,
                 metadata: {
                     ...source.metadata,
+                    params: {
+                        ...source.metadata.params,
+                        ...params,
+                    },
                     name: generateRandomString(),
                     popup: {
                         active: true,
