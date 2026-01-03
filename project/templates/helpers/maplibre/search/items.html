@@ -3,14 +3,13 @@
 
 {% for layer in layers %}
     {% variable layer.metadata as metadata %}
-    {% variable layer.collection as collection %}
     {% variable metadata.thumbnails as thumbnails %}
     {% variable metadata.type as type %}
-    {% variable collection.url.path as url %}
+    {% variable metadata.url as url %}
     <li 
         class="list-group-item d-flex border-0 col-xxl-2 col-xl-3 col-lg-5 col-12 p-0 gap-3 flex-grow-1 mb-3"
         style='min-width:150px;max-width:350px;'
-        {% if forloop.last and page_obj.has_next  %}
+        {% if forloop.last and page_obj and page_obj.has_next  %}
             hx-get="{% url 'htmx:search_library' %}{% querystring request page=page_obj.number|add:1 %}"
             hx-trigger="intersect once"
             hx-swap='outerHTML'
@@ -43,7 +42,7 @@
             {% endif %}
             <div class="card-body w-100 d-flex flex-column p-2 gap-2">
                 <h6 class="card-title fs-12 fw-bold m-0">{{metadata.title}}</h6>
-                {% if collection.format|startswith:'ogc-' %}
+                {% if metadata.format|startswith:'ogc-' %}
                     <h6 class="card-subtitle fw-bold text-body-secondary fs-12">{{metadata.name}}</h6>
                 {% endif %}
                 <a 
@@ -109,7 +108,7 @@
             </div>
         </div>
     </li>
-    {% if forloop.last and page_obj.has_next %}
+    {% if forloop.last and page_obj and page_obj.has_next %}
         <li id="searchResultsSpinner-{{page_obj.number}}" class="list-group-item htmx-indicator col-12">
             <div class='d-flex justify-content-center gap-3'>
                 {% with spinner_class="spinner-grow spinner-grow-sm text-secondary mb-3" %}

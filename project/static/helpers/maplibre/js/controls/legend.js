@@ -76,7 +76,6 @@ class LegendControl {
                                 geojson.features.push(turf.bboxPolygon(bbox))
                             })
                             this.map.fitBounds(turf.bbox(geojson), {padding:100, maxZoom:11})
-                            // update search library to show random datasets 
                         }
                     },
                 }
@@ -96,7 +95,7 @@ class LegendControl {
         Object.entries(menuBtns).forEach(([section, btns]) => {
             const sectionContainer = customCreateElement({
                 parent: menuContent,
-                className: 'd-flex flex-nowrap gap-2 border rounded'
+                className: 'd-flex flex-nowrap border rounded'
             })
 
             Object.entries(btns).forEach(([name, params]) => {

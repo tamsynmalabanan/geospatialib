@@ -27,7 +27,7 @@
                 <div class="{{container_class}}">
                     {% include "helpers/maplibre/search/search_form.html" %}
                     <div class="d-flex flex-grow-1 px-3">
-                        <ul id="searchResults" class='flex-grow-1'></ul>
+                        {% include "helpers/maplibre/search/results_list.html" %}
                     </div>
                     <div class="{{footer_class}}">
                         <span class='fst-italic text-muted user-select-none'>Import a map, upload a local file layer or onboard a new layer source URL</span>

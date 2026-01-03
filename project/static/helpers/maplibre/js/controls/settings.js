@@ -725,7 +725,7 @@ class SettingsControl {
 
             carouselContainer.appendChild(carousel)
 
-            this.handleLayerSourceElements(popupContainer)
+            this.handleLayerMetadataSources(popupContainer)
         }
     }
 
@@ -1434,7 +1434,7 @@ class SettingsControl {
         return [w,s,e,n]
     }
 
-    configBboxFiels() {
+    configBboxFields() {
         this.map.on('moveend', (e) => {
             const geom = JSON.stringify(turf.bboxPolygon(this.getMapBbox()).geometry)
             this.map._container.querySelectorAll(`[data-map-bbox-field="true"]`).forEach(el => {
@@ -1529,7 +1529,7 @@ class SettingsControl {
         return bbox
     }
 
-    handleLayerSourceElements(container) {
+    handleLayerMetadataSources(container) {
         container.querySelectorAll(`[data-map-layer-metadata]:not(input.form-check-input)`).forEach(async el => {
             const params = JSON.parse(el.getAttribute('data-map-layer-metadata') ?? '{}')
             if (!['url', 'format', 'name'].every(i => i in params)) return
@@ -1563,6 +1563,22 @@ class SettingsControl {
         })
     } 
 
+    handleLayerBboxSources(container) {
+        container.querySelectorAll(`[data-map-layer-bbox]`).forEach(el => {
+            const bbox = el.getAttribute('data-map-layer-bbox')
+            if (!bbox) return
+            
+            el.addEventListener('click', (e) => {
+                try {
+                    this.map.fitBounds(JSON.parse(bbox), {padding:100, maxZoom:11})
+                } catch (error) {
+                    console.log(error)
+                    console.log(bbox)
+                }
+            })
+        })
+    }
+
     handleHTMXContent() {
         this.map._container.addEventListener('htmx:afterSwap', (e) => {
             const container = e.target.parentElement
@@ -1572,21 +1588,9 @@ class SettingsControl {
                 el.value = bboxGeom
             })
 
-            container.querySelectorAll(`[data-map-layer-bbox]`).forEach(el => {
-                const bbox = el.getAttribute('data-map-layer-bbox')
-                if (!bbox) return
-                
-                el.addEventListener('click', (e) => {
-                    try {
-                        this.map.fitBounds(JSON.parse(bbox), {padding:100, maxZoom:11})
-                    } catch (error) {
-                        console.log(error)
-                        console.log(bbox)
-                    }
-                })
-            })
+            this.handleLayerBboxSources(container)
 
-            this.handleLayerSourceElements(container)
+            this.handleLayerMetadataSources(container)
         })
     }
 
@@ -1953,7 +1957,10 @@ class SettingsControl {
         this.configPopup()
         this.configTooltip()
 
-        this.configBboxFiels()
+        this.handleLayerMetadataSources(this.map.getContainer())
+        this.handleLayerBboxSources(this.map.getContainer())
+
+        this.configBboxFields()
         this.handleHTMXContent()
 
         this.configMapAddLayer()
