@@ -40,6 +40,7 @@ class LayerAdmin(admin.ModelAdmin):
     bbox_extent.short_description = "BBOX Extent"
 
 admin.site.register(models.SpatialRefSys)
+admin.site.register(models.SpatialRefSysExt)
 admin.site.register(models.URL)
 admin.site.register(models.Collection, CollectionAdmin)
 admin.site.register(models.Layer, LayerAdmin)

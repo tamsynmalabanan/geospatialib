@@ -44,6 +44,27 @@ class SpatialRefSys(models.Model):
 
     def __str__(self):
         return self.title
+    
+class SpatialRefSysExt(models.Model):
+    srs = models.ForeignKey("main.SpatialRefSys", verbose_name='Spatial reference system', on_delete=models.CASCADE)
+    srid = models.CharField('SRID', max_length=64, default='', blank=True, null=True)
+    source = models.CharField('Source', max_length=255, default='', blank=True, null=True)
+    type = models.CharField('Type', max_length=255, default='', blank=True, null=True)
+    name = models.CharField('Name', max_length=255, default='', blank=True, null=True)
+    unit = models.CharField('Unit', max_length=255, default='', blank=True, null=True)
+    scope = models.CharField('Scope', max_length=255, default='', blank=True, null=True)
+    extent = models.TextField('Extent', default='', blank=True, null=True)
+    bbox = models.PolygonField('Bounding Box', blank=True, null=True)
+    x_min = models.FloatField('West', default=0, blank=True, null=True)
+    y_min = models.FloatField('South', default=0, blank=True, null=True)
+    x_max = models.FloatField('East', default=0, blank=True, null=True)
+    y_max = models.FloatField('North', default=0, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Spatial Reference Systems (extended)'
+
+    def __str__(self) -> str:
+        return f'{self.name} ({self.srid})'
 
 class URL(models.Model):
     path = models.URLField('Path', max_length=512, unique=True)
