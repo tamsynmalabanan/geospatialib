@@ -5,6 +5,8 @@ from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.urls import reverse
 from django.contrib.sites.models import Site
 from django.conf import settings
+from django.contrib.gis.gdal import SpatialReference
+
 
 import time
 import json
@@ -31,6 +33,7 @@ import shapely.wkt
 from pyproj import CRS
 import ezdxf
 from shapely.geometry import LineString, Point, Polygon as Poly, mapping
+import _io
 
 from main.models import SpatialRefSys, Layer
 from helpers.base.utils import get_response, get_response_file, generate_uuid, create_cache_key
@@ -173,7 +176,7 @@ def get_geojson_bbox_polygon(fc, srid=4326):
         if geojson_bbox.within(WORLD_GEOM):
             return geojson_bbox
         else: 
-            raise Exception('Failed to get bbox.')
+            raise Exception(f'Failed to get bbox. {srid}')
     except Exception as e:
         logger.error(f'get_geojson_bbox_polygon, {e}')
         raise e
@@ -450,22 +453,37 @@ def kml_to_geojson(file, params):
 
 def get_geojson_metadata(data):
     bounds = None
-    srid = DEFAULT_SRID
+    srid = None
 
-    with MemoryFile(data) as memfile:
-        with memfile.open() as src:
-            srid = SpatialRefSys.objects.filter(
-                srid=int(str(src.crs or '').split('EPSG:')[-1] or 4326)
-            ).first()
+    try:
+        if isinstance(data, bytes):
+            srid_no = int(json.loads(data.decode())['crs']['properties']['name'].upper().split('EPSG:')[-1])
 
-            w,s,e,n = src.bounds
-            bounds = geojson.FeatureCollection([geojson.Feature(
-                    geometry=geojson.Polygon([[
-                    (w, s), (e, s), (e, n), (w, n), (w, s)
-                ]])
-            )])
+        if isinstance(data, _io.BytesIO):
+            data.seek(0)
+            parsed_geojson = json.load(data)
+            srid_no = int(parsed_geojson['crs']['properties']['name'].upper().replace('::', ':').split('EPSG:')[-1])
+            data = json.dumps(parsed_geojson).encode()
 
-    return bounds, srid
+        srid = SpatialRefSys.objects.filter(srid=srid_no).first()
+
+        with MemoryFile(data) as memfile:
+            with memfile.open() as src:
+                if not srid and isinstance(src.crs, fiona.crs.CRS):
+                    srid = SpatialRefSys.objects.filter(
+                        srid=SpatialReference(str(src.crs)).srid
+                    ).first()
+                    
+                w,s,e,n = src.bounds
+                bounds = geojson.FeatureCollection([geojson.Feature(
+                        geometry=geojson.Polygon([[
+                        (w, s), (e, s), (e, n), (w, n), (w, s)
+                    ]])
+                )])
+
+        return bounds, srid or DEFAULT_SRID
+    except Exception as e:
+        logger.error(f'get_geojson_metadata: {e}')
             
 def validate_geojson(url, name, params):
     try:
@@ -642,7 +660,7 @@ def validate_file(url, name, params):
         params['srid'] = srid
         return params
     except Exception as e:
-        logger.error(f'validate_file error, {e}')
+        logger.error(f'validate_file error, {url}, {name}, {params} {e}')
        
 def validate_xyz(url, name, params):
     try:

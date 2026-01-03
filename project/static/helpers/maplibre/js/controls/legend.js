@@ -62,6 +62,23 @@ class LegendControl {
         
                         }
                     },
+                },
+                zoomin: {
+                    className: `bi bi-zoom-in`,
+                    events: {
+                        click: () => {
+                            const legendContainers = Array.from(layers.querySelectorAll(`[data-map-layer-id]`))
+                            const geojson = turf.featureCollection([])
+                            legendContainers.forEach(el => {
+                                const layer = this.map.getLayer(el.getAttribute('data-map-layer-id'))
+                                const bbox = this.map._settingsControl.getLayerBbox(layer)
+                                if (!bbox) return
+                                geojson.features.push(turf.bboxPolygon(bbox))
+                            })
+                            this.map.fitBounds(turf.bbox(geojson), {padding:100, maxZoom:11})
+                            // update search library to show random datasets 
+                        }
+                    },
                 }
             },
             section2: {
@@ -84,13 +101,14 @@ class LegendControl {
 
             Object.entries(btns).forEach(([name, params]) => {
                 const btn = customCreateElement({
+                    ...params,
                     parent: sectionContainer,
                     tag: 'button',
                     attrs: {
                         disabled: true,
                         ...(params.attrs ?? {})
                     },
-                    ...params
+                    className: `border-top-0 ${params.className}`,
                 })
 
             })
@@ -232,13 +250,23 @@ class LegendControl {
                         },
                     },
                     handlers: {
-                        test: (el) => {
+                        rename: (el) => {
                             this.map.on('styledata', (e) => {
                                 if (!this.map.getLayer(layer.id)) return
                                 el.innerHTML = this.map.getLayoutProperty(layer.id, 'visibility') === 'none' ? 'Show layer' : 'Hide layer'
                             })
                         }
                     }
+                },
+                zoomin: {
+                    innerHTML: 'Zoom to layer',
+                    events: {
+                        click: () => {
+                            const bbox = this.map._settingsControl.getLayerBbox(layer)
+                            if (!bbox) return
+                            this.map.fitBounds(bbox, {padding:100, maxZoom:11})
+                        },
+                    },
                 },
             },
             section2: {

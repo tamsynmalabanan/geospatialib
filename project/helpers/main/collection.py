@@ -235,14 +235,15 @@ def get_collection_data(url, format=None):
     cached_layers_count = len(cached_layers.keys())
 
     if collection and collection.layers.count() >= cached_layers_count:
-        layers = collection.get_layers()
+        layers = collection.layers_access
         data.update({'layers': layers, 'collection': collection})
         return data
 
-    if cached_layers_count > 0 and format not in ['dxf', 'file']:
+    if cached_layers_count > 0:
         data['layers'] = cached_layers
-        return data
-    
+        if not settings.DEBUG:
+            return data
+
     layers = get_layers(url, format)
     if len(layers) > 0:
         data['layers'] = layers
@@ -288,9 +289,12 @@ def update_collection_data(cache_key, updated_layers):
     
     cache.set(cache_key, collection_data, timeout=60*60)
     
-    if settings.DEBUG:
-        onboard_collection(cache_key)
-    else:
-        onboard_collection.delay(cache_key)
-    
+    try:
+        if settings.DEBUG:
+            onboard_collection(cache_key)
+        else:
+            onboard_collection.delay(cache_key)
+    except Exception as e:
+        logger.error(f'update_collection_data error: {e}')
+
     return collection_data

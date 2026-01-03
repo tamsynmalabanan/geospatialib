@@ -17,8 +17,8 @@ class UserControl {
 
             let data
             if (this.searchResultsBoundsToggle?.checked) {
-                const features = Array.from(searchResults.querySelectorAll(`[data-map-layer-source]`)).map(el => {
-                    const layerSource = el.getAttribute('data-map-layer-source') ?? '{}'
+                const features = Array.from(searchResults.querySelectorAll(`[data-map-layer-metadata]`)).map(el => {
+                    const layerSource = el.getAttribute('data-map-layer-metadata') ?? '{}'
                     let properties = JSON.parse(layerSource)
                     if (!properties.bbox) return
 
@@ -30,9 +30,9 @@ class UserControl {
                         tag: 'button',
                         parent: menu,
                         className: `btn btn-sm bg-transparent border w-auto h-auto fs-10`,
-                        innerText: 'Add layers',
+                        innerText: 'Add layer',
                         attrs: {
-                            'data-map-layer-source': layerSource
+                            'data-map-layer-metadata': layerSource
                         }
                     })
 
@@ -283,12 +283,15 @@ class UserControl {
             const layers = {}
    
             layerCheckboxes.forEach(i => {
-                const params = {}
+                const fields = {}
                 Array.from(i.parentElement.querySelectorAll('[name]')).forEach(j => {
                     if (i === j) return
-                    params[j.getAttribute('name')] = j.value
+                    fields[j.getAttribute('name')] = j.value
                 })
-                layers[i.value] = params
+                layers[i.value] = {
+                    fields,
+                    params: JSON.parse(i.dataset.mapLayerMetadata ?? '{}')
+                }
             })
             
             return layers
@@ -453,7 +456,33 @@ class UserControl {
         addBtn.addEventListener('click', async (e) => {
             const source = getActiveSourceRadio().value
             const layers = getSelectedLayers()
+            const settings = this.map._settingsControl
+            
             console.log(source, layers)
+            
+            if (source === 'url') {
+                const url = form.elements.url.value
+                const format = form.elements.format.value
+                
+                for (const name in layers) {
+                    const layer = layers[name]
+                    const params = {url, format, name, ...layer.params, ...layer.fields}
+                    settings.addLayerFromParams(params)
+                }
+
+                const updateElement = getActiveResultsContainer().querySelector(`[hx-trigger="update-collection"`)
+                const updatedLayers = Object.fromEntries(Object.entries(layers).filter(([name, layer]) => Object.entries(layer.fields).find(([k, v]) => {
+                    return k !== 'title' && v !== '' && v !== String(layer.params[k])
+                })).map(([name, props]) => [name, props.fields]))
+                if (updateElement && Object.keys(updatedLayers).length) {
+                    updateElement.setAttribute('hx-vals', JSON.stringify({
+                        ...JSON.parse(updateElement.getAttribute('hx-vals')),
+                        layers: updatedLayers,
+                    }))
+                    updateElement.dispatchEvent(new Event("update-collection", { bubbles: true }))            
+                }
+            }
+
         })
     }
 

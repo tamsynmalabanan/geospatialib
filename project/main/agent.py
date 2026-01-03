@@ -240,7 +240,7 @@ def create_thematic_map(self, user_prompt:str, bbox:str, map_id:str):
 
             #     if filtered_queryset.exists():
             #         categories[id]['layers'] = {
-            #             layer.pk: layer.data for layer in Layer.objects.filter(
+            #             layer.pk: layer.metadata for layer in Layer.objects.filter(
             #                 pk__in=filtered_queryset.values_list('pk', flat=True), 
             #                 title__in=filter_layers(user_prompt, values, filtered_queryset, client)
             #             )[:5]

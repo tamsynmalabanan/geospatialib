@@ -71,8 +71,13 @@ class Collection(models.Model):
     def __str__(self):
         return f'{self.url.domain} ({choices.COLLECTION_FORMATS.get(self.format)})'
     
-    def get_layers(self):
-        return {layer.name: layer.data for layer in self.layers.all()}
+    @property
+    def layers_metadata(self):
+        return {layer.name: layer.metadata for layer in self.layers.all()}
+    
+    @property
+    def layers_access(self):
+        return {layer.name: layer.access for layer in self.layers.all()}
 
 class ToTSVector(Func):
     function = 'to_tsvector'
@@ -116,22 +121,38 @@ class Layer(models.Model):
         return f'{self.name} in {str(self.collection)}'
     
     @property
-    def data(self):
+    def bbox_extent(self):
+        bbox = self.bbox
+        return list(bbox.extent) if bbox and not bbox.empty else list(WORLD_GEOM.extent)
+    @property
+    def metadata(self):
         data = {key: value for key, value in model_to_dict(
             self, exclude=['search_vector', 'collection', 'id', 'bbox']
         ).items() if value is not None} 
 
-        bbox = self.bbox
-        data['bbox'] = list(bbox.extent) if bbox and not bbox.empty else list(WORLD_GEOM.extent)
+        data['bbox'] = self.bbox_extent
         
-        srid = self.srid
-        data['srid_title'] = srid.title
-
         collection = self.collection
         data['url'] = collection.url.path
         data['format'] = collection.format
 
         return data
+    
+    @property
+    def access(self):
+        return {
+            'url': self.collection.url.path,
+            'format': self.collection.format,
+            'type': self.type,
+            'name': self.name,
+            'attribution': self.attribution,
+            'bbox': self.bbox_extent,
+            'srid': self.srid.srid,
+            'xField': self.xField,
+            'yField': self.yField,
+            'styles': self.styles,
+            'title': self.title,
+        }
     
     def set_thumbnails(self):
         if not self.thumbnails:

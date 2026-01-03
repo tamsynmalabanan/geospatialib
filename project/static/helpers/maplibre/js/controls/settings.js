@@ -639,7 +639,7 @@ class SettingsControl {
             popup.on('close', () => resizeObserver.unobserve(carouselContainer))
 
             const carousel = customCreateElement({
-                className: 'carousel slide',
+                className: 'carousel slide flex-grow-1',
             })
 
             const carouselInner = customCreateElement({
@@ -1506,6 +1506,8 @@ class SettingsControl {
     }
 
     async addLayerFromParams(params) {
+        console.log(params)
+
         const sourcePrefix = Array(params.type, await hashJSON({
             url:params.url,
             format:params.format,
@@ -1517,9 +1519,19 @@ class SettingsControl {
         }
     }
 
+    getLayerBbox(layer) {
+        let bbox = layer.metadata?.params.bbox
+
+        if (!bbox) {
+            console.log(`there is no bbox in metadata`)
+        }
+
+        return bbox
+    }
+
     handleLayerSourceElements(container) {
-        container.querySelectorAll(`[data-map-layer-source]`).forEach(async el => {
-            const params = JSON.parse(el.getAttribute('data-map-layer-source') ?? '{}')
+        container.querySelectorAll(`[data-map-layer-metadata]:not(input.form-check-input)`).forEach(async el => {
+            const params = JSON.parse(el.getAttribute('data-map-layer-metadata') ?? '{}')
             if (!['url', 'format', 'name'].every(i => i in params)) return
             
             el.addEventListener('click', (e) => {
@@ -1560,8 +1572,8 @@ class SettingsControl {
                 el.value = bboxGeom
             })
 
-            container.querySelectorAll(`[data-map-bbox-source]`).forEach(el => {
-                const bbox = el.getAttribute('data-map-bbox-source')
+            container.querySelectorAll(`[data-map-layer-bbox]`).forEach(el => {
+                const bbox = el.getAttribute('data-map-layer-bbox')
                 if (!bbox) return
                 
                 el.addEventListener('click', (e) => {

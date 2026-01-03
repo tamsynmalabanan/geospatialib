@@ -69,28 +69,28 @@ document.addEventListener('DOMContentLoaded', () => {
     //     toggleSubmitBtn()
     // }
     
-    const getIncludedLayers = (source) => {
-        const container = getLayerNamesContainer(source)
-        const layerCheckboxes = Array.from(container.querySelectorAll('.form-check-input')).slice(1)
-        const includedLayers = {}
-        layerCheckboxes.forEach(i => {
-            if (!i.checked) return
+    // const getIncludedLayers = (source) => {
+    //     const container = getLayerNamesContainer(source)
+    //     const layerCheckboxes = Array.from(container.querySelectorAll('.form-check-input')).slice(1)
+    //     const includedLayers = {}
+    //     layerCheckboxes.forEach(i => {
+    //         if (!i.checked) return
     
-            const params = {}
-            Array.from(i.parentElement.querySelectorAll('[name]')).forEach(j => {
-                if (i === j) return
+    //         const params = {}
+    //         Array.from(i.parentElement.querySelectorAll('[name]')).forEach(j => {
+    //             if (i === j) return
     
-                const name = j.getAttribute('name')
-                if (!name) return
+    //             const name = j.getAttribute('name')
+    //             if (!name) return
                 
-                params[name] = j.value
-            })
+    //             params[name] = j.value
+    //         })
             
-            includedLayers[i.value] = params
-        })
+    //         includedLayers[i.value] = params
+    //     })
         
-        return includedLayers
-    }
+    //     return includedLayers
+    // }
     
     // form.addEventListener('submit', (e) => e.preventDefault())
     
@@ -160,33 +160,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             }
     
-            const element = getLayerNamesContainer(source).querySelector('[hx-trigger="update-collection"')
-            if (element && Object.values(includedLayers).some(i => Object.keys(i).some(j => {
-                if (j === 'title') return false
+            // const element = getLayerNamesContainer(source).querySelector('[hx-trigger="update-collection"')
+            // if (element && Object.values(includedLayers).some(i => Object.keys(i).some(j => {
+            //     if (j === 'title') return false
     
-                let field = form.elements[j]
-                field = field.length ? Array.from(field)[0] : field
-                if (field.hidden) return false
+            //     let field = form.elements[j]
+            //     field = field.length ? Array.from(field)[0] : field
+            //     if (field.hidden) return false
     
-                return i[j] !== ''
-            }))) {
-                try {
-                    const vals = {
-                        ...JSON.parse(element.getAttribute('hx-vals')),
-                        layers: includedLayers,
-                    }
-                    element.setAttribute('hx-vals', JSON.stringify(vals))
+            //     return i[j] !== ''
+            // }))) {
+            //     try {
+            //         const vals = {
+            //             ...JSON.parse(element.getAttribute('hx-vals')),
+            //             layers: includedLayers,
+            //         }
+            //         element.setAttribute('hx-vals', JSON.stringify(vals))
                     
-                    const event = new Event("update-collection", { bubbles: true })
-                    element.dispatchEvent(event)
-                } catch (error) {
-                    console.log(error)
-                }
-            }
+            //         const event = new Event("update-collection", { bubbles: true })
+            //         element.dispatchEvent(event)
+            //     } catch (error) {
+            //         console.log(error)
+            //     }
+            // }
         }
         
-        resetForm()
-        modalInstance?.hide()
+        // resetForm()
+        // modalInstance?.hide()
     })
     
     // vectorBtn.addEventListener('click', async (e) => {

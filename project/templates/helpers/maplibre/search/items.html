@@ -2,10 +2,10 @@
 {% load utility_tags %}
 
 {% for layer in layers %}
-    {% variable layer.data as data %}
+    {% variable layer.metadata as metadata %}
     {% variable layer.collection as collection %}
-    {% variable data.thumbnails as thumbnails %}
-    {% variable data.type as type %}
+    {% variable metadata.thumbnails as thumbnails %}
+    {% variable metadata.type as type %}
     {% variable collection.url.path as url %}
     <li 
         class="list-group-item d-flex border-0 col-xxl-2 col-xl-3 col-lg-5 col-12 p-0 gap-3 flex-grow-1 mb-3"
@@ -42,9 +42,9 @@
                 </div>
             {% endif %}
             <div class="card-body w-100 d-flex flex-column p-2 gap-2">
-                <h6 class="card-title fs-12 fw-bold m-0">{{data.title}}</h6>
+                <h6 class="card-title fs-12 fw-bold m-0">{{metadata.title}}</h6>
                 {% if collection.format|startswith:'ogc-' %}
-                    <h6 class="card-subtitle fw-bold text-body-secondary fs-12">{{data.name}}</h6>
+                    <h6 class="card-subtitle fw-bold text-body-secondary fs-12">{{metadata.name}}</h6>
                 {% endif %}
                 <a 
                     class="text-muted text-decoration-none mt-auto text-nowrap text-truncate" 
@@ -91,13 +91,13 @@
                     title='Add layer to map'
                     class="bg-transparent border-0 p-0 fs-12 add-layer-button bi bi-plus-circle-fill" 
                     tabindex="-1"
-                    data-map-layer-source="{{data|dump_json}}"
+                    data-map-layer-metadata="{{metadata|dump_json}}"
                 ></button>
                 <button 
                     title='Zoom to layer'
                     class="bg-transparent border-0 p-0 bi bi-zoom-in fs-12"
                     tabindex="-1"
-                    data-map-bbox-source="{{data.bbox}}"
+                    data-map-layer-bbox="{{metadata.bbox}}"
                 ></button>
                 {% comment %} <button 
                     title='Layer information'
