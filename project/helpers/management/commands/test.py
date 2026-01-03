@@ -10,8 +10,6 @@ from main.tasks import onboard_collection
 from main.models import URL, Collection, Layer
 from main.agent import create_thematic_map
 
-from htmx.models import SRTMBoundingBox
-
 import io
 
 import xml.etree.ElementTree as ET
