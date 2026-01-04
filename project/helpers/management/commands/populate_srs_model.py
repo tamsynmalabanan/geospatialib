@@ -69,7 +69,6 @@ class Command(BaseCommand):
             if len(coordinates) > 0:
                 coords = coordinates[0] if geometry['type'] == 'Polygon' else coordinates[0][0]
                 defaults['bbox'] = Polygon(coords)
-                print(defaults)
                 if any(not defaults.get(i) for i in ['x_min', 'y_min', 'x_max', 'y_max']):
                     try:
                         polygon = Polygon(coords)

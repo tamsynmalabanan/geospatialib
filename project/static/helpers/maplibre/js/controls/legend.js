@@ -189,7 +189,7 @@ class LegendControl {
         if (legendContainer) return
 
         legendContainer = customCreateElement({
-            className: 'd-flex flex-column',
+            className: 'd-flex flex-column gap-2',
             attrs: {
                 'data-map-layer-id': layer.id
             }
@@ -205,6 +205,14 @@ class LegendControl {
             parent: legendContainer,
             className: 'collapse show user-select-none',
             innerHTML: this.getLayerLegend(layer)
+        })
+        
+        console.log(layer)
+
+        const legendAttr = customCreateElement({
+            parent: legendContainer,
+            className: 'collapse show user-select-none text-break text-wrap small',
+            innerHTML: layer.metadata.params.attribution
         })
 
         const legendTitle = customCreateElement({
