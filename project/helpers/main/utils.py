@@ -6,6 +6,8 @@ from helpers.base.utils import (
     get_domain_url,
     get_google_drive_file_download_url,
 )
+from helpers.main.constants import XYZ_TILES_CHARS
+
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -17,6 +19,7 @@ import os
 from staticmap import StaticMap, CircleMarker
 from PIL import Image
 import json
+from urllib.parse import unquote
 
 import logging
 logger = logging.getLogger('django')
@@ -26,7 +29,19 @@ matplotlib.use('Agg')
 def get_clean_url(url, format:str=None, exclusions=[]):
     if format is None:
         format = ''
-        
+
+    if format == 'xyz' or any([i for i in XYZ_TILES_CHARS if i in url]):
+        url = unquote(url)
+        if '{x}' not in url:
+            href,z,x,y = url.split('{', 4)
+            if z.split('}',2)[0] != 'z':
+                z = '}'.join([i for i in ['z', z.split('}',2)[1]] if i])
+            if x.split('}',2)[0] != 'x':
+                x = '}'.join([i for i in ['x', x.split('}',2)[1]] if i])
+            if y.split('}',2)[0] != 'y':
+                y = '}'.join([i for i in ['y', y.split('}',2)[1]] if i])
+            url = '{'.join([href,z,x,y])
+
     if format in exclusions:
         return url
 

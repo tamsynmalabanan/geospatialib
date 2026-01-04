@@ -1447,6 +1447,55 @@ class SettingsControl {
         }
     }
 
+    addXYZLayer (sourcePrefix, params) {
+        const map = this.map
+        
+        const sourceId = sourcePrefix
+
+        let source = map.getSource(sourceId)
+        if (!source) {
+            let url = decodeURIComponent(params.url)
+            if (!url.includes('{x}')) {
+                let [href,z,x,y] = url.split('{', 4)
+                if (z.split('}',2)[0] !== 'z') z = ['z', z.split('}',2)[1]].filter(i => i).join('}')
+                if (x.split('}',2)[0] !== 'x') x = ['x', x.split('}',2)[1]].filter(i => i).join('}')
+                if (y.split('}',2)[0] !== 'y') y = ['y', y.split('}',2)[1]].filter(i => i).join('}')
+                url = [href,z,x,y].join('{')
+            }
+
+            map.addSource(sourceId, {
+                tileSize: 256,
+                type: "raster",
+                tiles: [url],
+            })
+
+            source = map.getSource(sourceId)
+            source.metadata = {params}
+        }
+     
+        if (source) {
+            const id = `${sourceId}-${generateRandomString()}`
+            const beforeId = this.getBeforeId(id)
+
+            map.addLayer({
+                id,
+                type: "raster",
+                source: sourceId,
+                metadata: {
+                    ...source.metadata,
+                    params: {
+                        ...source.metadata.params,
+                        ...params,
+                    },
+                    name: generateRandomString(),
+                    popup: {
+                        active: false,
+                    }
+                }
+            }, beforeId)   
+        }
+    }
+
     async addLayerFromParams(params) {
         console.log(params)
 
@@ -1461,7 +1510,7 @@ class SettingsControl {
         }
 
         if (params.type === 'xyz') {
-            console.log(sourcePrefix, params)
+            this.addXYZLayer(sourcePrefix, params)
         }
     }
 
