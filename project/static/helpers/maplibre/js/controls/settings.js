@@ -748,6 +748,85 @@ class SettingsControl {
         return source
     }
 
+    getWMSSource(sourcePrefix, params, {
+        style
+    }={}) {
+        const map = this.map
+
+        const styleOptions = JSON.parse(params.styles ?? '{}')
+        if (!style || !(style in styleOptions)) {
+            for (const i in styleOptions) {
+                style = i
+                if (style) break
+            }
+        }
+
+        const sourceId = Array(sourcePrefix, style).join('-')
+        
+        let source = map.getSource(sourceId)
+        if (!source) {
+            const getParams = {
+                SERVICE: 'WMS',
+                VERSION: '1.1.1',
+                REQUEST: 'GetMap',
+                LAYERS: params.name,
+                BBOX: "{bbox-epsg-3857}",
+                WIDTH: 256,
+                HEIGHT: 256,
+                SRS: "EPSG:3857",
+                FORMAT: "image/png",
+                TRANSPARENT: true,
+                ...(style ? {STYLES: style} : {})
+            }
+
+            const url = decodeURIComponent(
+                pushQueryParamsToURLString(
+                    removeQueryParams(params.url), getParams
+                )
+            )
+
+            map.addSource(sourceId, {
+                type: "raster",
+                tiles: [url],
+                tileSize: 256,
+            })
+
+            source = map.getSource(sourceId)
+            source.metadata = {params, style}
+        }
+
+        return source
+    }
+
+    getXYZSource(sourcePrefix, params) {
+        const map = this.map
+        
+        const sourceId = sourcePrefix
+
+        let source = map.getSource(sourceId)
+        if (!source) {
+            let url = decodeURIComponent(params.url)
+            if (!url.includes('{x}')) {
+                let [href,z,x,y] = url.split('{', 4)
+                if (z.split('}',2)[0] !== 'z') z = ['z', z.split('}',2)[1]].filter(i => i).join('}')
+                if (x.split('}',2)[0] !== 'x') x = ['x', x.split('}',2)[1]].filter(i => i).join('}')
+                if (y.split('}',2)[0] !== 'y') y = ['y', y.split('}',2)[1]].filter(i => i).join('}')
+                url = [href,z,x,y].join('{')
+            }
+
+            map.addSource(sourceId, {
+                tileSize: 256,
+                type: "raster",
+                tiles: [url],
+            })
+
+            source = map.getSource(sourceId)
+            source.metadata = {params}
+        }
+
+        return source
+    }
+
 
     // LAYER METHODS
     async getCanvasData({
@@ -1381,119 +1460,31 @@ class SettingsControl {
         return this.map.getStyle().layers.filter(l => l.id.startsWith(layerPrefix))
     }
 
-    async addWMSLayer(sourcePrefix, params, {
-        style
-    } = {}) {
+    addRasterLayer (source, params) {
         const map = this.map
         
-        const styleOptions = JSON.parse(params.styles ?? '{}')
-        if (!style || !(style in styleOptions)) {
-            for (const i in styleOptions) {
-                style = i
-                if (style) break
-            }
-        }
+        const name = generateRandomString()
+        const id = `${source.id}-${name}`
+        const beforeId = this.getBeforeId(id)
 
-        const sourceId = Array(sourcePrefix, style).join('-')
-
-        let source = map.getSource(sourceId)
-        if (!source) {
-            const getParams = {
-                SERVICE: 'WMS',
-                VERSION: '1.1.1',
-                REQUEST: 'GetMap',
-                LAYERS: params.name,
-                BBOX: "{bbox-epsg-3857}",
-                WIDTH: 256,
-                HEIGHT: 256,
-                SRS: "EPSG:3857",
-                FORMAT: "image/png",
-                TRANSPARENT: true,
-                ...(style ? {STYLES: style} : {})
-            }
-
-            const url = decodeURIComponent(pushQueryParamsToURLString(removeQueryParams(params.url), getParams))
-
-            map.addSource(sourceId, {
-                type: "raster",
-                tiles: [url],
-                tileSize: 256,
-            })
-
-            source = map.getSource(sourceId)
-            source.metadata = {params, style}
-        }
-     
-        if (source) {
-            const id = `${sourceId}-${generateRandomString()}`
-            const beforeId = this.getBeforeId(id)
-
-            map.addLayer({
-                id,
-                type: "raster",
-                source: sourceId,
-                metadata: {
-                    ...source.metadata,
-                    params: {
-                        ...source.metadata.params,
-                        ...params,
-                    },
-                    name: generateRandomString(),
-                    popup: {
-                        active: true,
-                    }
+        map.addLayer({
+            id,
+            type: "raster",
+            source: source.id,
+            metadata: {
+                ...source.metadata,
+                params: {
+                    ...source.metadata.params,
+                    ...params,
+                },
+                name,
+                popup: {
+                    active: params.type === 'wms' ? true : false,
                 }
-            }, beforeId)   
-        }
-    }
-
-    addXYZLayer (sourcePrefix, params) {
-        const map = this.map
-        
-        const sourceId = sourcePrefix
-
-        let source = map.getSource(sourceId)
-        if (!source) {
-            let url = decodeURIComponent(params.url)
-            if (!url.includes('{x}')) {
-                let [href,z,x,y] = url.split('{', 4)
-                if (z.split('}',2)[0] !== 'z') z = ['z', z.split('}',2)[1]].filter(i => i).join('}')
-                if (x.split('}',2)[0] !== 'x') x = ['x', x.split('}',2)[1]].filter(i => i).join('}')
-                if (y.split('}',2)[0] !== 'y') y = ['y', y.split('}',2)[1]].filter(i => i).join('}')
-                url = [href,z,x,y].join('{')
             }
+        }, beforeId)   
 
-            map.addSource(sourceId, {
-                tileSize: 256,
-                type: "raster",
-                tiles: [url],
-            })
-
-            source = map.getSource(sourceId)
-            source.metadata = {params}
-        }
-     
-        if (source) {
-            const id = `${sourceId}-${generateRandomString()}`
-            const beforeId = this.getBeforeId(id)
-
-            map.addLayer({
-                id,
-                type: "raster",
-                source: sourceId,
-                metadata: {
-                    ...source.metadata,
-                    params: {
-                        ...source.metadata.params,
-                        ...params,
-                    },
-                    name: generateRandomString(),
-                    popup: {
-                        active: false,
-                    }
-                }
-            }, beforeId)   
-        }
+        return map.getLayer(id)
     }
 
     async addLayerFromParams(params) {
@@ -1505,12 +1496,15 @@ class SettingsControl {
             name:params.name,
         })).join('-')
 
-        if (params.type === 'wms') {
-            this.addWMSLayer(sourcePrefix, params)
-        }
+        let source
 
-        if (params.type === 'xyz') {
-            this.addXYZLayer(sourcePrefix, params)
+        if (Array('wms', 'xyz').includes(params.type)) {
+            source = (
+                params.type === 'wms' 
+                ? this.getWMSSource(sourcePrefix, params)
+                : this.getXYZSource(sourcePrefix, params)
+            )
+            return this.addRasterLayer(source, params)
         }
     }
 

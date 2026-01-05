@@ -344,6 +344,12 @@ class UserControl {
             
             toggleAddBtn()
         })
+
+        form.addEventListener('change', (e) => {
+            const resultsContainer = getActiveResultsContainer()
+            if (!e.target.matches(`#${resultsContainer.id} [placeholder]`)) return
+            if (e.target.value === '') e.target.value = e.target.getAttribute('placeholder')
+        })
         
         vectorBtn.addEventListener('click', async (e) => {
             const settings = this.map._settingsControl
@@ -457,7 +463,7 @@ class UserControl {
             const source = getActiveSourceRadio().value
             const layers = getSelectedLayers()
             const settings = this.map._settingsControl
-            
+
             console.log(source, layers)
             
             if (source === 'url') {
@@ -466,7 +472,7 @@ class UserControl {
                 
                 for (const name in layers) {
                     const layer = layers[name]
-                    const params = {url, format, name, ...layer.params, ...layer.fields}
+                    const params = {url, format, name, ...layer.params, ...Object.fromEntries(Object.entries(layer.fields).filter(([k,v]) => v !== ''))}
                     settings.addLayerFromParams(params)
                 }
 
@@ -482,7 +488,6 @@ class UserControl {
                     updateElement.dispatchEvent(new Event("update-collection", { bubbles: true }))            
                 }
             }
-
         })
     }
 

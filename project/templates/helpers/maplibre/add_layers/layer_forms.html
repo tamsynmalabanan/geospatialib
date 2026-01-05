@@ -27,7 +27,8 @@
                 <input class="form-check-input mt-0 fs-12" type="checkbox" value="{{name}}" data-map-layer-metadata="{{params|dump_json}}">
                 <div class="form-floating flex-grow-1 ms-2 w-50">
                     {% random_string as id %}
-                    <input id="{{id}}" type="text" class="form-control form-control-sm fs-12" name='title' title="{{name}}" value="{{params.title}}">
+                    {% variable params.title '' as value %}
+                    <input id="{{id}}" type="text" class="form-control form-control-sm fs-12" name='title' title="{{name}}" value="{{value}}" placeholder="{{value}}">
                     <label for="{{id}}">Title</label>
                 </div>
 
@@ -35,13 +36,13 @@
                     <div class="form-floating ms-2">
                         {% random_string as id %}
                         {% variable params.xField '' as value %}
-                        <input id="{{id}}" type="text" name='xField' class='form-control form-control-sm fs-12' value="{{value}}">
+                        <input id="{{id}}" type="text" name='xField' class='form-control form-control-sm fs-12' value="{{value}}"  placeholder="{{value}}">
                         <label for="{{id}}">X Field</label>
                     </div>
                     <div class="form-floating ms-2">
                         {% random_string as id %}
                         {% variable params.yField '' as value %}
-                        <input id="{{id}}" type="text" name='yField' class='form-control form-control-sm fs-12' value="{{value}}">
+                        <input id="{{id}}" type="text" name='yField' class='form-control form-control-sm fs-12' value="{{value}}"  placeholder="{{value}}">
                         <label for="{{id}}">Y Field</label>
                     </div>
                 {% endif %}
@@ -50,7 +51,7 @@
                     <div class="form-floating ms-2">
                         {% random_string as id %}
                         {% variable params.srid '' as value %}
-                        <input id="{{id}}" type="number" name='srid' class='form-control form-control-sm fs-12' value="{{value}}">
+                        <input id="{{id}}" type="number" name='srid' class='form-control form-control-sm fs-12' value="{{value}}" placeholder="{{value}}"> 
                         <label for="{{id}}">SRID</label>
                     </div>
                 {% endif %}

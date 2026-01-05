@@ -26,21 +26,25 @@ logger = logging.getLogger('django')
 
 matplotlib.use('Agg')
 
+def clean_xyz_url(url):
+    url = unquote(url)
+    if '{x}' not in url:
+        href,z,x,y = url.split('{', 4)
+        if z.split('}',2)[0] != 'z':
+            z = '}'.join([i for i in ['z', z.split('}',2)[1]] if i])
+        if x.split('}',2)[0] != 'x':
+            x = '}'.join([i for i in ['x', x.split('}',2)[1]] if i])
+        if y.split('}',2)[0] != 'y':
+            y = '}'.join([i for i in ['y', y.split('}',2)[1]] if i])
+        url = '{'.join([href,z,x,y])
+    return url
+
 def get_clean_url(url, format:str=None, exclusions=[]):
     if format is None:
         format = ''
 
     if format == 'xyz' or any([i for i in XYZ_TILES_CHARS if i in url]):
-        url = unquote(url)
-        if '{x}' not in url:
-            href,z,x,y = url.split('{', 4)
-            if z.split('}',2)[0] != 'z':
-                z = '}'.join([i for i in ['z', z.split('}',2)[1]] if i])
-            if x.split('}',2)[0] != 'x':
-                x = '}'.join([i for i in ['x', x.split('}',2)[1]] if i])
-            if y.split('}',2)[0] != 'y':
-                y = '}'.join([i for i in ['y', y.split('}',2)[1]] if i])
-            url = '{'.join([href,z,x,y])
+        url = clean_xyz_url(url)
 
     if format in exclusions:
         return url
