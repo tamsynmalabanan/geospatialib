@@ -38,7 +38,7 @@ const fetchContentViaCORSProxy = async (url, fetchParams={}) => {
     }
     
     return fetch(
-        `/htmx/cors/proxy/content/?url=${encodeURIComponent(url)}`, 
+        `/htmx/cors_proxy/content/?url=${encodeURIComponent(url)}`, 
         params
     ).then(response => {
         if (!response.ok && (response.status < 200 || response.status >= 400)) {
@@ -58,7 +58,7 @@ const fetchHeadersViaCORSProxy = async (url) => {
     }
     
     return fetch(
-        `/htmx/cors/proxy/headers/?url=${encodeURIComponent(url)}`, 
+        `/htmx/cors_proxy/headers/?url=${encodeURIComponent(url)}`, 
         params
     ).then(response => {
         if (!response.ok && (response.status < 200 || response.status > 300)) {

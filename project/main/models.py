@@ -79,6 +79,10 @@ class URL(models.Model):
     def domain(self):
         return urlparse(self.path).netloc
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+
 class Collection(models.Model):
     added_by = models.ForeignKey("customuser.User", verbose_name='Added by', on_delete=models.DO_NOTHING, blank=True, null=True)
     url:URL = models.ForeignKey("main.URL", verbose_name='URL', on_delete=models.CASCADE)

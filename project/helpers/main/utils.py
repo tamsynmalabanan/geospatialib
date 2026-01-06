@@ -19,7 +19,7 @@ import os
 from staticmap import StaticMap, CircleMarker
 from PIL import Image
 import json
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 import logging
 logger = logging.getLogger('django')
@@ -28,7 +28,7 @@ matplotlib.use('Agg')
 
 def clean_xyz_url(url):
     url = unquote(url)
-    if '{x}' not in url:
+    if any(f'{{{i}}}' not in url for i in ['z', 'x', 'y']):
         href,z,x,y = url.split('{', 4)
         if z.split('}',2)[0] != 'z':
             z = '}'.join([i for i in ['z', z.split('}',2)[1]] if i])
@@ -42,6 +42,10 @@ def clean_xyz_url(url):
 def get_clean_url(url, format:str=None, exclusions=[]):
     if format is None:
         format = ''
+
+    parsed = urlparse(url)
+    if parsed.scheme == 'http':
+        url = url.replace('http', 'https', 1)
 
     if format == 'xyz' or any([i for i in XYZ_TILES_CHARS if i in url]):
         url = clean_xyz_url(url)

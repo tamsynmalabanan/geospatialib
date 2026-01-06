@@ -793,9 +793,76 @@ class SettingsControl {
 
             source = map.getSource(sourceId)
             source.metadata = {params, style}
+            this.handleRasterSourceErrors(source)
         }
 
         return source
+    }
+
+    handleRasterSourceErrors(source) {
+        let errorTimeout
+        this.map.on('error', (e) => {
+            if (e.sourceId !== source.id) return
+            
+            if (e.error.statusText === 'Failed to fetch') {
+                clearTimeout(errorTimeout)
+                errorTimeout = setTimeout(() => {
+                    console.log(e)
+                    // source.setTiles([`/cors_proxy/raster_data/?url=${decodeURIComponent(source.metadata.params.url)}`])
+                    
+                    const alert = createModal({
+                        titleText: `${e.error.statusText} data from`,
+                        parent: document.body,
+                        show: true,
+                        static: true,
+                        closeBtn: false,
+                        centered: true,
+                        contentBody: customCreateElement({
+                            className: 'p-3',
+                            innerHTML: `Recent change will not be backed up and therefore cannot be undone later via the <b>Undo</b> button. Do you want to keep the change or undo it now?`
+                        }),
+                        footerBtns: {
+                            undo: createButton({
+                                className: `btn-secondary ms-auto`,
+                                innerText: 'Undo',
+                                attrs: {'data-bs-dismiss': 'modal'},
+                                events: {click: (e) => {
+                                    alert?.remove()
+                                    resolve(false)
+                                }},
+                            }),
+                            keep: createButton({
+                                className: `btn-success`,
+                                innerText: 'Keep',
+                                attrs: {'data-bs-dismiss': 'modal'},
+                                events: {click: (e) => {
+                                    alert?.remove()
+                                    resolve(true)
+                                }},
+                            }),
+                        }
+                    })
+                }, 100)
+            }
+        })
+    }
+
+    cleanXYZTilesURL(url) {
+        let clean_url = decodeURIComponent(url)
+
+        if ((new URL(clean_url)).protocol === 'http') {
+            clean_url = clean_url.replace('http', 'https')
+        }
+        
+        if (Array('z', 'x', 'y').some(i => !url.includes(`{${i}}`))) {
+            let [href,z,x,y] = clean_url.split('{', 4)
+            clean_url = [href, ...Object.entries({z,x,y}).map(([k,v]) => {
+                return v.split('}',2)[0] === k ? v : [k, v.split('}',2)[1]].filter(i => i).join('}')
+            })].join('{')
+
+        }
+
+        return clean_url
     }
 
     getXYZSource(sourcePrefix, params) {
@@ -805,14 +872,7 @@ class SettingsControl {
 
         let source = map.getSource(sourceId)
         if (!source) {
-            let url = decodeURIComponent(params.url)
-            if (!url.includes('{x}')) {
-                let [href,z,x,y] = url.split('{', 4)
-                if (z.split('}',2)[0] !== 'z') z = ['z', z.split('}',2)[1]].filter(i => i).join('}')
-                if (x.split('}',2)[0] !== 'x') x = ['x', x.split('}',2)[1]].filter(i => i).join('}')
-                if (y.split('}',2)[0] !== 'y') y = ['y', y.split('}',2)[1]].filter(i => i).join('}')
-                url = [href,z,x,y].join('{')
-            }
+            const url = params.url = this.cleanXYZTilesURL(params.url)
 
             map.addSource(sourceId, {
                 tileSize: 256,
@@ -822,6 +882,8 @@ class SettingsControl {
 
             source = map.getSource(sourceId)
             source.metadata = {params}
+
+            this.handleRasterSourceErrors(source)
         }
 
         return source

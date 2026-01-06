@@ -1,25 +1,7 @@
 from django.core.management.base import BaseCommand
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Q
 
-from helpers.base.utils import get_response, get_response, split_by_special_characters
-from helpers.base.files import get_file_names
-from helpers.main.ogc import get_ogc_layers, get_layers_via_et
-from helpers.main.collection import get_collection_data, get_layers, get_file_names, update_collection_data
-from main.tasks import onboard_collection
-from main.models import URL, Collection, Layer
-from main.agent import create_thematic_map
-
-import io
-
-import xml.etree.ElementTree as ET
-from owslib.wms import WebMapService
-import validators
-import requests
-import re
-from urllib.parse import urlparse, urlunparse
-from urllib.parse import unquote
-
+import logging
+logger = logging.getLogger('django')
 
 def test_get_collection_data():
     # url = 'https://dataworks.calderdale.gov.uk/download/ep46w/dc5/Special%20Protection%20and%20Conservation%20Areas%20GeoJson.geojson'
@@ -52,7 +34,27 @@ def test_get_collection_data():
     data = get_collection_data(url)
     print('layers count', len((data or {}).get('layers', {}).keys()))
 
+def make_all_url_https():
+    from main.models import URL
+    from django.db.models import Q
+    from django.db import IntegrityError
+
+    urls = URL.objects.filter(~Q(path__startswith="https"))
+    if urls.exists():
+        for url in urls:
+            logger.info(url)
+            try:
+                url.path = url.path.replace('http', 'https', 1)
+                url.save()
+                logger.info('updated')
+            except IntegrityError as e:
+                url.delete()
+                logger.info('deleted duplicate')
+            except Exception as e:
+                logger.error(e)
+
 class Command(BaseCommand):
     help = 'Test'
     def handle(self, *args, **kwargs):
+        make_all_url_https()
         self.stdout.write(self.style.SUCCESS('Done.'))
