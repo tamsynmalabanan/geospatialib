@@ -798,6 +798,7 @@ class SettingsControl {
         return source
     }
 
+
     cleanXYZTilesURL(url) {
         let clean_url = decodeURIComponent(url)
 
@@ -1527,6 +1528,35 @@ class SettingsControl {
         }
 
         return bbox
+    }
+
+    handleLayerEvents(layer, {
+        minErrorCount=1,
+        errorHandler,
+        loadHandler,
+    }) {
+        let errorTimeout
+        let errorCount = 0
+
+        if (loadHandler) {
+            this.map.on('sourcedata', (e) => {
+                if (e.sourceId !== layer.source || !e.isSourceLoaded) return
+                loadHandler(layer)
+            })
+        }
+        
+        if (errorHandler) {
+            this.map.on('error', (e) => {
+                if (e.sourceId !== layer.source) return
+                errorCount +=1
+                clearTimeout(errorTimeout)
+                errorTimeout = setTimeout(() => {
+                    if (errorCount < minErrorCount) return
+                    errorCount = 0
+                    errorHandler(layer)
+                }, 100)
+            })
+        }
     }
 
 

@@ -228,10 +228,15 @@ class LegendControl {
             }
         })
 
-        const legendMenuToggle = customCreateElement({
+        const legendIndicators = customCreateElement({
             parent: legendHeader,
-            tag: 'button',
-            className: 'bi bi-three-dots ms-5',
+            className: 'ms-5 d-flex gap-2 flex-nowrap align-items-start'
+        })
+
+        const legendMenuToggle = customCreateElement({
+            parent: legendIndicators,
+            tag: 'span',
+            className: 'bi bi-three-dots',
             attrs: {
                 'data-bs-toggle':"dropdown", 
                 'aria-expanded':"false",
@@ -239,7 +244,7 @@ class LegendControl {
         })
 
         const legendMenu = customCreateElement({
-            parent: legendHeader,
+            parent: legendIndicators,
             tag: 'ul',
             className: 'dropdown-menu user-select-none'
         })
@@ -308,6 +313,19 @@ class LegendControl {
         legendMenu.lastElementChild.remove()
 
         this.toggleMenuBtns()
+
+        this.map._settingsControl.handleLayerEvents(layer, {
+            errorHandler: (layer) => {
+                if (legendIndicators.querySelector(`i.bi-bug`)) return
+                legendIndicators.insertBefore(titleToTooltip(customCreateElement({
+                    tag: 'i',
+                    className: 'user-select-none bi bi-bug',
+                }), 'Data source error'), legendMenuToggle)
+            },
+            loadHandler: (layer) => {
+                legendIndicators.querySelector(`i.bi-bug`)?.remove()
+            },
+        })
     }
 
     toggleMenuBtns() {
