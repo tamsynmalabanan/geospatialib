@@ -793,58 +793,9 @@ class SettingsControl {
 
             source = map.getSource(sourceId)
             source.metadata = {params, style}
-            this.handleRasterSourceErrors(source)
         }
 
         return source
-    }
-
-    handleRasterSourceErrors(source) {
-        let errorTimeout
-        this.map.on('error', (e) => {
-            if (e.sourceId !== source.id) return
-            
-            if (e.error.statusText === 'Failed to fetch') {
-                clearTimeout(errorTimeout)
-                errorTimeout = setTimeout(() => {
-                    console.log(e)
-                    // source.setTiles([`/cors_proxy/raster_data/?url=${decodeURIComponent(source.metadata.params.url)}`])
-                    
-                    const alert = createModal({
-                        titleText: `${e.error.statusText} data from`,
-                        parent: document.body,
-                        show: true,
-                        static: true,
-                        closeBtn: false,
-                        centered: true,
-                        contentBody: customCreateElement({
-                            className: 'p-3',
-                            innerHTML: `Recent change will not be backed up and therefore cannot be undone later via the <b>Undo</b> button. Do you want to keep the change or undo it now?`
-                        }),
-                        footerBtns: {
-                            undo: createButton({
-                                className: `btn-secondary ms-auto`,
-                                innerText: 'Undo',
-                                attrs: {'data-bs-dismiss': 'modal'},
-                                events: {click: (e) => {
-                                    alert?.remove()
-                                    resolve(false)
-                                }},
-                            }),
-                            keep: createButton({
-                                className: `btn-success`,
-                                innerText: 'Keep',
-                                attrs: {'data-bs-dismiss': 'modal'},
-                                events: {click: (e) => {
-                                    alert?.remove()
-                                    resolve(true)
-                                }},
-                            }),
-                        }
-                    })
-                }, 100)
-            }
-        })
     }
 
     cleanXYZTilesURL(url) {
@@ -882,8 +833,6 @@ class SettingsControl {
 
             source = map.getSource(sourceId)
             source.metadata = {params}
-
-            this.handleRasterSourceErrors(source)
         }
 
         return source
