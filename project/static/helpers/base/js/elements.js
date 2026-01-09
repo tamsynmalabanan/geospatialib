@@ -542,6 +542,7 @@ const createObjectTRs = (object, parent, {
 
 const createModal = ({
     titleText,
+    titleClass='',
     parent,
     contentBody,
     footerBtnText = 'Save',
@@ -574,7 +575,7 @@ const createModal = ({
     content.appendChild(header)
 
     const title = document.createElement('h5')
-    title.className = 'modal-title'
+    title.className = `modal-title ${titleClass}`
     if (titleText) title.innerText = titleText
     header.appendChild(title)
 

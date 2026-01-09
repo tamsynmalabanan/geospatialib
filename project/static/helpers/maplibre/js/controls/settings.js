@@ -19,6 +19,11 @@ class SettingsControl {
             vectorSourceTypes: [
                 'overpass'
             ],
+            baseLayers: [
+                'basemap',
+                'terrain',
+                'hillshade',
+            ],
             fixedLayers: [
                 'searchResultBounds',
                 'popupFeature', 
@@ -345,6 +350,58 @@ class SettingsControl {
                             }
                         }
                     },
+                    clear: {
+                        label: 'Clear stored data',
+                        icon: '🗑️',
+                        checked: false,
+                        events: {
+                            click: async (e) => {
+                                e.target.checked = false
+
+                                const alertPromise = new Promise((resolve, reject) => {
+                                    const alert = createModal({
+                                        titleText: 'Clear local data sources',
+                                        titleClass: 'fs-16',
+                                        parent: document.body,
+                                        show: true,
+                                        static: false,
+                                        closeBtn: true,
+                                        centered: true,
+                                        contentBody: customCreateElement({
+                                            className: 'p-3 fs-12',
+                                            innerHTML: `Are you sure you want to clear locally stored data sources? Some layers in this or other maps may be dependent on these sources and removing them will result to broken layers in maps.`
+                                        }),
+                                        footerBtns: {
+                                            back: createButton({
+                                                className: `btn-secondary ms-auto btn-sm`,
+                                                innerText: 'Back',
+                                                attrs: {'data-bs-dismiss': 'modal'},
+                                                events: {click: (e) => {
+                                                    alert?.remove()
+                                                    resolve(false)
+                                                }},
+                                            }),
+                                            remove: createButton({
+                                                className: `btn-danger btn-sm`,
+                                                innerText: 'Clear data',
+                                                attrs: {'data-bs-dismiss': 'modal'},
+                                                events: {click: (e) => {
+                                                    alert?.remove()
+                                                    clearGISDB()
+                                                    resolve(true)
+                                                }},
+                                            }),
+                                        }
+                                    })
+                                })
+                                
+                                const clearData = await alertPromise
+                                if (clearData) {
+                                    console.log('local data cleared, evaluate map layers')
+                                }
+                            },
+                        }
+                    },
                 }
 
                 Object.keys(checkboxOptions).forEach(name => {
@@ -357,7 +414,8 @@ class SettingsControl {
                             name,
                             ...(params.checked ? {checked: params.checked} : {})
                         },
-                        className: 'btn-check'
+                        className: 'btn-check',
+                        events: params.events,
                     })
                     
                     const label = titleToTooltip(customCreateElement({
@@ -369,33 +427,7 @@ class SettingsControl {
                             for: input.id,
                         },
                         innerText: params.icon,
-                        events: params.events,
                     }))
-                })
-
-                const buttonOptions = {
-                    storage: {
-                        label: 'Clear stored data',
-                        icon: '🗑️',
-                        attrs: {
-                            type: 'button',
-                            'data-bs-toggle': 'modal',
-                            'data-bs-target': '#clearLocalDataModal'
-                        }
-                    }
-                }
-
-                Object.keys(buttonOptions).forEach(name => {
-                    const params = buttonOptions[name]
-                    const button = customCreateElement({
-                        tag: 'button',
-                        parent: body,
-                        attrs: {
-                            ...params.attrs,
-                            title: params.label
-                        },
-                        innerText: params.icon
-                    })
                 })
 
                 return body

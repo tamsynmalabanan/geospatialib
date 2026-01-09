@@ -159,13 +159,13 @@ class LegendControl {
 
         const layers = this.layers = customCreateElement({
             parent: content,
-            className: 'd-flex flex-column gap-2 pe-2 overflow-y-auto',
+            className: 'd-flex flex-column gap-3 pe-2 overflow-y-auto',
         })
 
         return layers
     }
 
-    getLayerLegend(layer) {
+    getLegendStyle(layer) {
         const metadata = layer.metadata
         const params = metadata?.params
         const type = params?.type
@@ -183,7 +183,10 @@ class LegendControl {
     addLayerLegend(layer) {
         console.log(layer)
         
-        if (this.map._settingsControl.config.fixedLayers.find(i => layer.id.startsWith(i))) return
+        if (Array(
+            this.map._settingsControl.config.baseLayers,
+            this.map._settingsControl.config.fixedLayers,
+        ).find(i => layer.id.startsWith(i))) return
 
         let legendContainer = Array.from(this.layers.children).find(el => el.getAttribute('data-map-layer-id').startsWith(Array(layer.source, layer.metadata.name).join('-')))
         if (legendContainer) return
@@ -201,18 +204,24 @@ class LegendControl {
             className: 'd-flex align-items-top justify-content-between'
         })
 
-        const legendStyle = customCreateElement({
-            parent: legendContainer,
-            className: 'collapse show user-select-none',
-            innerHTML: this.getLayerLegend(layer)
-        })
+        let legendStyleContainer
+        const legendStyle = this.getLegendStyle(layer)
+        if (legendStyle) {
+            legendStyleContainer = customCreateElement({
+                parent: legendContainer,
+                className: 'collapse show user-select-none',
+                innerHTML: legendStyle
+            })
+        }
         
         console.log(layer)
 
+        const url = layer.metadata.params.url
+        const attribution = layer.metadata.params.attribution
         const legendAttr = customCreateElement({
             parent: legendContainer,
             className: 'collapse show user-select-none text-break text-wrap small',
-            innerHTML: layer.metadata.params.attribution
+            innerHTML: attribution && !Array('none').includes(attribution.toLowerCase()) ? attribution : `<span>Data retrieved from <a href="${url}" tagret="_blank">${(new URL(url)).hostname}</a></span>`
         })
 
         const legendTitle = customCreateElement({
@@ -221,10 +230,12 @@ class LegendControl {
             className: `user-select-none`,
             innerText: layer.metadata?.params?.title ?? layer.metadata?.params?.name ?? 'Untitled',
             attrs: {
-                'data-bs-toggle': "collapse",
-                'data-bs-target': `#${legendStyle.id}`,
-                'aria-expanded': "true",
-                'aria-controls': legendStyle.id,
+                ...(legendStyle && legendStyleContainer ? {
+                    'data-bs-toggle': "collapse",
+                    'data-bs-target': `#${legendStyleContainer.id}`,
+                    'aria-expanded': "true",
+                    'aria-controls': legendStyleContainer.id,
+                }: {}),
             }
         })
 
@@ -258,7 +269,7 @@ class LegendControl {
                             const visibility = this.map.getLayoutProperty(layer.id, 'visibility') === 'none' ? 'visible' : 'none'
                             this.map.setLayoutProperty(layer.id, 'visibility', visibility)
                             e.target.innerHTML = `${visibility === 'visible' ? 'Hide' : 'Show'} layer`
-                            legendStyle.classList.toggle('d-none', visibility === 'none')
+                            legendStyleContainer.classList.toggle('d-none', visibility === 'none')
                         },
                     },
                     handlers: {
