@@ -68,7 +68,7 @@
                                         rel="noopener noreferrer"   
                                     ><i class="bi bi-database-fill-gear fs-12 text-muted fw-medium"></i><span class='fs-12 text-muted fw-medium'>Admin</span></a></div>
                                 {% endif %}
-                                <form class="m-0" method="post" action="{% url 'customuser:logout' %}">
+                                <form class="m-0" method="post" action="{% url 'customuser:logout_account' %}">
                                     {% csrf_token %}
                                     <button class="text-bg-{{theme}} border-0 bg-transparent p-0 m-0 small fs-12 text-muted fw-medium d-flex flex-nowrap gap-1 h-auto w-auto" type="submit">
                                         <i class="bi bi-box-arrow-in-left"></i>
