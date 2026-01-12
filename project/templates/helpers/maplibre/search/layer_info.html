@@ -1,0 +1,80 @@
+{% load utility_tags %}
+{% load leaflet_tags %}
+{% load static %}
+
+<div id='layerInfoModal' class="modal fade" tabindex="-1">
+    <div class="modal-fullscreen-sm-down modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-fullscreen-sm-down modal-dialog-centered modal-fullscreen-sm-down modal-lg">
+        <div class='modal-content'>
+            <div class="modal-header d-flex align-items-start border-0">
+                <div class='d-flex flex-column'>
+                    <div class="modal-title text-muted lead fs-6">Layer Information</div>
+                    <h4 id="layerInfoModal-title"></h4>
+                    <div id="layerInfoModal-format" class=''></div>
+                </div>
+                <button type="button" class="bi bi-x-lg border-0 bg-transparent p-0 m-0 ms-auto" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <th scope="row">URL</th>
+                            <td id='layerInfoModal-url'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td id='layerInfoModal-name'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">BBOX</th>
+                            <td id='layerInfoModal-bbox'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td 
+                                id='layerInfoModal-preview'
+                                data-map-controls-excluded = "all"
+                                data-map-class = "rounded"
+                            >
+                                {% leaflet_map "layerInfoModal-preview-map" %}
+                                <div id="layerInfoModal-thumbnails" class="carousel slide bg-light ignore-theme">
+                                    <div class= "carousel-inner"></div>
+                                    <button class="carousel-control-prev w-auto h-auto" type="button" data-bs-target="#layerInfoModal-thumbnails" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next w-auto h-auto" type="button" data-bs-target="#layerInfoModal-thumbnails" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>           
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">SRID</th>
+                            <td id='layerInfoModal-srid'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"></th>
+                            <td id='layerInfoModal-abstract' style='text-align:justify;'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Attribution</th>
+                            <td id='layerInfoModal-attribution' style='text-align:justify;'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Fees</th>
+                            <td id='layerInfoModal-fees' style='text-align:justify;'></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Styles</th>
+                            <td id='layerInfoModal-styles'></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="addLayerFromData(this.parentElement)" data-bs-dismiss="modal">Add layer to map</button>
+            </div>
+        </div>
+    </div>
+</div>

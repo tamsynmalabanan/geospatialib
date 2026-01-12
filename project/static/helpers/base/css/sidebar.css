@@ -1,0 +1,11 @@
+.sidebar-gutter {
+    max-width: 3px !important;
+    padding: 0px;
+    background-color: var(--bs-border-color);
+    cursor: col-resize;
+}
+
+[data-bs-toggle="offcanvas"] {
+    font-weight: 600;
+}
+

@@ -1,0 +1,49 @@
+{% load static %}
+{% load compress %}
+{% load leaflet_tags %}
+
+{% comment %} Bootstrap {% endcomment %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+{% comment %} tagify {% endcomment %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.33.2/tagify.css" integrity="sha512-aGUjmkw9c7PfAFTwp5TUNdYaPeENG2dmSQcttEohCiV35w6jnLw8F4b71+OELp81/HE+FdDkoYfNG2FVoY/y2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{% comment %} maplibre {% endcomment %}
+<link href="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.css" rel="stylesheet" />
+
+{% comment %} leaflet {% endcomment %}
+{% leaflet_css plugins="forms, geocoder" %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.84.2/dist/L.Control.Locate.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-measure-path@1.5.0/leaflet-measure-path.min.css">
+
+{% comment %} leaflet-better-filelayer {% endcomment %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-better-filelayer@1.0.1/dist/leaflet.betterfilelayer.min.css">
+
+{% comment %} leaflet draw {% endcomment %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw-src.css" integrity="sha512-vJfMKRRm4c4UupyPwGUZI8U651mSzbmmPgR3sdE3LcwBPsdGeARvUM5EcSTg34DK8YIRiIo+oJwNfZPMKEQyug==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{% compress css %}
+    {% comment %} leaflet {% endcomment %}
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/leaflet-line-measurement/Leaflet.LinearMeasurement.css' %}">    
+
+    {% comment %} project {% endcomment %}
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/htmx.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/index.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/theme.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/tagify.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/form.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/utils.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/animations.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/accordion.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/base/css/sidebar.css' %}">    
+
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/gis/css/layers.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/leaflet/css/controls/controls.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/leaflet/css/layers.css' %}">    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/leaflet/css/maps.css' %}">    
+    
+    <link rel="stylesheet" type="text/css" href="{% static 'helpers/maplibre/css/maps.css' %}">    
+{% endcompress %}
+
+{% comment %} <link rel="stylesheet" type="text/css" href="{% static app_name|add:'/css/'|add:url_name|add:'.css' %}">     {% endcomment %}

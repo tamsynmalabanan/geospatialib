@@ -1,0 +1,9 @@
+@keyframes pulse {
+  0%   { text-shadow: 0 0 5px #00f, 0 0 10px #00f, 0 0 20px #00f, 0 0 40px #ff6a00, 0 0 60px #ff6a00; }
+  50%  { text-shadow: 0 0 10px #00f, 0 0 20px #00f, 0 0 30px #00f, 0 0 50px #ff6a00, 0 0 70px #ff6a00; }
+  100% { text-shadow: 0 0 5px #00f, 0 0 10px #00f, 0 0 20px #00f, 0 0 40px #ff6a00, 0 0 60px #ff6a00; }
+}
+
+path.leaflet-interactive:focus {
+    outline: none;
+}

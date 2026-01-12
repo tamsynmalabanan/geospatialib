@@ -1,0 +1,18 @@
+<div class="modal fade" id="userSettingsModal" tabindex="-1" aria-labelledby="userSettingsModalLabel" aria-hidden="true">
+    <div class="modal-fullscreen-sm-down modal-dialog modal-fullscreen-sm-down modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="userSettingsModalLabel">Account Settings</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-wrap gap-3">
+                {% if user.is_authenticated and not user.is_superuser %}
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete account</button>
+                {% endif %}
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Back</button>
+            </div>
+        </div>
+    </div>
+</div>

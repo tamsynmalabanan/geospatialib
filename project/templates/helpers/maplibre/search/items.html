@@ -1,0 +1,122 @@
+{% load static %}
+{% load utility_tags %}
+
+{% for layer in layers %}
+    {% variable layer.metadata as metadata %}
+    {% variable metadata.thumbnails as thumbnails %}
+    {% variable metadata.type as type %}
+    {% variable metadata.url as url %}
+    <li 
+        class="list-group-item d-flex border-0 col-xxl-2 col-xl-3 col-lg-5 col-12 p-0 gap-3 flex-grow-1 mb-3"
+        style='min-width:150px;max-width:350px;'
+        {% if forloop.last and page_obj and page_obj.has_next  %}
+            hx-get="{% url 'htmx:search_library' %}{% querystring request page=page_obj.number|add:1 %}"
+            hx-trigger="intersect once"
+            hx-swap='outerHTML'
+            hx-target="#searchResultsSpinner-{{page_obj.number}}"
+            hx-indicator="#searchResultsSpinner-{{page_obj.number}}"
+        {% endif %}
+    >   
+        <div class="card w-100 border border-2 border-secondary border-opacity-25 rounded">
+            {% if thumbnails %}
+                {% random_string as thumbnails_id %}
+                <div id="{{thumbnails_id}}" class="carousel slide bg-light ignore-theme rounded-top d-none">
+                    <div class= "carousel-inner">
+                        {% for i in thumbnails  %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{i}}" class="card-img-top">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if thumbnails|length > 1 %}
+                        <button class="carousel-control-prev w-auto h-auto" type="button" data-bs-target="#{{thumbnails_id}}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next w-auto h-auto" type="button" data-bs-target="#{{thumbnails_id}}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>           
+                    {% endif %}
+                </div>
+            {% endif %}
+            <div class="card-body w-100 d-flex flex-column p-2 gap-2">
+                <h6 class="card-title fs-12 fw-bold m-0">{{metadata.title}}</h6>
+                {% if metadata.format|startswith:'ogc-' %}
+                    <h6 class="card-subtitle fw-bold text-body-secondary fs-12">{{metadata.name}}</h6>
+                {% endif %}
+                <a 
+                    class="text-muted text-decoration-none mt-auto text-nowrap text-truncate" 
+                    href="{{url}}" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    title="Go to {{url}}"
+                >{{url|subdomain}}</a>
+            </div>
+            <div class="card-footer d-flex p-0 gap-3 p-2">
+                <div class='d-flex align-items-center'>
+                    {% variable 360|divided_by:11 as color_section %}
+                    <span   
+                        class="badge font-monospace align-top user-select-none fs-10"
+                        title="{{type}}" 
+                        style="background-color:hsla(
+                            {% if type == 'wms' %}
+                                {{0|multiplied_by:color_section}}
+                            {% elif type == 'wfs' %}
+                                {{1|multiplied_by:color_section}}
+                            {% elif type == 'geojson' %}
+                                {{2|multiplied_by:color_section}}
+                            {% elif type == 'csv' %}
+                                {{3|multiplied_by:color_section}}
+                            {% elif type == 'gpx' %}
+                                {{4|multiplied_by:color_section}}
+                            {% elif type == 'xyz' %}
+                                {{5|multiplied_by:color_section}}
+                            {% elif type == 'osm' or type == 'overpass' or type == 'json' %}
+                                {{6|multiplied_by:color_section}}
+                            {% elif type == 'kml' or type == 'kmz' %}
+                                {{7|multiplied_by:color_section}}
+                            {% elif type == 'shp' or type == 'dbf' or type == 'cpg' or type == 'prj' or type == 'shx' %}
+                                {{8|multiplied_by:color_section}}
+                            {% elif type == 'dxf' %}
+                                {{9|multiplied_by:color_section}}
+                            {% else %}
+                                {{10|multiplied_by:color_section}}
+                            {% endif %}
+                        , 100%, 25%, 1);"
+                    >{{type}}</span>
+                </div>
+                <button 
+                    title='Add layer to map'
+                    class="bg-transparent border-0 p-0 fs-12 add-layer-button bi bi-plus-circle-fill" 
+                    tabindex="-1"
+                    data-map-layer-metadata="{{metadata|dump_json}}"
+                ></button>
+                <button 
+                    title='Zoom to layer'
+                    class="bg-transparent border-0 p-0 bi bi-zoom-in fs-12"
+                    tabindex="-1"
+                    data-map-layer-bbox="{{metadata.bbox}}"
+                ></button>
+                {% comment %} <button 
+                    title='Layer information'
+                    class="bg-transparent border-0 p-0 bi bi-info-circle fs-12"
+                    tabindex="-1"
+                    data-bs-toggle="modal"
+                    data-bs-target="#layerInfoModal"
+                ></button> {% endcomment %}
+            </div>
+        </div>
+    </li>
+    {% if forloop.last and page_obj and page_obj.has_next %}
+        <li id="searchResultsSpinner-{{page_obj.number}}" class="list-group-item htmx-indicator col-12">
+            <div class='d-flex justify-content-center gap-3'>
+                {% with spinner_class="spinner-grow spinner-grow-sm text-secondary mb-3" %}
+                    <div class="{{spinner_class}}" role="status"></div>
+                    <div class="{{spinner_class}}" role="status"></div>
+                    <div class="{{spinner_class}}" role="status"></div>
+                {% endwith %}
+            </div>
+        </li>
+    {% endif %}
+{% endfor %}

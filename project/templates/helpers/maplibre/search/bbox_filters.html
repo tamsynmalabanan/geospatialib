@@ -1,0 +1,27 @@
+{% load utility_tags %}
+
+{% variable request.GET.bbox__bboverlaps as bbox_filter %}
+
+<button 
+    class='border-0 bg-transparent px-0 h-auto w-auto' 
+    tabindex="-1" 
+    type='submit' 
+    name='bbox__bboverlaps' 
+    data-map-bbox-field="true" 
+    title='Seach within map extent'
+><i class="bi bi-bounding-box-circles"></i></button>
+
+<button 
+    class='border-0 bg-transparent px-0 d-flex align-items-start justify-content-center h-auto w-auto' 
+    tabindex="-1" 
+    type='submit' 
+    name='bbox__bboverlaps' 
+    title='Remove search bbox limit' 
+    value="" 
+    {% if not bbox_filter or bbox_filter == '' %}
+        disabled
+    {% endif %}
+>
+    <i class="bi bi-bounding-box-circles"></i>
+    <i class="bi bi-slash-lg position-absolute fs-18"></i>
+</button>

@@ -1,0 +1,50 @@
+{% load utility_tags %}
+{% load static %}
+
+<div id='findLayersModal' class="modal fade" tabindex="-1">
+    <div class="modal-fullscreen-sm-down modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable modal-fullscreen-sm-down modal-dialog-centered modal-fullscreen-sm-down modal-lg">
+        <form 
+            id='findLayersForm' 
+            class="modal-content" 
+            style='min-height:50%'
+            hx-post="{% url 'htmx:find_layers' %}"
+            hx-trigger='submit'
+            hx-target='#findLayersResponse'
+            hx-swap='innerHTML'
+            {% comment %} hx-swap='beforeend' {% endcomment %}
+            {% comment %} hx-request='{"timeout":180000}' {% endcomment %}
+        >
+            {% csrf_token %}
+            <div class="modal-header d-flex flex-column gap-1">
+                <div class='d-flex justify-content-between w-100'>
+                    <h5 class="modal-title">Need help finding layers for your map?</h5>
+                    <button type="button" class="bi bi-x-lg border-0 bg-transparent p-0 m-0" data-bs-dismiss="modal" aria-label="Close" tabindex="-1"></button>
+                </div>
+                <div class="d-flex w-100 small text-muted">
+                    Describe the subject of your map and we'll suggest layers that you might find useful!
+                </div>
+            </div>
+            <div id='findLayersResponse' class="modal-body d-flex flex-column gap-3 fs-12 p-0">
+            </div>
+            <div class="modal-footer d-flex flex-nowrap justify-content-start align-items-start gap-1">
+                <div class="d-flex flex-column flex-grow-1 gap-2">
+                    <textarea name='subject' class="form-control form-control-sm" placeholder='What do you want to map?' style='min-height:32px; height:32px;'></textarea>
+                    <div class="input-group">
+                        {% random_string as id %}
+                        <span class="input-group-text fs-12">Area of interest</span>
+                        <input name='bbox' type="search" class="form-control form-control-sm fs-12" id="{{id}}" placeholder='type in a place name or bounding box in [west, south, east, north] format'>
+                        <button class="btn btn-secondary fs-12 rounded-end" tabindex='-1' type="button" name='setMapBbox'>use current map extent</button>
+                        <div class="invalid-feedback fs-12"></div>
+                    </div>
+                </div>
+                <div class='d-flex flex-column justify-content-between gap-2'>
+                    <button name='submit' type="submit" disabled class="btn btn-sm btn-primary" title='Find layers' style="width: 32px; height:32px;"><i class="bi bi-search"></i></button>
+                    <button name='reset' type="button" class="btn btn-sm btn-secondary" title='Reset' style="width: 32px; height:32px;" tabindex='-1'>
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

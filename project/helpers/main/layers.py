@@ -1,0 +1,702 @@
+from django.contrib.gis.geos import GEOSGeometry, Polygon
+from django.core.cache import cache
+from django.db.models import QuerySet, Count, Sum, F, IntegerField, Value, Q, Case, When, Max, TextField, CharField, FloatField
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline
+from django.urls import reverse
+from django.contrib.sites.models import Site
+from django.conf import settings
+from django.contrib.gis.gdal import SpatialReference
+
+
+import time
+import json
+import geojson
+import pandas as pd, geopandas as gpd
+import io
+from fiona.io import MemoryFile
+from urllib.parse import unquote, quote
+import osm2geojson
+import codecs
+import os
+from functools import cached_property
+from geojson_transformer import GeoJsonTransformer
+import tempfile
+import gpxpy
+from osgeo import ogr
+from zipfile import ZipFile
+import fiona
+import base64
+import requests
+import sqlite3
+import shapely.wkb
+import shapely.wkt
+from pyproj import CRS
+import ezdxf
+from shapely.geometry import LineString, Point, Polygon as Poly, mapping
+import _io
+
+from main.models import SpatialRefSys, Layer
+from helpers.base.utils import get_response, get_response_file, generate_uuid, create_cache_key
+from helpers.base.files import extract_zip, is_zipped_file, is_sqlite_file
+from helpers.main.constants import WORLD_GEOM, LONGITUDE_ALIASES, LATITUDE_ALIASES, QUERY_BLACKLIST
+from helpers.base.utils import create_cache_key, get_special_characters
+from helpers.main.utils import features_to_geometries
+
+import logging
+logger = logging.getLogger('django')
+
+DEFAULT_SRID = SpatialRefSys.objects.filter(srid=4326).first()
+
+class FilteredLayers():
+    min_keyword_length = 3
+    filter_fields = ['type']
+    filter_expressions = ['bbox__bboverlaps']
+
+    def __init__(self, params:dict, cache_pks:bool=True, cache_timeout:int=600):
+        self.params = params
+        self.cache_pks = cache_pks
+        self.cache_timeout = cache_timeout
+        self.set_clean_keywords()
+        self.set_raw_query()
+        self.set_clean_filters()
+        self.set_filter_values()
+        self.set_cache_key()
+
+    def set_clean_keywords(self):
+        query = self.params.get('query', '').strip().lower()
+        for i in ['\'', '"']:
+            query = query.replace(i, '')
+
+        if ' -' in f' {query}':
+            split_query = query.split()
+            self.exclusions = sorted(set([
+                i[1:] for i in split_query 
+                if i.startswith('-') 
+                and len(i) > self.min_keyword_length
+            ]))
+            query = ' '.join([
+                i for i in split_query
+                if not i.startswith('-') 
+                and i not in self.exclusions
+            ])
+        else:
+            self.exclusions = []
+
+        for i in get_special_characters(query):
+            query = query.replace(i, ' ')
+
+        self.query = sorted(set([
+            i for i in query.split() 
+            if len(i) >= self.min_keyword_length 
+            and i not in QUERY_BLACKLIST
+        ]))
+
+    def set_raw_query(self):
+        self.raw_query = f'({' | '.join(
+            [f"'{i}'" for i in self.query]
+        )}){f' & !({' | '.join(
+            [f"'{i}'" for i in self.exclusions]
+        )})' if self.exclusions else ''}'
+
+    def set_clean_filters(self):
+        self.clean_filters = {
+            key: value for key, value in self.params.items()
+            if key in self.filter_fields + self.filter_expressions
+            and value not in ['', None]
+        }
+
+    def set_filter_values(self):
+        self.filter_values = sorted([str(v).strip() for v in self.clean_filters.values()])
+
+    def set_cache_key(self):
+        self.cache_key = create_cache_key([
+            self.__class__.__name__, 
+            self.raw_query
+        ] + self.filter_values)
+
+    def get_cached_pks(self):
+        return cache.get(self.cache_key)
+
+    def get_cached_queryset(self):
+        pk_list = self.get_cached_pks()
+        if not pk_list:
+            return Layer.objects.none()
+        
+        return (
+            Layer.objects.all()
+            .select_related('collection__url')
+            .filter(pk__in=pk_list)
+            .order_by(Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(pk_list)]))
+        )
+
+    def get_filtered_queryset(self):
+        if not self.query:
+            return Layer.objects.none()
+
+        queryset = (
+            Layer.objects.all()
+            .select_related('collection__url')
+        )
+
+        if self.filter_values:
+            queryset = queryset.filter(**self.clean_filters)
+        
+        return (
+            queryset
+            .filter(search_vector=SearchQuery(self.raw_query, search_type='raw'))
+            .annotate(rank=Max(SearchRank(F('search_vector'), SearchQuery(
+                ' OR '.join(self.query), 
+                search_type='websearch')))
+            )
+            .order_by(*['-rank', 'title', 'type'])
+        )[:1000]
+
+    def get_queryset(self):
+        queryset = self.get_cached_queryset()
+
+        if not queryset.exists():
+            queryset = self.get_filtered_queryset()
+            if queryset.exists() and self.cache_pks and self.cache_timeout:
+                cache.set(self.cache_key, queryset.values_list('pk', flat=True), timeout=self.cache_timeout)
+
+        return queryset
+
+
+def get_geojson_bbox_polygon(fc, srid=4326):
+    try:
+        geometries = features_to_geometries(fc.get("features", []), srid)
+        w, s, e, n = float("inf"), float("inf"), float("-inf"), float("-inf")
+        for geom in geometries:
+            bbox = geom.extent
+            w = min(w, bbox[0])
+            s = min(s, bbox[1])
+            e = max(e, bbox[2])
+            n = max(n, bbox[3])
+        geojson_bbox = Polygon(((w, s), (e, s), (e, n), (w, n), (w, s)))
+        if geojson_bbox.within(WORLD_GEOM):
+            return geojson_bbox
+        else: 
+            raise Exception(f'Failed to get bbox. {srid}')
+    except Exception as e:
+        logger.error(f'get_geojson_bbox_polygon, {e}')
+        raise e
+
+def csv_to_geojson(file, params):
+    try:
+        df = pd.read_csv(file)
+
+        xField = params['xField'] = params.get('xField', ([i for i in df.columns if i.strip().lower() in LONGITUDE_ALIASES+[j+'s' for j in LONGITUDE_ALIASES]]+[None])[0])
+        yField = params['yField'] = params.get('yField', ([i for i in df.columns if i.strip().lower() in LATITUDE_ALIASES+[j+'s' for j in LATITUDE_ALIASES]]+[None])[0])
+        if not xField or not yField:
+            raise Exception('No valid coordinate fields.')
+        
+        gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df[xField], df[yField]))
+        return json.loads(gdf.to_json()), params
+    except Exception as e:
+        logger.error(f'csv_to_geojson, {e}')
+        return None, None
+
+def shp_to_geojson(files, shp_filename):
+    try:
+        name = os.path.normpath(shp_filename).split('.shp')[0]
+        available_exts = [i.split('.')[-1] for i in list(files.keys()) if os.path.normpath(i).startswith(name)]
+
+        has_required_exts = all(ext in available_exts for ext in ['shp', 'shx', 'dbf'])
+        if not has_required_exts:
+            raise Exception('Missing some files.')
+        
+        with tempfile.TemporaryDirectory() as tmpdir:
+            temp_filename = generate_uuid()
+            for filename, fileobj in files.items():
+                if not os.path.normpath(filename).startswith(name):
+                    continue
+                extension = filename.split('.')[-1]
+
+                filepath = os.path.join(tmpdir, f'{temp_filename}.{extension}')
+                with open(filepath, 'wb') as f:
+                    f.write(fileobj.getbuffer())
+
+            shp_path = os.path.join(tmpdir, f'{temp_filename}.shp')
+            with fiona.Env(SHAPE_RESTORE_SHX='YES'):
+                gdf = gpd.read_file(shp_path)
+            srid = SpatialRefSys.objects.filter(srid=int(gdf.crs.to_epsg())).first()
+            return json.loads(gdf.to_json()), srid
+    except Exception as e:
+        logger.error(f'shp_to_geojson, {e}')
+        return None, None
+
+def dxf_to_geojson(file):
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".dxf") as tmp:
+            tmp.write(file.getvalue())
+            doc = ezdxf.readfile(tmp.name)
+            msp = doc.modelspace()
+            
+            features = []
+
+            for entity in msp:
+                try:
+                    entityType = entity.dxftype()
+                    if entityType not in ['LWPOLYLINE', 'LINE', 'POINT', 'CIRCLE', 'INSERT', 'HATCH']:
+                        if hasattr(entity, 'get_points'):
+                            entityType = 'LWPOLYLINE'
+                        elif hasattr(entity.dxf, 'start') and hasattr(entity.dxf, 'end'):
+                            entityType = 'LINE'
+                        elif hasattr(entity.dxf, 'center'):
+                            entityType = 'CIRCLE'
+                        elif hasattr(entity.dxf, 'location'): # or hasattr(entity.dxf, 'position'):
+                            entityType = 'POINT'
+
+                    if entityType == 'LINE':
+                        start = entity.dxf.start
+                        end = entity.dxf.end
+                        geom = LineString([start[:2], end[:2]])
+                        features.append(geojson.Feature(geometry=mapping(geom)))
+                    elif entityType == 'LWPOLYLINE':
+                        points = [(float(pt[0]), float(pt[1])) for pt in entity.get_points()]
+                        geom = Poly(points) if entity.closed else LineString(points)
+                        features.append(geojson.Feature(geometry=mapping(geom)))
+                    elif entityType == 'CIRCLE':
+                        center = entity.dxf.center
+                        geom = Point(center[:2])
+                        features.append(geojson.Feature(geometry=mapping(geom)))
+                    elif entityType == 'POINT':
+                        coords = entity.dxf.location
+                        geom = Point([coords.x, coords.y])
+                        features.append(geojson.Feature(geometry=mapping(geom)))
+                    elif entityType == 'INSERT':
+                        coords = entity.dxf.insert
+                        geom = Point([coords.x, coords.y])
+                        features.append(geojson.Feature(geometry=mapping(geom)))
+                    elif entityType == 'HATCH':
+                        paths = entity.paths
+                        for path in paths:
+                            geom = LineString(path.vertices)
+                            features.append(geojson.Feature(geometry=mapping(geom)))
+                    else:
+                        logger.info('NO MATCH')
+                        logger.info(entity.dxftype())
+                        logger.info(vars(entity))
+                        logger.info(vars(entity.dxf))
+                except Exception as e:
+                    logger.error('ERROR')
+                    logger.info(entity.dxftype())
+                    logger.info(vars(entity))
+                    logger.info(vars(entity.dxf))
+                    logger.error(e)
+
+            geojson_obj = geojson.FeatureCollection(features)
+            return geojson_obj
+    except Exception as e:
+        logger.error(f'dxf_to_geojson, {e}')
+
+def sqlite_to_geojson(file, params):
+    try:
+        table_name = params.get('title', '')
+        fc = {
+            "type": "FeatureCollection",
+            "features": []
+        }
+        srid = SpatialRefSys.objects.filter(srid=4326).first()
+        
+        with tempfile.NamedTemporaryFile(delete=False) as tmp:
+            tmp.write(file.getvalue())
+            tmp_path = tmp.name
+
+        if params.get('type') == 'gpkg':
+            with fiona.open(tmp_path, layer=table_name) as src:
+                for feature in src:
+                    geometry = feature['geometry']
+                    properties = feature['properties']
+                    feature = {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": geometry.type,
+                            "coordinates": geometry.coordinates
+                        },
+                        "properties": dict(properties)
+                    }
+                    fc["features"].append(feature)
+
+                try:
+                    crs_wkt = src.crs_wkt
+                    crs = CRS.from_wkt(crs_wkt)
+                    srid = SpatialRefSys.objects.filter(srid=int(crs.to_epsg())).first()
+                except Exception as e:
+                    pass
+
+        if params.get('type') == 'sqlite':
+            conn = sqlite3.connect(tmp_path)
+            cursor = conn.cursor()
+
+            cursor.execute(f'PRAGMA table_info({table_name})')
+            columns_info = cursor.fetchall()
+            column_names = [col[1] for col in columns_info]
+
+            geom_col = None
+            for candidate in ['GEOMETRY', 'geom']:
+                if candidate in column_names:
+                    geom_col = candidate
+                    break
+
+            if not geom_col:
+                raise ValueError("No geometry column found (expected 'GEOMETRY' or 'geom')")
+
+            cursor.execute(f'SELECT * FROM {table_name}')
+            rows = cursor.fetchall()
+
+            for row in rows:
+                row_dict = dict(zip(column_names, row))
+                geometry_blob = row_dict.pop(geom_col)
+
+                try:
+                    geom = shapely.wkb.loads(geometry_blob)
+                except Exception:
+                    try:
+                        wkt_str = geometry_blob.decode('utf-8') if isinstance(geometry_blob, bytes) else str(geometry_blob)
+                        geom = shapely.wkt.loads(wkt_str)
+                    except Exception:
+                        try:
+                            geom = shapely.wkb.loads(geometry_blob[38:])
+                        except Exception as final_err:
+                            logger.error(f"Geometry decoding failed: {final_err}")
+                            continue
+                geometry = json.loads(json.dumps(geom.__geo_interface__))
+                
+                feature = {
+                    "type": "Feature",
+                    "geometry": geometry,
+                    "properties": row_dict
+                }
+                fc["features"].append(feature)
+
+            try:
+                cursor.execute(f"SELECT srid FROM geometry_columns WHERE f_table_name = ?", (table_name,))
+                srid_row = cursor.fetchone()
+                if srid_row:
+                    srid = SpatialRefSys.objects.filter(srid=int(srid_row[0])).first()
+            except Exception:
+                pass
+
+            conn.close()
+        
+        return fc, srid
+    except Exception as e:
+        logger.error(f'sqlite_to_geojson, {e}')
+        return None, None
+    
+def gpx_to_geojson(file, params):
+    try:
+        gpx = gpxpy.parse(file)
+
+        features = []
+
+        for track in gpx.tracks:
+            for segment in track.segments:
+                coords = [(point.longitude, point.latitude) for point in segment.points]
+                line = geojson.LineString(coords)
+                features.append(geojson.Feature(geometry=line, properties={"name": track.name}))
+
+        for route in gpx.routes:
+            coords = [(point.longitude, point.latitude) for point in route.points]
+            line = geojson.LineString(coords)
+            features.append(geojson.Feature(geometry=line, properties={"name": route.name}))
+
+        for waypoint in gpx.waypoints:
+            point = geojson.Point((waypoint.longitude, waypoint.latitude))
+            features.append(geojson.Feature(geometry=point, properties={"name": waypoint.name}))
+
+        return geojson.FeatureCollection(features), params
+    except Exception as e:
+        logger.error(f'gpx_to_geojson, {e}')
+        return None, None
+    
+def kml_to_geojson(file, params):
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".kml", delete=False) as tmp_kml:
+            content = file.getvalue()
+            if hasattr(content, 'encode'):
+                content = content.encode('utf-8')
+            tmp_kml.write(content)
+            tmp_kml.flush()
+            tmp_kml_path = tmp_kml.name
+
+        driver = ogr.GetDriverByName('KML')
+        datasource = driver.Open(tmp_kml_path)
+        if datasource is None:
+            raise RuntimeError("Failed to open KML data")
+
+        layer = datasource.GetLayer()
+        fc = {
+            "type": "FeatureCollection",
+            "features": []
+        }
+
+        for feature in layer:   
+            geom = feature.GetGeometryRef()
+            geojson_feature = {
+                "type": "Feature",
+                "geometry": json.loads(geom.ExportToJson()),
+                "properties": {}
+            }
+
+            for i in range(feature.GetFieldCount()):
+                field_name = feature.GetFieldDefnRef(i).GetName()
+                geojson_feature["properties"][field_name] = feature.GetField(i)
+            
+            fc["features"].append(geojson_feature)
+
+        return fc, params
+    except Exception as e:
+        logger.error(f'kml_to_geojson, {e}')
+        return None, None
+
+def get_geojson_metadata(data):
+    bounds = None
+    srid = None
+
+    try:
+        if isinstance(data, bytes):
+            srid_no = int(json.loads(data.decode())['crs']['properties']['name'].upper().split('EPSG:')[-1])
+
+        if isinstance(data, _io.BytesIO):
+            data.seek(0)
+            parsed_geojson = json.load(data)
+            srid_no = int(parsed_geojson['crs']['properties']['name'].upper().replace('::', ':').split('EPSG:')[-1])
+            data = json.dumps(parsed_geojson).encode()
+
+        srid = SpatialRefSys.objects.filter(srid=srid_no).first()
+
+        with MemoryFile(data) as memfile:
+            with memfile.open() as src:
+                if not srid and isinstance(src.crs, fiona.crs.CRS):
+                    srid = SpatialRefSys.objects.filter(
+                        srid=SpatialReference(str(src.crs)).srid
+                    ).first()
+                    
+                w,s,e,n = src.bounds
+                bounds = geojson.FeatureCollection([geojson.Feature(
+                        geometry=geojson.Polygon([[
+                        (w, s), (e, s), (e, n), (w, n), (w, s)
+                    ]])
+                )])
+
+        return bounds, srid or DEFAULT_SRID
+    except Exception as e:
+        logger.error(f'get_geojson_metadata: {e}')
+            
+def validate_geojson(url, name, params):
+    try:
+        response = get_response(url)
+        geojson_obj, srid = get_geojson_metadata(json.dumps(response.json()).encode())
+        
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_geojson, {e}')
+            
+def validate_osm(url, name, params):
+    try:
+        response = get_response(url)
+        text = response.text
+        
+        if text.startswith('{'):
+            geojson_obj = osm2geojson.json2geojson(json.loads(text), filter_used_refs=False, log_level='INFO')
+        else:
+            geojson_obj = osm2geojson.xml2geojson(text, filter_used_refs=False, log_level='INFO')
+
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj)
+        params['srid'] = DEFAULT_SRID
+        return params
+    except Exception as e:
+        logger.error(f'validate_osm, {e}')
+
+def validate_overpass(url, name, params):
+    try:
+        query = f"""
+            [out:json][timeout:{60*10}];
+            (
+                node{name};
+                way{name};
+                relation{name};
+            );
+            out ids 1;
+        """
+        elements = []
+        tries = 0
+        while not elements and tries < 3:
+            tries += 1
+            try:
+                response = get_response(url, method='post', data={"data": query}, cache_response=False)
+                elements = response.json().get('elements', [])
+            except Exception as e:
+                logger.error(e)
+        if not elements:
+            raise Exception('No elements.')
+
+        params['bbox'] = WORLD_GEOM
+        params['srid'] = DEFAULT_SRID
+        return params
+    except Exception as e:
+        logger.error(f'validate_overpass, {e}')
+
+def validate_csv(url, name, params):
+    try:
+        response = get_response(url)
+        geojson_obj, params = csv_to_geojson(io.StringIO(response.text), params)
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
+
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_csv, {e}')
+
+def validate_gpx(url, name, params):
+    try:
+        response = get_response(url)
+        geojson_obj, params = gpx_to_geojson(io.StringIO(response.text), params)
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
+
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_csv, {e}')
+
+def validate_kml(url, name, params):
+    try:
+        response = get_response(url)
+        geojson_obj, params = kml_to_geojson(io.StringIO(response.text), params)
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_kml, {e}')
+
+def validate_shp(url, name, params):
+    try:
+        response = get_response(url)
+        geojson_obj, params = shp_to_geojson({
+            name: io.StringIO(response.text)
+        }, os.path.normpath(name))
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_shp, {e}')
+
+def validate_dxf(url, name, params):
+    try:
+        response = get_response(url)
+        geojson_obj = dxf_to_geojson(io.BytesIO(response.content))
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid',4326))).first() 
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_dxf, {e}')
+
+def validate_file(url, name, params):
+    try:
+        file_details = get_response_file(url)
+        if not file_details:
+            raise Exception('Failed to download file.')
+        
+        file = file_details.get('file')
+        files = {name:file}
+        filename = file_details.get('filename','')
+        normpath = os.path.normpath(name)
+
+        if is_zipped_file(filename=filename, file_details=file_details):
+            files = extract_zip(file, filename)
+            file = files.get(name, files.get(normpath))
+        
+        if not file:
+            raise Exception('File not found.')
+        
+        geojson_obj = None
+        srid = SpatialRefSys.objects.filter(srid=int(params.get('srid', 4326))).first()
+
+        if name.endswith('.csv'):
+            geojson_obj, params = csv_to_geojson(file, params)
+
+        if name.endswith('.gpx'):
+            geojson_obj, params = gpx_to_geojson(file, params)
+
+        if name.endswith('.kml'):
+            geojson_obj, params = kml_to_geojson(file, params)
+
+        if name.endswith('.shp'):
+            geojson_obj, srid = shp_to_geojson(files, normpath)
+
+        if name.endswith('.dxf'):
+            geojson_obj = dxf_to_geojson(file)
+
+        if name.endswith('.geojson'):
+            geojson_obj, srid = get_geojson_metadata(file)
+
+        if any([i == params.get('type') or f'.{i}' in name for i in ['sqlite', 'gpkg']]) or is_sqlite_file(filename=filename, file_details=file_details):
+            geojson_obj, srid = sqlite_to_geojson(file, params)
+
+        if not geojson_obj:
+            try:
+                content = file.getvalue().decode('utf-8')
+                if any([i for i in ['osm', 'openstreetmap'] if i in content.lower()]):
+                    if content.startswith('{'):
+                        geojson_obj = osm2geojson.json2geojson(json.loads(content))
+                    else:
+                        geojson_obj = osm2geojson.xml2geojson(content)
+            except Exception as e:
+                pass
+
+        if not geojson_obj:
+            raise Exception(f'No valid geojson., {[url, name, params]}')
+
+        params['bbox'] = get_geojson_bbox_polygon(geojson_obj, srid.srid)
+        params['srid'] = srid
+        return params
+    except Exception as e:
+        logger.error(f'validate_file error, {url}, {name}, {params} {e}')
+       
+def validate_xyz(url, name, params):
+    try:
+        params['bbox'] = WORLD_GEOM
+        params['srid'] = DEFAULT_SRID
+        return params
+    except Exception as e:
+        logger.error(f'validate_xyz, {e}')
+       
+def validate_ogc(url, name, params):
+    try:
+        srid = SpatialRefSys.objects.filter(srid=params.get('srid', 4326)).first()
+        params['srid'] = srid
+
+        w,s,e,n,*crs = params.get('bbox')
+        params['bbox'] = Polygon([(w,s), (e,s), (e,n), (w,n), (w,s)])
+
+        return params
+    except Exception as e:
+        logger.error(f'validate_ogc, {e}')
+       
+LAYER_VALIDATORS = {
+    'overpass': validate_overpass,
+    'osm': validate_osm,
+    'geojson': validate_geojson,
+    'csv': validate_csv,
+    'gpx': validate_gpx,
+    'kml': validate_kml,
+    'shp': validate_shp,
+    'dxf': validate_dxf,
+    'file': validate_file,
+    'kmz': validate_file,
+    'gpkg': validate_file,
+    'sqlite': validate_file,
+    'xyz': validate_xyz,
+    'ogc-wfs': validate_ogc,
+    'ogc-wms': validate_ogc,
+    # 'ogc-wcs': validate_ogc,
+}

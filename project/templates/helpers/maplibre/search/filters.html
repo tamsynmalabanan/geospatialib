@@ -1,0 +1,89 @@
+{% load static %}
+{% load utility_tags %}
+
+<div id='searchResultsFiltersContainer' hx-swap-oob='true' class='d-flex flex-column gap-3'>
+    <div id='libraryFormFilters' class='collapse show multi-collapse'>
+        <div class="d-flex flex-column gap-3">
+            <div class='d-flex gap-3 flex-nowrap fs-12'>
+                <button 
+                    class='border-0 bg-transparent px-0 h-auto w-auto' 
+                    tabindex="-1" 
+                    type='button'
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#searchResultsFilters" 
+                    aria-expanded="true"
+                    aria-controls="searchResultsFilters"
+                    title="Toggle filter tags"
+                    ><i class="bi bi-funnel"></i></button>
+                {% include "helpers/maplibre/search/bbox_filters.html" %}
+                {% include "helpers/maplibre/search/clear_filters.html" %}
+            </div>
+            <div class="collapse show" id="searchResultsFilters">
+                <div class="d-flex gap-2 flex-wrap overflow-y-auto overflow-x-hidden" style='max-height:100px;'>
+                    {% for field, queryset in filters.items %}
+                        {% for i in queryset %}
+                            {% variable i.count as icount %}
+                            {% variable i|get:field as value %}
+                            
+                            {% variable field|field_name as field_name %}
+                            {% variable value|sub_bool:field_name as label %}
+                            
+                            {% variable 'btn btn-sm rounded-pill border-0 fs-12 text-wrap text-break h-auto w-auto px-2' as button_class %}
+    
+                            {% if label %}
+                                {% if request.GET|get:field == value|stringify %}
+                                    <button
+                                        type='submit'
+                                        name="{{field}}"
+                                        value=""
+                                        class="{{button_class}} btn-primary"
+                                        tabindex="-1"
+                                    >{{label}} ({{icount|format_number}})</button>
+                                {% else %}
+                                    {% if icount != count %}
+                                        <button
+                                            type='submit'
+                                            name="{{field}}"
+                                            value="{{value}}"
+                                            class="{{button_class}} bg-primary-subtle text-muted"
+                                            tabindex="-1"
+                                        >{{label}} ({{icount|format_number}})</button>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='d-flex gap-5 align-items-center'>
+        {% if count != 0 %}
+            <span class='text-brea user-select-none fs-12'>
+                Results for "{{request.GET.query}}" ({{count|format_number}})
+            </span>
+            <div class="ms-auto d-flex flex-nowrap gap-3 fs-12">
+                <div>
+                    <input type="checkbox" class="btn-check" id="searchResultsThumbnailsToggle" autocomplete="off" checked>
+                    <label class="bi bi-image p-0" for="searchResultsThumbnailsToggle" title='Togle search result thumbnails'></label>
+                </div>
+                <div>
+                    <input type="checkbox" class="btn-check" id="searchResultsBoundsToggle" autocomplete="off">
+                    <label class="bi bi-intersect p-0" for="searchResultsBoundsToggle" title='Togle search result bounds'></label>
+                </div>
+                <button 
+                    class="border-0 bg-transparent px-0 bi bi-chevron-bar-up fs-14 d-flex justify-content-end pt-1 w-auto h-auto" 
+                    tabindex="-1" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target=".multi-collapse" 
+                    aria-expanded="true" 
+                    aria-controls="libraryFormFields libraryFormFilters" 
+                    title='Toggle search form'
+                ></button>
+            </div>
+        {% else %}
+            <span class='text-break mb-3'>No results found for "{{request.GET.query}}"</span>
+        {% endif %}
+    </div>            
+</div>

@@ -1,0 +1,143 @@
+{% load static %}
+{% load compress %}
+{% load leaflet_tags %}
+
+{% comment %} Bootstrap {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+{% comment %} html2canvas {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% comment %} tagify {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.33.2/tagify.min.js" integrity="sha512-a6ZSFxj4WMZoVm8nWpD03fldTcKmjTdQVVsczBrWl+CUVkPkTdb+r4h/YVobA1ojJaNTBtEVoIYq8Yss4X0M7w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% comment %} papaparse {% endcomment %}
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaOtpa48djpNbZHwExddghZ+ZmzWT06R5v6NSk3ZUfsH6FNEDepLx9hPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js" integrity="sha256-NVP7i99bgATOVTHmgn6ByLNOezmSZ3lndUVEBk6XsBY=" crossorigin="anonymous"></script>
+
+{% comment %} htmx {% endcomment %}
+{% comment %} <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script> {% endcomment %}
+{% comment %} <script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.js" integrity="sha384-oeUn82QNXPuVkGCkcrInrS1twIxKhkZiFfr2TdiuObZ3n3yIeMiqcRzkIcguaof1" crossorigin="anonymous"></script> {% endcomment %}
+<script type="text/javascript" src="{% static 'plugins/htmx/js/htmx.min.js' %}"></script>
+<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/ws.js"></script>
+
+{% comment %} jszip {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% comment %} alpine {% endcomment %}
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+{% comment %} rbush {% endcomment %}
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/rbush@4.0.1/rbush.min.js"></script> {% endcomment %}
+
+{% comment %} lodash {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% comment %} maplibre {% endcomment %}
+<script src="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.js"></script>
+
+{% comment %} leaflet {% endcomment %}
+{% leaflet_js plugins="forms, geocoder" %}
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.84.2/dist/L.Control.Locate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-measure-path@1.5.0/leaflet-measure-path.min.js"></script>
+
+{% comment %} shpjs {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shpjs/6.1.0/shp.min.js" integrity="sha512-cVRBoEiESB75FnwL2Kx/ZOsS1DM6i018SEF/Flp117oqC7vNSKP0XlzHN+pE12ga7TjDpS2LEOEP77tI/fvICQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% comment %} leaflet draw {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js" integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+{% comment %} geojson-vt and leaflet vectorgrid {% endcomment %}
+{% comment %} <script src="https://unpkg.com/geojson-vt/geojson-vt.js"></script> {% endcomment %}
+<script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.bundled.js"></script>
+
+{% comment %} geopackage-js {% endcomment %}
+{% comment %} <script src="https://unpkg.com/@ngageoint/geopackage@latest/dist/geopackage.min.js"></script> {% endcomment %}
+
+{% comment %} dxf-parse {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/dxf-parser@1.1.2/dist/dxf-parser.min.js"></script>
+
+{% comment %} sql.js {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+
+{% comment %} wkx {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/wkx@0.5.0/dist/wkx.min.js"></script>
+
+{% comment %} togeojson {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.min.js" integrity="sha512-tGbo6fmjjGoMjPcSMmwn2kdL791LM73K/8dUjCdO91fBBF26AXG7/DKFcVHfOieY78XT2hl0rJkbM0GUVaPcjw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% comment %} turf {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+
+{% comment %} proj4js {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.15.0/proj4.js" integrity="sha512-zlBm5j/0UjgCzqBVLkATd/2b9Yun4SzATXJ7v1T2KfjmP0iw8FUcG5mPD60SrdxU+tRkACm3IQRq55pEkp9Qow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% comment %} json compress {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/compress-json@3.1.2/bundle.min.js"></script>
+
+{% comment %} loadash {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% compress js %}
+    {% comment %} htmx {% endcomment %}
+    {% comment %} <script type="text/javascript" src="{% static 'plugins/htmx/js/htmx.min.js' %}"></script> {% endcomment %}
+
+    {% comment %} leaflet {% endcomment %}
+    <script type="text/javascript" src="{% static 'plugins/leaflet-polygon-fillPattern-canvas-main/leaflet-polygon.fillPattern-canvas.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/leaflet-line-measurement/Leaflet.LinearMeasurement.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/osmtogeojson/js/osmtogeojson.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/buffer/js/bundle.js' %}"></script>
+
+    {% comment %} project {% endcomment %}
+    <script type="text/javascript" src="{% static 'helpers/base/js/bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/base/js/utils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/base/js/contextmenu.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/base/js/elements.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/base/js/cookies.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/base/js/theme.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/base/js/htmx.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/base/js/sidebar.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/base/js/fetch.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'helpers/gis/js/init.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/gis/js/data.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/gis/js/geojson.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/gis/js/indexdb.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/gis/js/proj4.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/gis/js/utils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/gis/js/panels.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/gis/js/osm.js' %}"></script>
+    {% comment %} <script type="text/javascript" src="{% static 'helpers/gis/js/find_layers.js' %}"></script> {% endcomment %}
+    <script type="text/javascript" src="{% static 'helpers/gis/js/add_layers.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/gis/js/export_layers.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'helpers/maplibre/js/data.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/maplibre/js/geojson.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/maplibre/js/maps.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/maplibre/js/controls/settings.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/maplibre/js/controls/user.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/maplibre/js/controls/fit_to_world.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/maplibre/js/controls/legend.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/maplibre/js/controls/place_search.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/utils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/geojson.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/controls/controls.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/controls/draw.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/layers/utils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/layers/menu.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/layers/editor.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/groups.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/panels.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/legend.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/style.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/query.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/panels/toolbox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/map.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/osm.js' %}"></script>
+    <script type="text/javascript" src="{% static 'helpers/leaflet/js/init.js' %}"></script>
+
+{% endcompress %}
+
+{% comment %} <script type="text/javascript" src="{% static app_name|add:'/js/'|add:url_name|add:'.js' %}"></script> {% endcomment %}

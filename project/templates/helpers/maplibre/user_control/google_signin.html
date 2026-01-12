@@ -1,0 +1,11 @@
+{% load socialaccount %}
+
+<a 
+    href="{% provider_login_url 'google' %}?next={% url 'main:index' %}" 
+    rel="noopener noreferrer"
+    class="btn btn-{{theme}} justify-content-center d-flex flex-nowrap gap-2 text-reset text-decoration-none"
+    style="height:32p;"
+>
+    <i class="bi bi-google fs-12"></i>
+    <span class='text-nowrap fw-medium fs-12 d-none d-md-block'>Sign in with Google</span>
+</a>
