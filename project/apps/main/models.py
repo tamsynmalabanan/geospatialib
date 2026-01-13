@@ -92,7 +92,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ).values("rank")[:1]
 
         return Project.objects.filter(
-            Q(owner=self) | Q(role__user=self)
+            Q(owner=self) | Q(role__is_active=True, role__user=self)
         ).distinct().annotate(
             user_rank=Case(
                 When(owner=self, then=Value(0)),
@@ -110,7 +110,7 @@ class Project(BaseModel):
 class Role(BaseModel):
     project = models.ForeignKey("main.Project", verbose_name='Project', on_delete=models.CASCADE)
     user = models.ForeignKey("main.User", verbose_name='User', on_delete=models.CASCADE)
-    rank = models.SmallIntegerField('Role', choices=[
+    rank = models.SmallIntegerField('Rank', choices=[
         [1, 'Admin'],
         [2, 'Contributor'],
         [3, 'Member'],
@@ -124,6 +124,21 @@ class Role(BaseModel):
         if self.user == self.project.owner:
             return 'Owner'
         return [
-            i[1] for i in self.__class__._meta.get_field('rank').choices 
+            i[1] for i in Role._meta.get_field('rank').choices 
+            if i[0] == self.rank
+        ][0]
+
+class Invite(BaseModel):
+    role = models.ForeignKey("main.Role", verbose_name='Role', on_delete=models.CASCADE)
+    status = models.SmallIntegerField('Status', choices=[
+        [1, 'Accepted'],
+        [2, 'Pending'],
+        [3, 'Declined'],
+    ])
+
+    @property
+    def status_title(self):
+        return [
+            i[1] for i in Invite._meta.get_field('status').choices 
             if i[0] == self.rank
         ][0]

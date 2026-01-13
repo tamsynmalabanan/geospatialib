@@ -42,3 +42,4 @@ class BaseAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Project, BaseAdmin)
 admin.site.register(models.Role, BaseAdmin)
+admin.site.register(models.Invite, BaseAdmin)
