@@ -2,7 +2,7 @@
 URL configuration for project project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
+    https://docs.djangoproject.com/en/6.0/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from apps.main.views import redirect_to_index
+
 from decouple import config
 
-from main.views import redirect_to_index
 
 urlpatterns = [
     path(f'{config('ADMIN_PATH')}/', admin.site.urls, name='admin'),
@@ -26,11 +27,10 @@ urlpatterns = [
     # social auth paths
     path('accounts/', include('allauth.urls')),
 
-    path('', include('main.urls')),
-    path('accounts/', include('customuser.urls')),
-    path(f'htmx/', include('htmx.urls')),
-
+    # apps
+    path('htmx/', include('apps.htmx.urls')),
+    path('', include('apps.main.urls')),
     re_path(r'^.*$', redirect_to_index, name='redirect_to_index'),
 ]
 
-handler404 = 'main.views.redirect_to_index'
+handler404 = 'apps.main.views.redirect_to_index'

@@ -1,0 +1,40 @@
+{% load static %}
+{% load helper_tags %}
+
+<div class="card w-100">
+    <div class="card-header d-flex justify-content-between">
+        <span>Projects</span>
+        <div class='d-flex gap-1'>
+            <button class='btn btn-sm btn-{{theme}}'>
+                <i class='bi bi-plus-lg fs-12'></i>
+            </button>
+            <button class='btn btn-sm btn-{{theme}}'>
+                <i class='bi bi-search fs-12'></i>
+            </button>
+        </div>
+    </div>
+    {% var user.projects as projects %}
+    {% if projects %}
+        <ul class="list-group list-group-flush">
+            {% for project in user.projects %}
+                <li class="list-group-item">
+                    <button class='d-flex justify-content-between w-100 border-0 bg-transparent'>
+                        <span>{{project.title}}</span>
+                        <div class="d-flex gap-3">
+                            {% if project.owner == user %}
+                                <i class="bi bi-house" title='You own this project'></i>
+                            {% endif %}
+                            {% if project.is_private %}
+                                <i class="bi bi-lock" title='This is a private project'></i>
+                            {% endif %}
+                        </div>
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class='p-3'>
+            You are not part of any projects.
+        </div>
+    {% endif %}
+</div>

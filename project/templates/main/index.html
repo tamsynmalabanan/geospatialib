@@ -1,12 +1,8 @@
 {% extends "helpers/base.html" %}
-{% load utility_tags %}
+
 {% load static %}
-{% load compress %}
+{% load helper_tags %}
 
 {% block title %}
     Geospatialib
 {% endblock title %}
-
-{% block body %}
-    {% include "helpers/maplibre/map.html" %}
-{% endblock body %}

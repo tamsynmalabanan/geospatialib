@@ -1,35 +1,72 @@
-{% load utility_tags %}
+{% load static %}
+{% load helper_tags %}
 
-{% variable request.resolver_match.app_name as app_name %}
-{% variable request.resolver_match.url_name as url_name %}
-{% variable app_name|add:'-'|add:url_name as page_name %}
-{% variable request.COOKIES|get:'theme' 'dark' as theme %}
-{% variable page_name|add:'-map' as map_id %}
+{% var request.resolver_match.app_name as app_name %}
+{% var request.resolver_match.url_name as url_name %}
 
-{% block page_variables %}{% endblock page_variables %}
+{% var request.COOKIES.theme as theme %}
+{% if not theme %}
+    {% var 'light' as theme %}
+{% endif %}
+
+{% block variables %}{% endblock variables %}
 
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="{{theme}}">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}{% endblock title %}</title>
         
-        <title>
-            {% block title %}{% endblock title %}
-        </title>
-        
-        {% include "helpers/partials/resources/styles.html" %}
+        {% include "helpers/resources/styles.html" %}
         {% block styles %}{% endblock styles %}
     </head>
     <body class="vh-100 overflow-hidden"> 
         {% block body %}
-        {% endblock body %}
-        
-        {% block modals %}{% endblock modals %}
-        {% include "helpers/partials/export_layers/modal.html" %}
-        {% include "helpers/maplibre/search/layer_info.html" %}
+            {% random_string as offcanvas_id %}
+            <button class="btn btn-lg btn-{{theme}} position-absolute bottom-0 m-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#{{offcanvas_id}}" aria-controls="{{offcanvas_id}}" title='Toggle sidebar'>
+                {% block sidebar_icon %}
+                    <i class="bi bi-layout-sidebar-inset"></i>
+                {% endblock sidebar_icon %}
+            </button>
+            <div class="offcanvas offcanvas-start show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="{{offcanvas_id}}" aria-labelledby="{{offcanvas_id}}Label" aria-modal='true' role='dialog'>
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="{{offcanvas_id}}Label">
+                        <a class='text-reset text-decoration-none' href="{% url 'main:index' %}">Geospatialib</a>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    {% if user.is_authenticated %}
+                        <div class="d-flex flex-column gap-4">
+                            {% include "helpers/partials/user_menu.html" %}
+                            {% include "helpers/partials/user_projects.html" %}
+                        </div>
+                    {% else %}
+                        {% include "helpers/partials/google_signin.html" %}
+                    {% endif %}
+                </div>
+                <div class="offcanvas-footer border-top px-3 py-2">
+                    {% include "helpers/partials/disclaimer.html" %}
+                </div>
+            </div>
 
-        {% include "helpers/partials/resources/scripts.html" %}
+        {% endblock body %}
+
+
+        {% block modals %}
+            {% include "helpers/modals/user_terms.html" %}
+            {% include "helpers/modals/privacy_policy.html" %}
+            {% include "helpers/modals/cookies_policy.html" %}
+            {% if user.is_authenticated %}
+                {% include "helpers/modals/user_settings.html" %}
+                {% if not user.is_superuser and not user.is_staff %}
+                    {% include "helpers/modals/delete_account.html" %}
+                {% endif %}
+            {% endif %}
+        {% endblock modals %}
+
+        {% include "helpers/resources/scripts.html" %}
         {% block scripts %}{% endblock scripts %}
     </body>
 </html>

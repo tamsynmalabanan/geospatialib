@@ -1,0 +1,14 @@
+{% load socialaccount %}
+
+<p>
+    {% lorem 1 b random %}
+</p>
+
+<a 
+    href="{% provider_login_url 'google' %}?next={% url 'main:index' %}" 
+    rel="noopener noreferrer"
+    class="btn btn-primary justify-content-center d-flex flex-nowrap gap-2"
+>
+    <i class="bi bi-google"></i>
+    <span class='text-nowrap'>Sign in with Google</span>
+</a>
