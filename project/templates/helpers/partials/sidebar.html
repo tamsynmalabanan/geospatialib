@@ -1,0 +1,30 @@
+{% load static %}
+{% load helper_tags %}
+
+{% random_string as offcanvas_id %}
+<button class="btn btn-lg btn-{{theme}} position-absolute bottom-0 m-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#{{offcanvas_id}}" aria-controls="{{offcanvas_id}}" title='Toggle sidebar'>
+    {% block sidebar_icon %}
+        <i class="bi bi-layout-sidebar-inset"></i>
+    {% endblock sidebar_icon %}
+</button>
+<div class="offcanvas offcanvas-start show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="{{offcanvas_id}}" aria-labelledby="{{offcanvas_id}}Label" aria-modal='true' role='dialog'>
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="{{offcanvas_id}}Label">
+            <a class='text-reset text-decoration-none' href="{% url 'main:index' %}">Geospatialib</a>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        {% if user.is_authenticated %}
+            <div class="d-flex flex-column gap-4">
+                {% include "helpers/partials/user_menu.html" %}
+                {% include "helpers/partials/user_projects.html" %}
+            </div>
+        {% else %}
+            {% include "helpers/partials/google_signin.html" %}
+        {% endif %}
+    </div>
+    <div class="offcanvas-footer border-top px-3 py-2">
+        {% include "helpers/partials/disclaimer.html" %}
+    </div>
+</div>

@@ -21,6 +21,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.15.0/proj4.js" integrity="sha512-zlBm5j/0UjgCzqBVLkATd/2b9Yun4SzATXJ7v1T2KfjmP0iw8FUcG5mPD60SrdxU+tRkACm3IQRq55pEkp9Qow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 {% compress js %}
+    <script type="text/javascript" src="{% static 'maplibre/js/map.js' %}"></script>
 {% endcompress %}
 
 <script type="text/javascript" src="{% static app_name|add:'/js/'|add:url_name|add:'.js' %}"></script>

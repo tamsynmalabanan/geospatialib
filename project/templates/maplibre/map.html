@@ -1,0 +1,8 @@
+{% load static %}
+{% load helper_tags %}
+
+<div
+    id="{% random_string %}"
+    class='w-100 h-100'
+    x-data x-init="createNewMap($el)"
+></div>
