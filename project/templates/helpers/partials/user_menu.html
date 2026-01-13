@@ -1,0 +1,44 @@
+<div class="btn-group w-100">
+    <button 
+        class="d-flex flex-nowrap align-items-center dropdown-toggle justify-content-between w-100 border rounded px-3 py-2"
+        data-bs-toggle="dropdown"
+    >
+        <div class='d-flex flex-nowrap gap-3 align-items-center'>
+            {% with social_account=user.socialaccount_set.all %}
+                {% if social_account and social_account.0.extra_data.picture %}
+                    <img
+                        class="rounded-circle"
+                        alt="{{user}}"
+                        src="{{social_account.0.extra_data.picture}}"
+                        width="30"
+                        height="30"
+                    />
+                {% else %}
+                    <i class="bi bi-person-circle" style="font-size:30px"></i>
+                {% endif %}
+            {% endwith %}
+            <span class="text-wrap">{{user}}</span>
+        </div>
+    </button>
+    <ul class='dropdown-menu dropdown-menu-end'>
+        {% if user.is_staff %}
+            <li><a 
+                class="dropdown-item text-reset text-decoration-none d-flex flex-nowrap gap-2"
+                href="{% url 'admin:index' %}" 
+                target="_blank" 
+                rel="noopener noreferrer"   
+            ><i class="bi bi-database-fill-gear"></i><span>Admin page</span></a></li>
+        {% endif %}
+        <li><button type="button" class="dropdown-item d-flex flex-nowrap gap-2" data-bs-toggle="modal" data-bs-target="#userSettingsModal">
+                <i class="bi bi-sliders"></i>
+                <span>Settings</span>
+        </button></li>
+        <li><form class="" method="post" action="{% url 'main:logout_account' %}">
+            {% csrf_token %}
+            <button class="dropdown-item d-flex flex-nowrap gap-2" type="submit">
+                <i class="bi bi-box-arrow-in-left"></i>
+                <span>Logout</span>
+            </button>
+        </form></li>
+    </ul>
+</div>
