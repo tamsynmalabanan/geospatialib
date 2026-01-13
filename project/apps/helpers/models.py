@@ -67,3 +67,6 @@ class Layout(BaseModel):
 
 class ChangeLog(BaseModel):
     details = models.JSONField('Details', default=dict, blank=True, null=True)
+
+class Tag(models.Model):
+    tag = models.CharField('Tag', max_length=50)
