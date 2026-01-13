@@ -13,13 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
-from datetime import timedelta
-from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 import logging
 from concurrent_log_handler import ConcurrentRotatingFileHandler
 import logging.config  
-
-
 
 if os.name == 'nt':
     VENV_BASE = os.environ['VIRTUAL_ENV']
@@ -48,9 +44,6 @@ ALLOWED_HOSTS = [
 ]
 
 AUTH_USER_MODEL = 'customuser.User'
-AUTHENTICATION_BACKENDS = (
-    'customuser.backends.CustomAuthenticationBackend',
-)
 
 # allauth
 SITE_ID = 1
