@@ -86,8 +86,8 @@ class ControlsHandler {
                 },
                 fullscreen: {
                     include: true,
-                    position: 'bottom-right',
-                    order: 2,
+                    position: 'top-left',
+                    order: 100,
                     constructor: maplibregl.FullscreenControl,
                 },
             },
