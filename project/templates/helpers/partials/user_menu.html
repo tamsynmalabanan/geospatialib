@@ -1,22 +1,10 @@
 <div class="btn-group w-100">
     <button 
-        class="d-flex flex-nowrap align-items-center dropdown-toggle justify-content-between w-100 border rounded px-3 py-2"
+        class="d-flex flex-nowrap align-items-center dropdown-toggle justify-content-between w-100 border rounded px-3 py-2 btn btn-{{theme}}"
         data-bs-toggle="dropdown"
     >
         <div class='d-flex flex-nowrap gap-3 align-items-center'>
-            {% with social_account=user.socialaccount_set.all %}
-                {% if social_account and social_account.0.extra_data.picture %}
-                    <img
-                        class="rounded-circle"
-                        alt="{{user}}"
-                        src="{{social_account.0.extra_data.picture}}"
-                        width="30"
-                        height="30"
-                    />
-                {% else %}
-                    <i class="bi bi-person-circle" style="font-size:30px"></i>
-                {% endif %}
-            {% endwith %}
+            {% include "helpers/partials/profile_pic.html" with size=30 %}
             <span class="text-wrap">{{user}}</span>
         </div>
     </button>

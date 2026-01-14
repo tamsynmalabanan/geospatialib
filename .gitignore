@@ -174,7 +174,7 @@ cython_debug/
 
 notes.txt
 nginx.config
-.backup
+backup
 
 **/migrations/*
 !**/migrations/__init__.py

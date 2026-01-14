@@ -1,0 +1,13 @@
+{% with social_account=user.socialaccount_set.all %}
+    {% if social_account and social_account.0.extra_data.picture %}
+        <img
+            class="rounded-circle"
+            alt="{{user}}"
+            src="{{social_account.0.extra_data.picture}}"
+            width="{{size}}"
+            height="{{size}}"
+        />
+    {% else %}
+        <i class="bi bi-person-circle" style="font-size:30px"></i>
+    {% endif %}
+{% endwith %}
