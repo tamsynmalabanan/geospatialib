@@ -1,3 +1,13 @@
+const CURSOR = {
+    x: null,
+    y: null,
+}
+
+document.addEventListener("mousemove", (e) => {
+    CURSOR.x = e.clientX
+    CURSOR.y = e.clientY
+})
+
 const generateRandomString = (length=16) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
     let result = ''
@@ -79,7 +89,7 @@ const hashJSON = async (jsonObj) => {
 }
 
 const hslaColor = (color='hsla(0, 0%, 100%, 1)') => {
-    if (!color || !color.startsWith('hsla')) return
+    if (!color || !color.startsWith('hsl')) return
     
     const [h,s,l,a] = color.split(',').map(str => parseNumber(str))
     

@@ -3,9 +3,10 @@ class SourcesHandler {
         this.map = map
         this.config = {
             systemLayers: [
-                'searchResultBounds',
-                'popupFeature', 
                 'placeSearch',
+                'infoFeature', 
+                'tooltipFeature', 
+                'searchResultBounds',
             ],
         }
     }
@@ -65,8 +66,17 @@ class SourcesHandler {
             'Polygon', 'LineString', 'Point'
         ).map(i => [i, ["all", ["==", "$type", i], ...validFilter]]))
         
-        const colorHSLA = hslaColor(color)
-        const outlineColor = colorHSLA.toString({l:colorHSLA.l*0.5})
+        const hsla = hslaColor(color)
+        const outlineColor = hsla.toString({l:hsla.l*0.5})
+
+        const metadata = {
+            tooltip: {
+                active: true,
+            },
+            popup: {
+                active: true,
+            },
+        }
 
         const defaultParams = {
             'background': {
@@ -80,6 +90,7 @@ class SourcesHandler {
                     'background-opacity': 0.25,
                     // 'background-pattern': ''
                 },
+                metadata,
             },
             'fill': {
                 minzoom,
@@ -97,7 +108,8 @@ class SourcesHandler {
                     'fill-translate': [0,0],
                     'fill-translate-anchor': 'map',
                     // 'fill-pattern': '',
-                }
+                },
+                metadata,
             },
             'line': {
                 minzoom,
@@ -123,7 +135,8 @@ class SourcesHandler {
                     // 'line-dasharray': [],
                     // 'line-pattern': '',
                     // 'line-gradient': '',
-                }
+                },
+                metadata,
             },
             'circle': {
                 minzoom,
@@ -146,6 +159,7 @@ class SourcesHandler {
                     "circle-stroke-color": outlineColor,
                     "circle-stroke-opacity": 1,
                 },
+                metadata,
             },
             'heatmap': {
                 minzoom,
@@ -171,6 +185,7 @@ class SourcesHandler {
                     ],
                     'heatmap-opacity': 0.5,
                 },
+                metadata,
             },
             'fill-extrusion': {
                 minzoom,
@@ -189,6 +204,7 @@ class SourcesHandler {
                     'fill-extrusion-base': 0,
                     'fill-extrusion-vertical-gradient': true,
                 },
+                metadata,
             },
             'symbol': {
                 minzoom,
@@ -256,7 +272,8 @@ class SourcesHandler {
                     // 'text-halo-blur': 0,
                     // 'text-translate': [0,0],
                     // 'text-translate-anchor': 'map',
-                }
+                },
+                metadata,
             }
         }
 
@@ -332,6 +349,20 @@ class SourcesHandler {
                             "circle-color": 'white',
                             "circle-opacity": 0.5,
                             "circle-translate": [-2.5,2.5],
+                        },
+                    },
+                },
+                'points-outline': {
+                    render: false,
+                    params: {
+                        ...defaultParams.circle,
+                        paint: {
+                            ...defaultParams.circle.paint,
+                            "circle-color": 'transparent',
+                            'circle-stroke-color': outlineColor,
+                            'circle-stroke-width': 2, 
+                            'circle-radius': 7, 
+
                         },
                     },
                 },
@@ -437,7 +468,7 @@ class SourcesHandler {
                 Object.entries(b).forEach(([c, d]) => {
                     const isNewLayer = !(c in type)
                     if (isNewLayer) type[c] = {}
-                    
+
                     const layer = type[c]
                     
                     const render = d.render
@@ -463,6 +494,10 @@ class SourcesHandler {
                                     ...defaultParams[a].paint,
                                     ...updates.paint ?? {}
                                 },
+                                metadata: {
+                                    ...defaultParams[a].metadata,
+                                    ...updates.metadata ?? {}
+                                },
                             }
                         } else {
                             layer.params = {
@@ -475,6 +510,10 @@ class SourcesHandler {
                                 paint: {
                                     ...layer.params.paint,
                                     ...updates.paint ?? {}
+                                },
+                                metadata: {
+                                    ...layer.params.metadata,
+                                    ...updates.metadata ?? {}
                                 },
                             }
                         }
@@ -555,12 +594,6 @@ class SourcesHandler {
                             group: groupId,
                             name,
                             role,
-                            tooltip: {
-                                active: true
-                            },
-                            popup: {
-                                active: true
-                            },
                         },
                     }
 

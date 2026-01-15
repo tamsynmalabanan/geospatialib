@@ -10,8 +10,8 @@ const customFetchMap = new Map()
 const customFetch = async (url, {
     params = {},
     timeout = 60000,
-    controller = new AbortController(),
-    abortControls = [],
+    abortController = new AbortController(),
+    abortEvents = [],
     callback=(response) => response,
 } = {}) => {
     const clean_url = url.replaceAll('http:', 'https:')
@@ -22,16 +22,20 @@ const customFetch = async (url, {
         return callback(response)
     }
     
-    const abortFetch = () => controller.abort()
+    const abortFetch = () => abortController.abort()
     const timeoutId = setTimeout(abortFetch, timeout)
-    abortControls.forEach(([type, element]) => element.addEventListener(type, abortFetch))
+    abortEvents.forEach(([element, types]) => {
+        types.forEach(type => {
+            element.addEventListener(type, abortFetch)
+        })
+    })
 
     const headers = params.headers = params.headers ?? {}
     headers['User-Agent'] = 'Geospatialib/1.0 (admin@geospatialib.com)'
 
     const fetchPromise = fetch(clean_url, {
         ...params, 
-        signal: controller.signal
+        signal: abortController.signal
     }).then(async response => {
         clearTimeout(timeoutId)
         if (!response.ok) {
@@ -42,7 +46,11 @@ const customFetch = async (url, {
         clearTimeout(timeoutId)
         throw error
     }).finally(() => {
-        abortControls.forEach(([type, element]) => element.removeEventListener(type, abortFetch))
+        abortEvents.forEach(([element, types]) => {
+            types.forEach(type => {
+                element.removeEventListener(type, abortFetch)
+            })
+        })
         setTimeout(() => customFetchMap.delete(mapKey), 1000)
     })
 
@@ -52,10 +60,11 @@ const customFetch = async (url, {
 }
 
 const parseJSONResponseMap = new Map()
-const parseJSONResponse = async (id, response, {
+const parseJSONResponse = async (response, {
+    id,
     timeout = 60000,
 } = {}) => {
-    if (parseJSONResponseMap.has(id)) {
+    if (id && parseJSONResponseMap.has(id)) {
         return parseJSONResponseMap.get(id)
     }
 
@@ -85,10 +94,14 @@ const parseJSONResponse = async (id, response, {
             }
         } finally {
             reader.releaseLock()
-            setTimeout(() => parseJSONResponseMap.delete(id), 1000)
+            if (id) {
+                setTimeout(() => parseJSONResponseMap.delete(id), 1000)
+            }
         }
     })()
 
-    parseJSONResponseMap.set(id, parsePromise)
+    if (id) {
+        parseJSONResponseMap.set(id, parsePromise)
+    }
     return parsePromise
 }

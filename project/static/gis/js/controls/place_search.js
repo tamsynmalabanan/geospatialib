@@ -5,7 +5,6 @@ class PlaceSearchControl {
     }
 
     async runPlaceSearch(e) {
-        
         const map = this.map
         const sourceId = 'placeSearch'
         map.sourcesHandler.removeSourceLayers(sourceId)
@@ -23,7 +22,9 @@ class PlaceSearchControl {
             })
             data = turf.featureCollection([turf.point(coords)])
         } else {
-            data = await fetchSearchNominatim({q})
+            data = await fetchSearchNominatim({q}, {
+                abortEvents: [[this.input, ['input', 'change', 'keydown:enter']]],
+            })
             const features = data?.features
             if (features?.length) {
                 let bbox = data.bbox
@@ -48,7 +49,7 @@ class PlaceSearchControl {
                 data, 
             })
 
-            const color = `hsla(70, 100%, 50%, 1.00)`
+            const color = `hsl(0, 100%, 50%)`
             map.sourcesHandler.addGeoJSONLayers(sourceId, {
                 name: 'default',
                 groups:  {
@@ -133,6 +134,8 @@ class PlaceSearchControl {
                 },
                 keydown: (e) => {
                     if (e.key !== 'Enter') return
+                    const event = new Event('keydown:enter')
+                    input.dispatchEvent(event)
                     handler(e)
                 },
             }

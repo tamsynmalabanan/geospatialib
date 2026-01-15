@@ -27,3 +27,25 @@ const elementMutationObserver = (element, callback, {
 
     return observer
 }
+
+const elementResizeObserver = (element, callback, {
+    once = false,
+} = {}) => {
+    let resizeTimeout
+    
+    const observer = new ResizeObserver(entries => {
+        for (const entry of entries) {
+            if (entry.target === element) {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    if (once) observer.unobserve(element)
+                    callback(element)
+                }, 100)
+            }
+        }
+    });
+
+    observer.observe(element)
+
+    return observer
+}

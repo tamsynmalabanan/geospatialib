@@ -90,6 +90,8 @@ const createNewMap = (el) => {
         map.sourcesHandler = new SourcesHandler(map)
         map.controlsHandler = new ControlsHandler(map)
         map.interactionsHandler = new InteractionsHandler(map)
+        
+        window.map = map
         console.log(map)
     })   
 }
