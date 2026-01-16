@@ -129,12 +129,15 @@ class ControlsHandler {
         toggle.classList.add('d-flex', 'justify-content-center', 'align-items-center', `text-bg-${getPreferredTheme()}`)
 
         const inner = container.querySelector(`.maplibregl-ctrl-attrib-inner`)
-        elementMutationObserver(inner, () => {
+        const innerHandler = () => {
             inner.querySelectorAll(`a`).forEach(a => {
                 a.setAttribute('target', '_blank')
                 a.classList.add('text-reset', 'text-decoration-none')
             })
-        }, { childList: true, subtree: true })
+        }
+
+        innerHandler()
+        elementMutationObserver(inner, innerHandler, { childList: true, subtree: true })
     }
 
     configControls() {
