@@ -84,9 +84,15 @@ class ControlsHandler {
                         maxWidth: 200,
                     }
                 },
+                settings: {
+                    include: true,
+                    position: 'bottom-right',
+                    order: 101,
+                    constructor: SettingsControl,
+                },
                 fullscreen: {
                     include: true,
-                    position: 'top-left',
+                    position: 'bottom-right',
                     order: 100,
                     constructor: maplibregl.FullscreenControl,
                 },
