@@ -137,6 +137,16 @@ class InteractionsHandler {
         return features
     }
 
+    getLayerTitle(layer) {
+        const source = this.map.getSource(layer.source)
+        return (
+            layer.metadata?.params?.title 
+            ?? layer.metadata?.params?.name 
+            ?? source?.metadata?.params?.title 
+            ?? source?.metadata?.params?.name
+        )
+    }
+
     getFeatureLabel(f) {
         return f.properties[
             f.layer?.metadata?.label ?? Array(
@@ -272,16 +282,6 @@ class InteractionsHandler {
                 })
             }
         }
-    }
-
-    getLayerTitle(layer) {
-        const source = this.map.getSource(layer.source)
-        return (
-            layer.metadata?.params?.title 
-            ?? layer.metadata?.params?.name 
-            ?? source?.metadata?.params?.title 
-            ?? source?.metadata?.params?.name
-        )
     }
 
     featurePropertiesToTable(properties, {
