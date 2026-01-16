@@ -8,7 +8,7 @@ from decouple import config
 import os
 import json
 
-from apps.main.models import User
+from apps.customuser.models import User
 from apps.helpers.models import SpatialRefSys, SpatialRefSysExt
 
 import logging

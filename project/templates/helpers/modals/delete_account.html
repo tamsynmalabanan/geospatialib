@@ -12,7 +12,7 @@
             </div>
             <div class="modal-footer d-flex justify-content-between gap-2">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#userSettingsModal">Back</button>
-                <form method="post" action="{% url 'main:delete_account' %}">
+                <form method="post" action="{% url 'customuser:delete_account' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm btn-danger">Delete account</button>
                 </form>

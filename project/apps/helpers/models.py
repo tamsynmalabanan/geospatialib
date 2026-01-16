@@ -39,7 +39,7 @@ class SpatialRefSysExt(models.Model):
 class BaseModel(models.Model):
     created_on = models.DateTimeField('Created on', auto_now_add=True)
     created_by = models.ForeignKey(
-        "main.User", 
+        "customuser.User", 
         verbose_name='Created by', 
         on_delete=models.DO_NOTHING, 
         related_name='%(class)s_creation',
@@ -48,7 +48,7 @@ class BaseModel(models.Model):
     )
     updated_on = models.DateTimeField('Last updated', auto_now=True)
     updated_by = models.ForeignKey(
-        "main.User", 
+        "customuser.User", 
         verbose_name='Updated by', 
         on_delete=models.DO_NOTHING, 
         related_name='%(class)s_updates',

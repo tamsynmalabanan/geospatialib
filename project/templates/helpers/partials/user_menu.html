@@ -21,7 +21,7 @@
                 <i class="bi bi-sliders"></i>
                 <span>Settings</span>
         </button></li>
-        <li><form class="" method="post" action="{% url 'main:logout_account' %}">
+        <li><form class="" method="post" action="{% url 'customuser:logout_account' %}">
             {% csrf_token %}
             <button class="dropdown-item d-flex flex-nowrap gap-2" type="submit">
                 <i class="bi bi-box-arrow-in-left"></i>

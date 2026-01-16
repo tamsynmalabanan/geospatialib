@@ -47,7 +47,7 @@ ALLOWED_HOSTS = [
     f'www.{config("HOST_DOMAIN")}',
 ]
 
-AUTH_USER_MODEL = 'main.User'
+AUTH_USER_MODEL = 'customuser.User'
 
 SITE_ID = 1
 SOCIALACCOUNT_LOGIN_ON_GET = True
@@ -63,10 +63,10 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-SOCIALACCOUNT_ADAPTER = 'apps.main.adapters.CustomSocialAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'apps.customuser.adapters.CustomSocialAccountAdapter'
 
 AUTHENTICATION_BACKENDS = (
-    'apps.main.backends.CustomAuthenticationBackend',
+    'apps.customuser.backends.CustomAuthenticationBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
@@ -102,6 +102,7 @@ INSTALLED_APPS = [
 
     # apps
     'tags',
+    'apps.customuser',
     'apps.main',
     'apps.htmx',
     'apps.helpers',

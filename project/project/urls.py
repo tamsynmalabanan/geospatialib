@@ -29,6 +29,7 @@ urlpatterns = [
 
     # apps
     path('htmx/', include('apps.htmx.urls')),
+    path('', include('apps.customuser.urls')),
     path('', include('apps.main.urls')),
     re_path(r'^.*$', redirect_to_index, name='redirect_to_index'),
 ]
