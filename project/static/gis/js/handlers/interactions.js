@@ -361,8 +361,6 @@ class InteractionsHandler {
                         this.configInfoLayer({feature, toggle})
                         if (toggle.classList.contains('text-bg-info')) {
                             navigator.clipboard.writeText(label)
-                            toggle.innerHTML = `<span class='text-center w-100'>Copied to clipboard</span>`
-                            setTimeout(() => { toggle.innerHTML = innerHTML }, 1000)
                         }
                     }
                 }
@@ -389,8 +387,6 @@ class InteractionsHandler {
                     
                     if(coords.classList.contains('text-bg-info')) {
                         navigator.clipboard.writeText(coordsValues.join(' '))
-                        coords.innerHTML = `<span class='text-center w-100'>Copied to clipboard</span>`
-                        setTimeout(() => { coords.innerHTML = innerHTML }, 1000)
                     }
                 }
             }
@@ -545,8 +541,6 @@ class InteractionsHandler {
                                 if (toggle.classList.contains('text-bg-info')) {
                                     popup.setLngLat(new maplibregl.LngLat(...turf.pointOnFeature(feature).geometry.coordinates))
                                     navigator.clipboard.writeText(title)
-                                    toggle.innerHTML = `<span class='text-center w-100'>Copied to clipboard</span>`
-                                    setTimeout(() => { toggle.innerHTML = innerHTML }, 1000)
                                 } else {
                                     popup.setLngLat(lngLat)
                                 }
