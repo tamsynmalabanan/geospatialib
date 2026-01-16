@@ -9,6 +9,9 @@ class SourcesHandler {
                 'searchResultBounds',
             ],
         }
+
+        this.configAddLayer()
+        this.configRemoveLayer()
     }
     
     removeSourceLayers(sourceId) {
@@ -610,5 +613,25 @@ class SourcesHandler {
         })
 
         return this.map.getStyle().layers.filter(l => l.id.startsWith(layerName))
+    }
+
+    configAddLayer() {
+        const originalAddLayer = this.map.addLayer.bind(this.map)
+
+        this.map.addLayer = (layer, beforeId) => {
+            const result = originalAddLayer(layer, beforeId)
+            this.map.fire('layeradded', { layer })
+            return result
+        }
+    }
+
+    configRemoveLayer() {
+        const originalRemoveLayer = this.map.removeLayer.bind(this.map)
+
+        this.map.removeLayer = (layerId) => {
+            const result = originalRemoveLayer(layerId)
+            this.map.fire('layerremoved', { layerId })
+            return result
+        }
     }
 }
