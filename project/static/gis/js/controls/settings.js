@@ -20,6 +20,44 @@ class SettingsControl {
                             icon: '🌍',
                         },
                     }
+                },
+                popup: {
+                    title: 'Popup options',
+                    handler: (e) => {
+                        const section = e.target.parentElement
+                        const interactionsHandler = this.map.interactionsHandler
+                        const config = interactionsHandler.config.interactions.info
+
+                        const toggle = section.querySelector('input[name="popup-toggle"]')
+                        const osm = section.querySelector('input[name="popup-osm"]')
+                        const layers = section.querySelector('input[name="popup-layers"]')
+
+                        config.active = toggle.checked
+                        osm.disabled = !toggle.checked
+                        layers.disabled = !toggle.checked
+
+                        config.targets.osm = osm.checked
+                        config.targets.layers = layers.checked
+
+                        interactionsHandler.configCursor()
+                    },
+                    options: {
+                        toggle: {
+                            label: 'Toggle popup',
+                            icon: '💬',
+                            checked: true,
+                        },
+                        layers: {
+                            label: 'Layers',
+                            icon: '📚',
+                            checked: true,
+                        },
+                        osm: {
+                            label: 'Openstreetmap',
+                            icon: '🗾',
+                            checked: true,
+                        },
+                    }
                 }
             }
         }
