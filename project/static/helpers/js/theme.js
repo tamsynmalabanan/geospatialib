@@ -2,7 +2,7 @@ const getPreferredTheme = () => getCookie('theme') ?? 'light'
 
 const themeClasses = Array(
     [['bg-light'],['bg-dark']],
-    [['bg-light-50'],['bg-dark-50']],
+    [['bg-light-75'],['bg-dark-75']],
     
     [['btn-light'],['btn-dark']],
     [['btn-outline-dark'],['btn-outline-light']],

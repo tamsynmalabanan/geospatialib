@@ -80,7 +80,7 @@ class ControlsHandler {
                     order: 1,
                     constructor: maplibregl.ScaleControl,
                     options: {
-                        unit: 'metric',
+                        unit: 'nautical',
                         maxWidth: 200,
                     }
                 },
@@ -209,5 +209,28 @@ class ControlsHandler {
         const newStyle = structuredClone(this.map.getStyle())
         newStyle.sky = sky
         this.map.setStyle(newStyle)
+    }
+
+    getScaleInMeters() {
+        const control = this.controls.scalebar
+        const rawValue = control._container.innerText
+        const rawInt = parseFloat(rawValue)
+        const unit = rawValue.split(rawInt).pop().trim()
+        
+        if (control.options.unit === 'metric') {
+            if (unit === 'm') return rawInt
+            if (unit === 'km') return rawInt * 1000
+        }
+        
+        if (control.options.unit === 'imperial') {
+            if (unit === 'mi') return rawInt * 1609.344
+            if (unit === 'ft') return rawInt * 0.3048
+        }
+        
+        if (control.options.unit === 'nautical') {
+            if (unit === 'nm') return rawInt * 1852
+        }
+        
+        throw new Error(`Unsupported scale: ${unit}`)
     }
 }

@@ -27,6 +27,8 @@ class SourcesHandler {
     }={}) {
         const map = this.map
 
+        normalizeGeoJSON(data)
+
         let source = map.getSource(sourceId)
         if (source) {
             source.setData(data)
@@ -34,6 +36,7 @@ class SourcesHandler {
             map.addSource(sourceId, {
                 data,
                 type: "geojson",
+                promoteId: '__id__',
                 ...params,
             })
             source = map.getSource(sourceId)

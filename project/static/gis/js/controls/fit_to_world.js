@@ -15,12 +15,7 @@ class FitToWorldControl {
         },
         innerText: '🌍',
         events: {
-            click: (e) => {
-                this.map.fitBounds(
-                  [[-180, -85], [180, 85]], 
-                  {padding:100, maxZoom:11}
-                )
-            }
+            click: (e) => this.map.fitBounds([[-140, -70], [160, 90]])
         }
     })
 

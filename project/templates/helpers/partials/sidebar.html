@@ -3,7 +3,7 @@
 
 {% random_string as offcanvas_id %}
 <button class="position-absolute bottom-0 m-3 rounded-circle p-0 shadow-lg text-bg-{{theme}} border border-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#{{offcanvas_id}}" aria-controls="{{offcanvas_id}}" title='Toggle sidebar' style='height:50px;width:50px'>
-    <i class="bi bi-layout-sidebar-inset fs-20"></i>
+    <i class="bi bi-layout-sidebar-inset fs-20 mx-auto d-flex" style="height:20px;width:20px;"></i>
 </button>
 <div class="offcanvas offcanvas-start {% if not user.is_authenticated %}show{% endif %}" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="{{offcanvas_id}}" aria-labelledby="{{offcanvas_id}}Label" {% if not user.is_authenticated %}aria-modal='true' role='dialog'{% endif %}>
     <div class="offcanvas-header">

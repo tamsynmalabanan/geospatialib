@@ -2,13 +2,18 @@ class PlaceSearchControl {
     constructor(options = {}) {
         this.options = options
         this._container = null
+        this.config = {
+            sourceId: 'placeSearch'
+        }
     }
 
     async runPlaceSearch(e) {
         const map = this.map
-        const sourceId = 'placeSearch'
-        map.sourcesHandler.removeSourceLayers(sourceId)
         
+        const sourceId = this.config.sourceId
+        map.sourcesHandler.removeSourceLayers(sourceId)
+        map.interactionsHandler.clearConfigs()
+
         const q = this.input.value.trim()
         if (q === '') return
         
@@ -18,7 +23,7 @@ class PlaceSearchControl {
         if (coords) {
             map.flyTo({
                 center: coords,
-                zoom: 11,
+                zoom: Math.max(11, map.getZoom()),
             })
             data = turf.featureCollection([turf.point(coords)])
         } else {
@@ -40,7 +45,7 @@ class PlaceSearchControl {
                         }
                     }
                 }
-                map.fitBounds(bbox, {padding:100, maxZoom:11})
+                map.fitBounds(bbox, {padding:100, maxZoom:Math.max(11, this.map.getZoom())})
             }
         }
 

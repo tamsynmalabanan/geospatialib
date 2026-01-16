@@ -5,3 +5,13 @@ const featuresAreSimilar = (feature1, feature2) => {
     if (!_.isEqual(feature1.properties, feature2.properties)) return false
     return true
 }
+
+const normalizeGeoJSON = (geojson) => {
+    geojson.features.forEach(f => {
+        if (!f.properties.__id__) {
+            f.properties.__id__ = generateRandomString()
+        }
+    })
+}
+
+const isSystemProperty = (string) => /^__.*__$/.test(string)

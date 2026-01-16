@@ -65,56 +65,55 @@ class InteractionsHandler {
         }
     }
 
+    clearConfigs() {
+        Object.values(map.interactionsHandler.config.interactions).forEach(i => this.clearConfig(i))
+    }
+
     async getCanvasData({
-        bbox, point, event,
+        bbox, point,
         layers, filter,
         queryRasters=false,
     }) {
-        let features = this.map.queryRenderedFeatures(bbox ?? point ?? event?.point, {layers, filter})
+        let features = this.map.queryRenderedFeatures(bbox ?? point, {layers, filter})
 
-        if (queryRasters) {
+        if (queryRasters && point) {
             console.log('update features with features from rasters i.e. wms, dems, etc.')
 
             const sources = {}
  
             this.map.getStyle().layers.forEach(l => {
-                if (layers?.length && !layers.includes(l.id)) return
                 if (l.source in sources) return
+                if (layers?.length && !layers.includes(l.id)) return
 
                 const source = this.map.getStyle().sources[l.source]
                 if (Array('vector', 'geojson').includes(source.type)) return
+                
                 sources[l.source] = source
             })
+
+            const lngLat = this.map.unproject(point)
+            const feature = turf.point(Object.values(lngLat))
 
             for (const source of Object.values(sources)) {
                 const metadata = source.metadata
                 const params = metadata?.params
 
-                let refFeature
-                if (bbox) {
-                    const [w,n] = Object.values(this.map.unproject(bbox[0]))
-                    const [e,s] = Object.values(this.map.unproject(bbox[1]))
-                    refFeature = turf.bboxPolygon([w,s,e,n])
-                } else {
-                    refFeature = turf.point(Object.values(point ? this.map.unproject(point) : event?.lngLat))
-                }
-
-                if (params?.bbox && !turf.booleanIntersects(refFeature, turf.bboxPolygon(params?.bbox))) continue
+                if (params?.bbox && !turf.booleanPointInPolygon(feature, turf.bboxPolygon(params.bbox))) continue
 
                 let data
 
                 if (Array('wms').includes(params?.type)) {
                     data = await fetchWMSData(params, {
+                        map: this.map,
+                        point, 
                         style: metadata.style,
-                        event,
                     })
                 }
                 
                 if (data?.features?.length) {
-                    await normalizeGeoJSON(data)
                     features = [
                         ...features,
-                        ...(data.features ?? [])
+                        ...data.features
                     ]
                 }
             }
@@ -125,7 +124,7 @@ class InteractionsHandler {
             features.forEach(f1 => {
                 if (!uniqueFeatures.find(f2 => {
                     if (f1.source !== f2.source) return false
-                    if (f1.layer?.metadata?.name !== f2.layer?.metadata?.name) return false
+                    if (f1.layer?.id !== f2.layer?.id) return false
                     if (f1.layer?.metadata?.group !== f2.layer?.metadata?.group) return false
                     if (!featuresAreSimilar(f1, f2)) return false
                     return true
@@ -149,14 +148,16 @@ class InteractionsHandler {
 
     getFeatureLabel(f) {
         return f.properties[
-            f.layer?.metadata?.label ?? Array(
+            f.layer?.metadata?.label
+             ?? Array(
                 'display_name',
                 'name:en', 
                 'name', 
                 'title', 
                 'id', 
             ).find(i => Object.keys(f.properties).find(j => j.startsWith(i)))
-        ] ?? Object.values(f.properties).pop()
+            ?? Object.keys(f.properties).filter(i => !isSystemProperty(i)).pop()
+        ]
     }
 
     defaultLayerGroups() {
@@ -212,7 +213,7 @@ class InteractionsHandler {
         if (!validVectorLayers.length) return
 
         const features = await this.getCanvasData({
-            event: e, 
+            point: e.point, 
             layers: validVectorLayers.map(l => l.id)
         })
         if (!features?.length) return
@@ -223,7 +224,7 @@ class InteractionsHandler {
         for (const f of features) {
             label = this.getFeatureLabel(f)
             if (label) {
-                feature = f
+                feature = this.getRawFeature(f)
                 break
             }
         }
@@ -246,7 +247,7 @@ class InteractionsHandler {
         const theme = getPreferredTheme()
         
         const popupContent = popup._container.querySelector('.maplibregl-popup-content')
-        popupContent.classList.add('p-2', `bg-${theme}-50`)
+        popupContent.classList.add('p-2', `bg-${theme}-75`)
         
         const container = popupContent.firstChild
         container.classList.add(`text-${theme === 'light' ? 'dark' : 'light'}`)
@@ -271,7 +272,7 @@ class InteractionsHandler {
             }
 
             toggle.classList.add('text-bg-info')
-            this.map.fitBounds(feature.bbox ?? turf.bbox(feature), {padding:100, maxZoom:11})
+            this.map.fitBounds(feature.bbox ?? turf.bbox(feature), {padding:100, maxZoom:Math.max(11, this.map.getZoom())})
             this.map.sourcesHandler.setGeoJSONData(info.sourceId, {
                 data: turf.featureCollection([turf.feature(feature.geometry, feature.properties)])
             })
@@ -306,6 +307,8 @@ class InteractionsHandler {
         })
         
         Object.keys(properties).forEach(property => {
+            if (isSystemProperty(property)) return 
+
             const data = properties[property] ?? null
 
             const tr = customCreateElement({
@@ -333,6 +336,73 @@ class InteractionsHandler {
         return container
     }
 
+    async createOSMPlaceToggle({
+        geom,
+        abortEvents,
+        parent
+    }={}) {
+        const data = await fetchReverseNominatim({
+            geom,
+            zoom: this.map.getZoom(),
+            abortEvents,
+        })
+        
+        if (data?.features?.length) {
+            const feature = data.features[0]
+            const label = this.getFeatureLabel(feature)
+            const innerHTML = `<span>📍</span><span class="text-wrap text-break text-start">${label}</span>`
+            const toggle = customCreateElement({
+                tag: 'button',
+                className: 'btn btn-sm text-bg-secondary   d-flex flex-nowrap align-items-center gap-2 fs-12 pe-3 flex-grow-1',
+                parent,
+                innerHTML,
+                events: {
+                    click: async (e) => {
+                        this.configInfoLayer({feature, toggle})
+                        if (toggle.classList.contains('text-bg-info')) {
+                            navigator.clipboard.writeText(label)
+                            toggle.innerHTML = `<span class='text-center w-100'>Copied to clipboard</span>`
+                            setTimeout(() => { toggle.innerHTML = innerHTML }, 1000)
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    createCoordinatesToggle({
+        parent,
+        lngLat
+    }={}) {
+        const coordsValues = Object.values(lngLat).map(i => parseFloat(i.toFixed(6)))    
+        const innerHTML = `<span>🔍</span>${coordsValues.map(i => `<span>${i}</span>`).join('')}`
+        const feature = turf.point(coordsValues)
+
+        const coords =  customCreateElement({
+            tag: 'button',
+            className: 'btn btn-sm text-bg-secondary   d-flex flex-nowrap gap-2 fs-12 flex-grow-1',
+            parent,
+            innerHTML,
+            events: {
+                click: (e) => {
+                    this.configInfoLayer({feature, toggle:coords})
+                    
+                    if(coords.classList.contains('text-bg-info')) {
+                        navigator.clipboard.writeText(coordsValues.join(' '))
+                        coords.innerHTML = `<span class='text-center w-100'>Copied to clipboard</span>`
+                        setTimeout(() => { coords.innerHTML = innerHTML }, 1000)
+                    }
+                }
+            }
+        })
+
+        return coords
+    }
+
+    getRawFeature(f) {
+        return this.map.getStyle().sources[f.source].data.features.find(i => i.properties.__id__ === f.id)
+    }
+
     async createInfoPopup(e) {
         const map = this.map
 
@@ -350,10 +420,8 @@ class InteractionsHandler {
         .setMaxWidth(`${popupWidth}px`)
         .setHTML(`<div></div>`)
         .addTo(map)
-
-        popup.on("close", (e) => {
-            this.clearConfig(info)
-        })
+        
+        popup.on("close", (e) => { this.clearConfig(info) })
         
         const popupContainer = popup._container
         
@@ -369,212 +437,171 @@ class InteractionsHandler {
         container.className = `d-flex flex-column gap-3`
         container.style.maxWidth = `${popupWidth-12-12}px`
         
-
         const footer = customCreateElement({
             parent: container,
             className: 'd-flex flex-wrap gap-2',
             style: { maxWidth: `${popupWidth/3}px` }
         })
 
-        const coordsValues = Object.values(lngLat).map(i => parseFloat(i.toFixed(6)))    
-
-        const zoom = customCreateElement({
-            tag: 'button',
-            className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12',
-            parent: footer,
-            innerText: '🔍',
-            events: {
-                click: (e) => {
-                    map.flyTo({
-                        center: coordsValues,
-                        zoom: 11,
-                    })
-                }
-            }
-        })
-
-        const coords = customCreateElement({
-            tag: 'button',
-            className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap gap-2 fs-12 flex-grow-1',
-            parent: footer,
-            innerHTML: `<span>📋</span><span>${coordsValues[0]}</span><span>${coordsValues[1]}</span>`,
-            events: {
-                click: (e) => {
-                    navigator.clipboard.writeText(coordsValues.join(' '))
-                }
-            }
-        })
-        
         const targets = Object.keys(info.targets).filter(i => info.targets[i])
 
-        if (targets.includes('osm')) {
-            const data = await fetchReverseNominatim({
-                geom: turf.point(coordsValues),
-                zoom: map.getZoom(),
-                abortEvents: [[map.getCanvas(), ['click']]]
-            })
-            
-            if (data?.features?.length) {
-                const feature = data.features[0]
-                const toggle = customCreateElement({
-                    tag: 'button',
-                    className: 'btn btn-sm text-bg-secondary rounded-pill badge d-flex flex-nowrap align-items-center gap-2 fs-12 pe-3 flex-grow-1',
-                    parent: footer,
-                    innerHTML: `<span>📍</span><span class="text-wrap text-break text-start">${this.getFeatureLabel(feature)}</span>`,
-                    events: {
-                        click: async (e) => {
-                            this.configInfoLayer({feature, toggle})
-                        }
-                    }
-                })
-            }
-        }
-
-        let features = []
-
         if (targets.includes('layers')) {
+            let features = []
+
             features = (await this.getCanvasData({
-                event:e, 
-                queryRasters:true, 
+                point:e.point, queryRasters:true, 
                 layers: this.map.getStyle().layers.filter(l => l.metadata?.popup?.active).map(l => l.id)
-            }))?.filter(f => f.geometry && f.layer?.source !== info.sourceId && Object.keys(f.properties).length)
+            }))?.filter(f => (
+                f.geometry 
+                && Object.keys(f.properties).filter(i => !isSystemProperty(i)).length
+                && !Object.values(this.config.interactions).map(i => i.sourceId).includes(f.layer?.source)
+            )).map(f => {
+                f.geometry = this.getRawFeature(f).geometry
+                return f
+            })
 
             if (features?.length > 1) {
-                const point = turf.point(Object.values(lngLat))
-                const intersectedFeatures = features.filter(f => turf.booleanIntersects(f, point))
-                if (intersectedFeatures.length) {
-                    features = intersectedFeatures
-                } else {
-                    const polygonFeatures = features.map(f => {
-                        if (f.geometry.type.includes('Polygon')) return f
-                        
-                        const clone_f = turf.clone(f)
-                        clone_f.original_f = f
-                        clone_f.geometry = turf.buffer(clone_f, 10, { units: "meters" }).geometry
-                        return clone_f
-                    })
+                const buffer = map.controlsHandler.getScaleInMeters()/1000
 
-                    features = polygonFeatures.map(f1 => {
-                        return polygonFeatures.filter(f2 => turf.booleanIntersects(f1, f2))
-                    }).reduce((a, b) => (b.length > a.length ? b : a))
+                const polygonFeatures = features.map(f => {
+                    if (f.geometry.type.includes('Polygon')) return f
                     
-                    if (features.length > 1) {
-                        try {
-                            const intersection = turf.intersect(turf.featureCollection(features))
-                            lngLat = new maplibregl.LngLat(...turf.pointOnFeature(intersection).geometry.coordinates)
-                        } catch (error) {console.log(error)}
-                    }
-
-                    features = features.map(f => f.original_f ?? f)
-                }
-            }
-        }
-
-        if (features?.length === 1) {
-            lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
-        }
-
-        popup.setLngLat(lngLat)
+                    const clone_f = turf.clone(f)
+                    clone_f.original_f = f
+                    clone_f.geometry = turf.buffer(clone_f, buffer, { units: "meters" }).geometry
+                    return clone_f
+                })
         
-        if (features?.length) {
-            const carouselContainer = customCreateElement({
-                className: 'd-flex',
-                style: {maxWidth: `400px`,}
-            })
-            container.insertBefore(carouselContainer, footer)
-
-            const resizeObserver = elementResizeObserver(carouselContainer, (e) => {
-                footer.style.maxWidth = `${carouselContainer.offsetWidth}px`
-            })
-            popup.on('close', () => resizeObserver.unobserve(carouselContainer))
-
-            const carousel = customCreateElement({
-                className: 'carousel slide flex-grow-1',
-            })
-
-            const carouselInner = customCreateElement({
-                parent: carousel,
-                className: 'carousel-inner'
-            })
-
-            Object.entries(features).forEach(([i, f]) => {
-                const carouselItem = customCreateElement({
-                    parent: carouselInner,
-                    className: `carousel-item ${parseInt(i) === 0 ? 'active' : ''}`,
-                })
-
-                const content = customCreateElement({
-                    parent: carouselItem,
-                    className: `d-flex flex-column gap-2`,
-                    style: {maxHeight: `50vh`}
-                })
-
-                const menu = customCreateElement({
-                    parent: content,
-                    className: 'd-flex flex-nowrap justify-content-between'
-                })
-
-                const page = customCreateElement({
-                    tag: 'span',
-                    className: `fs-12 btn btn-sm text-bg-secondary rounded-pill badge pe-none`,
-                    style: {zIndex: 1000},
-                    parent: menu,
-                    innerText: `${Array(Number(i)+1,features.length).join('/')}`,
-                })
-
-                const toggle = customCreateElement({
-                    tag: 'button',
-                    className: 'btn btn-sm text-bg-secondary rounded-pill badge fs-12',
-                    style: {zIndex: 1000},
-                    parent: menu,
-                    innerText: '👁️',
-                    events: {
-                        click: async (e) => {
-                            this.configInfoLayer({feature: turf.feature(f.geometry, f.properties), toggle})
-                        }
-                    }
-                })
-
-                let tempHeader = null
-                // tempHeader = '<img width="400" src="https://th.bing.com/th/id/OSK.HEROlJnsXcA4gu9_6AQ2NKHnHukTiry1AIf99BWEqfbU29E?w=472&h=280&c=1&rs=2&o=6&pid=SANGAM">'
+                features = polygonFeatures.map(f1 => {
+                    return polygonFeatures.filter(f2 => turf.booleanIntersects(f1, f2))
+                }).reduce((a, b) => (b.length > a.length ? b : a))
                 
-                const header = customCreateElement({
-                    parent: content,
-                    className: `fw-bold text-break text-wrap text-start fs-14`,
-                    style: {maxWidth:`400px`},
-                    innerHTML: tempHeader ?? Array(
-                        this.getLayerTitle(f.layer),
-                        this.getFeatureLabel(f)
-                    ).filter(i => i).join(': ')
-                })
+                if (features.length > 1) {
+                    try {
+                        const intersection = turf.intersect(turf.featureCollection(features))
+                        lngLat = new maplibregl.LngLat(...turf.pointOnFeature(intersection).geometry.coordinates)
+                    } catch (error) {console.log(error)}
+                }
 
-                const propertiesTable = this.featurePropertiesToTable(f.properties, {
-                    parent: content, 
-                    tableClass: `table-sm table-striped m-0 fs-12 table-${theme}`,
-                    containerClass: `overflow-y-auto flex-grow-1`,
-                })
-
-            })
-            
-            if (features.length > 1) {
-                Array.from(customCreateElement({
-                    innerHTML: `
-                        <button class="carousel-control-prev w-auto h-auto mt-2" type="button" data-bs-target="#${carousel.id}" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next w-auto h-auto me-2" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                    `
-                }).children).forEach(b => carousel.appendChild(b))
+                features = features.map(f => f.original_f ?? f)
             }
 
-            carouselContainer.appendChild(carousel)
+            if (features?.length === 1) {
+                lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
+            }
+    
+            popup.setLngLat(lngLat)
+
+            if (features?.length) {
+                const carouselContainer = customCreateElement({
+                    className: 'd-flex',
+                    style: {maxWidth: `400px`,}
+                })
+                container.insertBefore(carouselContainer, footer)
+    
+                const resizeObserver = elementResizeObserver(carouselContainer, (e) => {
+                    footer.style.maxWidth = `${carouselContainer.offsetWidth}px`
+                })
+                popup.on('close', () => resizeObserver.unobserve(carouselContainer))
+    
+                const carousel = customCreateElement({
+                    className: 'carousel slide flex-grow-1',
+                })
+    
+                const carouselInner = customCreateElement({
+                    parent: carousel,
+                    className: 'carousel-inner'
+                })
+
+                Object.entries(features).forEach(([i, feature]) => {
+                    const carouselItem = customCreateElement({
+                        parent: carouselInner,
+                        className: `carousel-item px-1 ${parseInt(i) === 0 ? 'active' : ''}`,
+                    })
+    
+                    const content = customCreateElement({
+                        parent: carouselItem,
+                        className: `d-flex flex-column gap-2`,
+                        style: {maxHeight: `50vh`}
+                    })
+    
+                    const title = Array(
+                        this.getLayerTitle(feature.layer),
+                        this.getFeatureLabel(feature)
+                    ).filter(i => i).join(': ')
+
+                    const innerHTML = `<span>${Array(Number(i)+1,features.length).join('/')}</span><span>${title}</span>`
+    
+                    const toggle = customCreateElement({
+                        tag: 'button',
+                        className: 'btn btn-sm text-bg-secondary fs-12 d-flex gap-2 text-start fw-bold',
+                        style: {zIndex: 1000},
+                        parent: content,
+                        innerHTML,
+                        events: {
+                            click: async (e) => {
+                                this.configInfoLayer({feature, toggle})
+                                
+                                if (toggle.classList.contains('text-bg-info')) {
+                                    popup.setLngLat(new maplibregl.LngLat(...turf.pointOnFeature(feature).geometry.coordinates))
+                                    navigator.clipboard.writeText(title)
+                                    toggle.innerHTML = `<span class='text-center w-100'>Copied to clipboard</span>`
+                                    setTimeout(() => { toggle.innerHTML = innerHTML }, 1000)
+                                } else {
+                                    popup.setLngLat(lngLat)
+                                }
+                            }
+                        }
+                    })
+    
+                    // const header = customCreateElement({
+                    //     parent: content,
+                    //     className: `fw-bold text-break text-wrap text-start fs-14`,
+                    //     style: {maxWidth:`400px`},
+                    //     innerHTML: title,
+                    // })
+    
+                    const propertiesTable = this.featurePropertiesToTable(feature.properties, {
+                        parent: content, 
+                        tableClass: `table-sm table-striped m-0 fs-12 table-${theme}`,
+                        containerClass: `overflow-y-auto flex-grow-1`,
+                    })
+    
+                })
+                
+                if (features.length > 1) {
+                    Array.from(customCreateElement({
+                        innerHTML: `
+                            <button class="carousel-control-prev w-auto h-auto mt-2" type="button" data-bs-target="#${carousel.id}" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next w-auto h-auto me-2" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        `
+                    }).children).forEach(b => carousel.appendChild(b))
+                }
+    
+                carouselContainer.appendChild(carousel)
+            }
+        }
+
+        this.createCoordinatesToggle({
+            parent: footer,
+            lngLat,
+        }).addEventListener('click', (e) => popup.setLngLat(lngLat))
+        
+
+        if (targets.includes('osm')) {
+            this.createOSMPlaceToggle({
+                geom: turf.point(Object.values(lngLat)),
+                abortEvents: [[this.map.getCanvas(), ['click']]],
+                parent: footer,
+            })
         }
     }
-
 
     configPopupPointer(popup) {
         const popupContainer = popup._container
