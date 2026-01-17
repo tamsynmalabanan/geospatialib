@@ -30,8 +30,6 @@ class SourcesHandler {
     }={}) {
         const map = this.map
 
-        normalizeGeoJSON(data)
-
         let source = map.getSource(sourceId)
         if (source) {
             source.setData(data)

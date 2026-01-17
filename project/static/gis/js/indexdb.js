@@ -30,10 +30,17 @@ const getAllGISDBKeys = async () => {
 const saveToGISDB = async (data, {
     id = `local-${generateRandomString(64)}`,
     params = {},
-    extent, 
+    extent,
+    normalize=true,
 }={}) => {
-    if (!extent && data.type === 'FeatureCollection') {
-        extent = turf.envelope(data).geometry
+    if (data?.type === 'FeatureCollection') {
+        if (normalize) {
+            await normalizeGeoJSON(data)
+        }
+
+        if (!extent) {
+            extent = turf.envelope(data).geometry
+        }
     }
 
     const request = requestGISDB()
@@ -150,46 +157,54 @@ const getGISDBData = async ({keys=[]}={}) => {
 const updateGISDB = async (id, {
     data,
     extent,
-    params = {},
+    params,
 }) => {
     return new Promise(async (resolve, reject) => {
-        if (!extent && data?.type === 'FeatureCollection') {
-            extent = turf.envelope(data).geometry
+        if (data?.type === 'FeatureCollection') {
+            await normalizeGeoJSON(data)
+
+            if (!extent) {
+                extent = turf.envelope(data).geometry
+            }
         }
         
         const storedContent = await getFromGISDB(id)
         
-        params = {
-            ...(storedContent?.params ?? {}),
-            ...params,
-        }
+        if (storedContent) {
+            params = {
+                ...(storedContent.params ?? {}),
+                ...(params ?? {}),
+            }
 
-        if (storedContent && data && extent) {
-            const storedExtentParts = turf.flatten(storedContent.extent).features
-            if (storedExtentParts.some(f => !turf.booleanContains(extent, f))) {
-                const worker = new Worker('/static/gis/js/workers/indexdb-update.js')
-
-                worker.postMessage({
-                    data, 
-                    extent,
-                    storedData: storedContent.data,
-                    storedExtent: storedContent.extent,
-                })
-        
-                worker.onmessage = async (e) => {
-                    const content = e.data
-                    await saveToGISDB(content.data, {
-                        id, 
-                        extent: content.extent, 
-                        params,
+            if (data && extent) {
+                const storedExtent = storedContent.extent
+                const storedExtentParts = turf.flatten(storedExtent).features
+                if (storedExtentParts.some(f => !turf.booleanContains(extent, f))) {
+                    const worker = new Worker('/static/gis/js/workers/indexdb-update.js')
+                    
+                    worker.postMessage({
+                        data, 
+                        extent,
+                        storedData: storedContent.data,
+                        storedExtent: storedExtent,
                     })
-                    worker.terminate()
-                    resolve(id)
-                }
-                
-                worker.onerror = (error) => {
-                    worker.terminate()
-                    reject()
+            
+                    worker.onmessage = async (e) => {
+                        const content = e.data
+                        await saveToGISDB(content.data, {
+                            id, 
+                            extent: content.extent, 
+                            params,
+                            normalize: false,
+                        })
+                        worker.terminate()
+                        resolve(id)
+                    }
+                    
+                    worker.onerror = (error) => {
+                        worker.terminate()
+                        reject()
+                    }
                 }
             }
         }
@@ -198,7 +213,9 @@ const updateGISDB = async (id, {
             id, 
             extent, 
             params,
+            normalize: false,
         })
+
         resolve(id)
     })
 }
