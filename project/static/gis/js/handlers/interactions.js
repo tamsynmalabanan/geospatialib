@@ -409,7 +409,6 @@ class InteractionsHandler {
 
         const theme = getPreferredTheme()
         const popupWidth = Math.max(window.innerWidth * 0.75, 300)
-        const popupHeight = Math.max(window.innerHeight * 0.5, 400)
 
         const popup = info.popup = new maplibregl.Popup()
         .setLngLat(lngLat)
@@ -518,7 +517,7 @@ class InteractionsHandler {
                     const content = customCreateElement({
                         parent: carouselItem,
                         className: `d-flex flex-column gap-2`,
-                        style: {maxHeight: `50vh`}
+                        style: {maxHeight: `${Math.max(map.getContainer().offsetHeight*0.3, 300)}px`}
                     })
     
                     const title = Array(

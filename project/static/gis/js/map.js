@@ -36,7 +36,7 @@ const MAP_DEFAULTS = {
             "sky-horizon-blend": 0.8,
             "atmosphere-blend": 0.8
         }
-    }
+    },
 }
 
 const createNewMap = (el) => {

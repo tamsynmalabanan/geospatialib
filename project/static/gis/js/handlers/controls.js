@@ -4,6 +4,31 @@ class ControlsHandler {
         this.config = {
             hillshade: {
                 render: true,
+                method: 'standard',
+                exaggeration: 0.5,
+                accent: '#000000',
+                standard: {
+                    'hillshade-illumination-direction': 315,
+                    'hillshade-illumination-altitude': 45,
+                    'hillshade-highlight-color': '#FFFFFF',
+                    'hillshade-shadow-color': '#000000',
+                },
+                multidirectional: {
+                    'hillshade-illumination-direction': [315, 45, 135, 225],
+                    'hillshade-illumination-altitude': [45, 45, 45, 45],
+                    'hillshade-highlight-color': [
+                        'hsl(0, 100%, 50%)',
+                        'hsl(90, 100%, 50%)',
+                        'hsl(180, 100%, 50%)',
+                        'hsl(270, 100%, 50%)',
+                    ],
+                    'hillshade-shadow-color': [
+                        'hsl(0, 25%, 25%)',
+                        'hsl(90, 25%, 25%)',
+                        'hsl(180, 25%, 25%)',
+                        'hsl(270, 25%, 25%)',
+                    ],
+                }            
             },
             controls: {
                 placeSearch: {
@@ -106,18 +131,25 @@ class ControlsHandler {
 
     configHillshade(){
         const map = this.map
+        const config = this.config.hillshade
 
         if (map.getLayer('hillshade')) {
             map.removeLayer('hillshade')
         }
         
         const source = map.getTerrain()?.source
-        if (source && this.config.hillshade.render) {
+        if (source && config.render) {
             map.addLayer({
                 id: 'hillshade',
                 type: 'hillshade',
                 source,
-            })
+                paint: {
+                    'hillshade-method': config.method,
+                    'hillshade-exaggeration': config.exaggeration,
+                    'hillshade-accent-color': config.accent,
+                    ...config[config.method]
+                }
+            }, map.sourcesHandler.getBeforeId('hillshade'))
         }
     }
 

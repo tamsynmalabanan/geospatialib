@@ -2,7 +2,7 @@ class SourcesHandler {
     constructor(map) {
         this.map = map
         this.config = {
-            systemLayers: [
+            systemOverlays: [
                 'placeSearch',
                 'infoFeature', 
                 'tooltipFeature', 
@@ -47,14 +47,21 @@ class SourcesHandler {
     }
 
     getBeforeId(layerName, beforeId) {
-        let systemLayers = structuredClone(this.config.systemLayers)
+        const layerIds = this.map.getStyle().layers.map(l => l.id)
 
-        const layerMatch = systemLayers.find(i => layerName.startsWith(i))
-        if (layerMatch) {
-            systemLayers = systemLayers.splice(systemLayers.indexOf(layerMatch) + 1)
+        if (layerName === 'basemap') {
+            return 'hillshade'
         }
 
-        return this.map.getStyle().layers?.find(l => l.id.startsWith(beforeId) || systemLayers.find(i => l.id.startsWith(i)))?.id 
+        if (layerName === 'hillshade') {
+            return layerIds.find(id => id !== 'basemap')
+        }
+
+        let systemOverlays = structuredClone(this.config.systemOverlays)
+        const layerMatch = systemOverlays.find(i => layerName.startsWith(i))
+        if (layerMatch) systemOverlays = systemOverlays.splice(systemOverlays.indexOf(layerMatch) + 1)
+
+        return layerIds.find(id => id.startsWith(beforeId) || systemOverlays.find(i => id.startsWith(i)))
     }
 
     getGeoJSONLayerParams({

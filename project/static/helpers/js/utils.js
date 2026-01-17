@@ -117,3 +117,100 @@ const parseNumber = (string) => {
     const match = string.match(regex);
     return match?.length ? parseFloat(match[0]) : null
 }
+
+const createModal = ({
+    titleInnerText,
+}={}) => {
+    const modal = customCreateElement({
+        parent: document.body,
+        className: 'modal fade',
+        attrs: {
+            tabindex: -1,
+        }
+    })
+
+    const dialog = customCreateElement({
+        parent: modal,
+        className: 'modal-fullscreen-sm-down modal-dialog modal-dialog-centered'
+    })
+
+    const content = customCreateElement({
+        parent: dialog,
+        className: 'modal-content'
+    })
+
+    const header = customCreateElement({
+        parent: content,
+        className: 'modal-header'
+    })
+
+    const title = customCreateElement({
+        tag: 'h6',
+        parent: header,
+        className: 'modal-title',
+        innerText: titleInnerText
+    })
+
+    const close = customCreateElement({
+        tag: 'button',
+        parent: header,
+        className: 'btn-close',
+        attrs: {
+            'data-bs-dismiss': 'modal'
+        }
+    })
+
+    const body = customCreateElement({
+        parent: content,
+        className: 'modal-body',
+    })
+
+    const footer = customCreateElement({
+        parent: content,
+        className: 'modal-footer',
+    })
+
+    const dismiss = customCreateElement({
+        tag: 'button',
+        parent: footer,
+        className: 'btn btn-sm btn-primary',
+        attrs: {
+            'data-bs-dismiss': 'modal',
+        },
+        innerText: 'Close',
+    })
+
+    const bsModal = new bootstrap.Modal(modal)
+    bsModal.show()
+
+    return modal
+}
+
+const createFormControl = ({
+    parent,
+    labelInnerText,
+    inputAttrs,
+}={}) => {
+    const container = customCreateElement({
+        parent,
+        className: 'd-flex flex-column gap-1'
+    })
+
+    const label = customCreateElement({
+        parent: container,
+        tag: 'label',
+        className: 'form-label fs-14',
+        innerText: labelInnerText
+    })
+
+    const input = customCreateElement({
+        tag: 'input',
+        parent: container,
+        className: 'form-control form-control-sm fs-14',
+        attrs: inputAttrs
+    })
+
+    label.setAttribute('for', input.id)
+
+    return container
+}
