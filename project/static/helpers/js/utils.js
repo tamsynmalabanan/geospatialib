@@ -119,19 +119,23 @@ const parseNumber = (string) => {
 }
 
 const createModal = ({
+    modalId = generateRandomString(),
     titleInnerText,
+    isStatic=false,
 }={}) => {
     const modal = customCreateElement({
+        id: modalId,
         parent: document.body,
         className: 'modal fade',
         attrs: {
             tabindex: -1,
+            ...(isStatic ? {'data-bs-backdrop': 'static'} : {})
         }
     })
 
     const dialog = customCreateElement({
         parent: modal,
-        className: 'modal-fullscreen-sm-down modal-dialog modal-dialog-centered'
+        className: 'modal-fullscreen-sm-down modal-dialog modal-dialog-centered modal-dialog-scrollable'
     })
 
     const content = customCreateElement({
@@ -211,6 +215,49 @@ const createFormControl = ({
     })
 
     label.setAttribute('for', input.id)
+
+    return container
+}
+
+const createFormSelect = ({
+    parent,
+    labelInnerText,
+    selected,
+    options = {}
+}={}) => {
+    const container = customCreateElement({
+        parent,
+        className: 'd-flex flex-column gap-1'
+    })
+
+    const label = customCreateElement({
+        parent: container,
+        tag: 'label',
+        className: 'form-label fs-14',
+        innerText: labelInnerText
+    })
+
+    const select = customCreateElement({
+        tag: 'select',
+        parent: container,
+        className: 'form-select form-select-sm fs-14',
+    })
+
+    Object.entries(options).forEach(([value,innerText]) => {
+        customCreateElement({
+            tag: 'option',
+            parent: select,
+            attrs: {
+                value,
+                ...(selected === value ? {
+                    selected: true,
+                } : {})
+            },
+            innerText,
+        })
+    })
+
+    label.setAttribute('for', select.id)
 
     return container
 }

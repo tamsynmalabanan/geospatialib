@@ -7,28 +7,8 @@ class ControlsHandler {
                 method: 'standard',
                 exaggeration: 0.5,
                 accent: '#000000',
-                standard: {
-                    'hillshade-illumination-direction': 315,
-                    'hillshade-illumination-altitude': 45,
-                    'hillshade-highlight-color': '#FFFFFF',
-                    'hillshade-shadow-color': '#000000',
-                },
-                multidirectional: {
-                    'hillshade-illumination-direction': [315, 45, 135, 225],
-                    'hillshade-illumination-altitude': [45, 45, 45, 45],
-                    'hillshade-highlight-color': [
-                        'hsl(0, 100%, 50%)',
-                        'hsl(90, 100%, 50%)',
-                        'hsl(180, 100%, 50%)',
-                        'hsl(270, 100%, 50%)',
-                    ],
-                    'hillshade-shadow-color': [
-                        'hsl(0, 25%, 25%)',
-                        'hsl(90, 25%, 25%)',
-                        'hsl(180, 25%, 25%)',
-                        'hsl(270, 25%, 25%)',
-                    ],
-                }            
+                standard: structuredClone(MAP_DEFAULTS.hillshade.standard),
+                multidirectional: structuredClone(MAP_DEFAULTS.hillshade.multidirectional)        
             },
             controls: {
                 placeSearch: {

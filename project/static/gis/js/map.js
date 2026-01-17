@@ -37,6 +37,30 @@ const MAP_DEFAULTS = {
             "atmosphere-blend": 0.8
         }
     },
+    hillshade: {
+        standard: {
+            'hillshade-illumination-direction': 315,
+            'hillshade-illumination-altitude': 45,
+            'hillshade-highlight-color': '#FFFFFF',
+            'hillshade-shadow-color': '#000000',
+        },
+        multidirectional: {
+            'hillshade-illumination-direction': [315, 45, 135, 225],
+            'hillshade-illumination-altitude': [45, 45, 45, 45],
+            'hillshade-highlight-color': [
+                '#ff0000',
+                '#80ff00',
+                '#00ffff',
+                '#7f00ff',
+            ],
+            'hillshade-shadow-color': [
+                '#503030',
+                '#405030',
+                '#305050',
+                '#403050',
+            ],
+        }  
+    }
 }
 
 const createNewMap = (el) => {
