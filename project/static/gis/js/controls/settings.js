@@ -1,29 +1,6 @@
 class SettingsControl {
     constructor(options={}) {
-        this.config = {
-            projection: 'mercator',
-            interactions: {
-                tooltip: {
-                    active: true,
-                },
-                info: {
-                    active: true,
-                    targets: {
-                        osm: true,
-                        layers: true,
-                    }
-                }
-            },
-            hillshade: {
-                render: true,
-                method: 'standard',
-                exaggeration: 0.5,
-                accent: '#000000',
-                standard: structuredClone(MAP_DEFAULTS.hillshade.standard),
-                multidirectional: structuredClone(MAP_DEFAULTS.hillshade.multidirectional)        
-            },
-
-        }
+        this.settings = null
     }
 
     createHillshadeForm(config, {dismissible=false}={}) {
@@ -100,17 +77,28 @@ class SettingsControl {
     }
 
     updateSettings() {
-        const settings =  JSON.stringify(this.config)
+        const settings =  JSON.stringify(this.settings)
 
         if (this.mapId) {
 
         } else {
-            localStorage.setItem('mapConfig', settings)
+            localStorage.setItem('mapSettings', settings)
         }
     }
 
-    configSettings() {
-        this.map.setProjection({type:this.config.projection})
+    applySettings() {
+        this.map.setProjection({type:this.settings.projection})
+        
+        if (this.settings.terrain) {
+            this.map.getContainer()
+            .querySelector(`.maplibregl-ctrl-terrain`)
+            ?.click()
+        }
+    }
+
+    configSettingsControl() {
+
+        this._container = customCreateElement({className: 'maplibregl-ctrl maplibregl-ctrl-group'})
 
         const theme = getPreferredTheme()
 
@@ -147,13 +135,13 @@ class SettingsControl {
             className: 'd-flex flex-column gap-3'
         })
 
-        // bookmark
+
         const settings = {
             projection: {
                 title: 'Projection',
                 radio: true,
                 handler: (e, {name}={}) => {
-                    this.config.projection = name
+                    this.settings.projection = name
                     this.map.setProjection({type:name})
                     this.updateSettings()                       
                 },
@@ -161,12 +149,12 @@ class SettingsControl {
                     mercator: {
                         title: 'Web Mercator',
                         icon: '🗺️',
-                        checked: this.config.projection !== 'globe',
+                        checked: this.settings.projection !== 'globe',
                     },
                     globe: {
                         title: '3D Globe',
                         icon: '🌍',
-                        checked: this.config.projection === 'globe'
+                        checked: this.settings.projection === 'globe'
                     },
                 }
             },
@@ -181,7 +169,7 @@ class SettingsControl {
                     osm.disabled = !active.checked
                     layers.disabled = !active.checked
 
-                    const config = this.config.interactions.info
+                    const config = this.settings.interactions.info
                     config.active = active.checked
                     config.targets.osm = osm.checked
                     config.targets.layers = layers.checked
@@ -194,19 +182,19 @@ class SettingsControl {
                     active: {
                         title: 'Toggle popup',
                         icon: 'ℹ️',
-                        checked: this.config.interactions.info.active,
+                        checked: this.settings.interactions.info.active,
                     },
                     layers: {
                         title: 'Layers',
                         icon: '📚',
-                        checked: this.config.interactions.info.targets.layers,
-                        disabled: !this.config.interactions.info.active,
+                        checked: this.settings.interactions.info.targets.layers,
+                        disabled: !this.settings.interactions.info.active,
                     },
                     osm: {
                         title: 'Openstreetmap',
                         icon: '🗾',
-                        checked: this.config.interactions.info.targets.osm,
-                        disabled: !this.config.interactions.info.active,
+                        checked: this.settings.interactions.info.targets.osm,
+                        disabled: !this.settings.interactions.info.active,
                     },
                 }
             },
@@ -222,7 +210,7 @@ class SettingsControl {
                         section.querySelector('input[name="hillshade-more"]')
                     ).forEach(el => el.disabled = !active.checked)
 
-                    const config = this.config.hillshade
+                    const config = this.settings.hillshade
                     config.render = active.checked
                     config.method = multidirectional.checked ? 'multidirectional' : 'standard'
                     
@@ -234,25 +222,25 @@ class SettingsControl {
                     active: {
                         title: 'Toggle hillshade',
                         icon: '⛰️',
-                        checked: this.config.hillshade.render,
+                        checked: this.settings.hillshade.render,
                     },
                     multidirectional: {
                         title: 'Multidirectional hillshade',
                         icon: '↔️',
-                        checked: this.config.hillshade.method === 'multidirectional',
-                        disabled: !this.config.hillshade.render
+                        checked: this.settings.hillshade.method === 'multidirectional',
+                        disabled: !this.settings.hillshade.render
                     },
                     more: {
                         title: 'More hillshade options',
                         icon: '🎚️',
-                        disabled: !this.config.hillshade.render,
+                        disabled: !this.settings.hillshade.render,
                         handler: (e) => {
                             e.target.checked = false
 
                             const modalId = `hillshadeOptionsModal`
                             document.querySelector(`#${modalId}`)?.remove()
                             
-                            const config = this.config.hillshade
+                            const config = this.settings.hillshade
 
                             const modal = createModal({
                                 modalId,
@@ -335,7 +323,6 @@ class SettingsControl {
                                 className: 'd-flex flex-nowrap gap-2'
                             })
 
-                            
                             const addMulti = customCreateElement({
                                 parent: multiOptions,
                                 tag:'button',
@@ -359,7 +346,7 @@ class SettingsControl {
                                     click: (e) => {
                                         multiFields.innerHTML = ''
 
-                                        const multiConfig = MAP_DEFAULTS.hillshade.multidirectional
+                                        const multiConfig = MAP_DEFAULTS.settings.hillshade.multidirectional
                                         Object.keys(multiConfig[hillshadeParams[0]]).forEach(i => {
                                             multiFields.appendChild(this.createHillshadeForm(Object.fromEntries(hillshadeParams.map(name => {
                                                 return [name, multiConfig[name][i]]
@@ -415,15 +402,43 @@ class SettingsControl {
                     },
                 }
             },
+            bookmark: {
+                title: 'Bookmark',
+                options: {
+                    set: {
+                        title: 'Bookmark current view',
+                        icon: '➕',
+                        handler: (e) => {
+                            e.target.checked = false
+                            
+                            const config = this.settings.bookmark
+                            config.zoom = this.map.getZoom()
+                            config.center = this.map.getCenter()
+                            config.pitch = this.map.getPitch()
+                            config.bearing = this.map.getBearing()
+
+                            this.updateSettings()
+                        }
+                    },
+                    zoom: {
+                        title: 'Zoom to bookmarked view',
+                        icon: '🔍',
+                        handler: (e) => {
+                            e.target.checked = false
+                            this.map.jumpTo(this.settings.bookmark)
+                        }
+                    }
+                }
+            },
             misc: {
                 title: 'Miscellaneous',
                 options: {
                     tooltip: {
                         title: 'Toggle tooltip',
                         icon: '💬',
-                        checked: this.config.interactions.tooltip.active,
+                        checked: this.settings.interactions.tooltip.active,
                         handler: (e) => {
-                            this.config.interactions.tooltip.active = e.target.checked
+                            this.settings.interactions.tooltip.active = e.target.checked
                             this.map.interactionsHandler.configCursor()
                             this.updateSettings()
                         }
@@ -527,7 +542,7 @@ class SettingsControl {
 
     configHillshade(){
         const map = this.map
-        const config = this.config.hillshade
+        const config = this.settings.hillshade
 
         if (map.getLayer('hillshade')) {
             map.removeLayer('hillshade')
@@ -554,13 +569,10 @@ class SettingsControl {
         this.map._settings = this
 
         this.mapId = this.map.getContainer().dataset.mapId
-        const config = this.map.getContainer().dataset.mapConfig || localStorage.getItem('mapConfig')
-        if (config) {
-            this.config = JSON.parse(config)
-        }
+        this.settings = this.map.controlsHandler.settings
         
-        this._container = customCreateElement({className: 'maplibregl-ctrl maplibregl-ctrl-group'})
-        this.configSettings()
+        this.applySettings()
+        this.configSettingsControl()
         return this._container
     }
 

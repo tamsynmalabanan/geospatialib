@@ -1,6 +1,9 @@
 class ControlsHandler {
-    constructor(map) {
+    constructor(map, settings) {
         this.map = map
+        this.map.controlsHandler = this
+
+        this.settings = settings
         this.config = {
             controls: {
                 placeSearch: {
@@ -46,9 +49,12 @@ class ControlsHandler {
                     handler: (control) => {
                         this.map.setTerrain(null)
 
-                        control._container.querySelector('button')
-                        .addEventListener('click', () => {
-                            this.map._settings.configHillshade()
+                        const button = control._container.querySelector('button')
+                        button.addEventListener('click', (e) => {
+                            const settings = this.map._settings
+                            settings.configHillshade()
+                            settings.settings.terrain = button.classList.contains('maplibregl-ctrl-terrain-enabled')
+                            settings.updateSettings()
                         })
                     }
                 },
@@ -129,7 +135,6 @@ class ControlsHandler {
 
     configControls() {
         this.removeControls()
-
         this.controls = Object.fromEntries(
             Object.entries(this.config.controls)
             .sort((a, b) => a[1].order - b[1].order)

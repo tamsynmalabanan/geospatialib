@@ -1,6 +1,8 @@
 class SourcesHandler {
     constructor(map) {
         this.map = map
+        this.map.sourcesHandler = this
+
         this.config = {
             systemOverlays: [
                 'placeSearch',

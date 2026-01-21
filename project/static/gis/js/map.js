@@ -37,38 +37,70 @@ const MAP_DEFAULTS = {
             "atmosphere-blend": 0.8
         }
     },
-    hillshade: {
-        standard: {
-            'hillshade-illumination-direction': 315,
-            'hillshade-illumination-altitude': 45,
-            'hillshade-highlight-color': '#FFFFFF',
-            'hillshade-shadow-color': '#000000',
+    settings: {
+        terrain: false,
+        projection: 'mercator',
+        interactions: {
+            tooltip: {
+                active: true,
+            },
+            info: {
+                active: true,
+                targets: {
+                    osm: true,
+                    layers: true,
+                }
+            }
         },
-        multidirectional: {
-            'hillshade-illumination-direction': [315, 45, 135, 225],
-            'hillshade-illumination-altitude': [45, 45, 45, 45],
-            'hillshade-highlight-color': [
-                '#ff0000',
-                '#80ff00',
-                '#00ffff',
-                '#7f00ff',
-            ],
-            'hillshade-shadow-color': [
-                '#503030',
-                '#405030',
-                '#305050',
-                '#403050',
-            ],
-        }  
+        hillshade: {
+            render: true,
+            method: 'standard',
+            exaggeration: 0.1,
+            accent: '#000000',
+            standard: {
+                'hillshade-illumination-direction': 315,
+                'hillshade-illumination-altitude': 45,
+                'hillshade-highlight-color': '#FFFFFF',
+                'hillshade-shadow-color': '#000000',
+            },
+            multidirectional: {
+                'hillshade-illumination-direction': [315, 45, 135, 225],
+                'hillshade-illumination-altitude': [45, 45, 45, 45],
+                'hillshade-highlight-color': [
+                    '#ff0000',
+                    '#80ff00',
+                    '#00ffff',
+                    '#7f00ff',
+                ],
+                'hillshade-shadow-color': [
+                    '#503030',
+                    '#405030',
+                    '#305050',
+                    '#403050',
+                ],
+            }  
+        },
+        bookmark: {
+            zoom: 1,
+            center: new maplibregl.LngLat(0,3),
+            pitch: 0,
+            bearing: 0,
+        }
     }
 }
 
 const createNewMap = (el) => {
+    let settings = el.dataset.mapSettings || localStorage.getItem('mapSettings')
+    settings = settings ? JSON.parse(settings) : structuredClone(MAP_DEFAULTS.settings)
+
     const map = new maplibregl.Map({
         container: el.id,
-        zoom: 0,
-        center: [0,0],
-        pitch: 0,
+
+        zoom: settings.bookmark.zoom,
+        center: settings.bookmark.center,
+        pitch: settings.bookmark.pitch,
+        bearing: settings.bookmark.bearing,
+        
         hash: false,
         style: {
             version: 8,
@@ -111,10 +143,11 @@ const createNewMap = (el) => {
     })
 
     map.on('load', () => {
-        map.sourcesHandler = new SourcesHandler(map)
-        map.controlsHandler = new ControlsHandler(map)
-        map.interactionsHandler = new InteractionsHandler(map)
+        new SourcesHandler(map)
+        new ControlsHandler(map, settings)
+        new InteractionsHandler(map)
         
+        window.map = map
         console.log(map)
     })   
 }
