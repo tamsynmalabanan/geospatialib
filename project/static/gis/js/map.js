@@ -115,7 +115,6 @@ const createNewMap = (el) => {
         map.controlsHandler = new ControlsHandler(map)
         map.interactionsHandler = new InteractionsHandler(map)
         
-        window.map = map
         console.log(map)
     })   
 }

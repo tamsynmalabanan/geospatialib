@@ -1,66 +1,27 @@
 {% load static %}
 {% load compress %}
 
-{% comment %} Bootstrap {% endcomment %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-{% comment %} html2canvas {% endcomment %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-{% comment %} papaparse {% endcomment %}
-{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaOtpa48djpNbZHwExddghZ+ZmzWT06R5v6NSk3ZUfsH6FNEDepLx9hPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> {% endcomment %}
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.5.3/papaparse.min.js" integrity="sha256-NVP7i99bgATOVTHmgn6ByLNOezmSZ3lndUVEBk6XsBY=" crossorigin="anonymous"></script>
-
-{% comment %} htmx {% endcomment %}
-<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/htmx-ext-ws@2.0.4" integrity="sha384-1RwI/nvUSrMRuNj7hX1+27J8XDdCoSLf0EjEyF69nacuWyiJYoQ/j39RT1mSnd2G" crossorigin="anonymous"></script>
-
-{% comment %} jszip {% endcomment %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-{% comment %} alpine {% endcomment %}
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-{% comment %} rbush {% endcomment %}
-{% comment %} <script src="https://cdn.jsdelivr.net/npm/rbush@4.0.1/rbush.min.js"></script> {% endcomment %}
-
-{% comment %} lodash {% endcomment %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-{% comment %} maplibre {% endcomment %}
-<script src="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.js"></script>
-
-{% comment %} shpjs {% endcomment %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shpjs/6.1.0/shp.min.js" integrity="sha512-cVRBoEiESB75FnwL2Kx/ZOsS1DM6i018SEF/Flp117oqC7vNSKP0XlzHN+pE12ga7TjDpS2LEOEP77tI/fvICQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-{% comment %} geopackage-js {% endcomment %}
-{% comment %} <script src="https://unpkg.com/@ngageoint/geopackage@latest/dist/geopackage.min.js"></script> {% endcomment %}
-
-{% comment %} dxf-parse {% endcomment %}
-<script src="https://cdn.jsdelivr.net/npm/dxf-parser@1.1.2/dist/dxf-parser.min.js"></script>
-
-{% comment %} sql.js {% endcomment %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
-
-{% comment %} wkx {% endcomment %}
-<script src="https://cdn.jsdelivr.net/npm/wkx@0.5.0/dist/wkx.min.js"></script>
-
-{% comment %} togeojson {% endcomment %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.min.js" integrity="sha512-tGbo6fmjjGoMjPcSMmwn2kdL791LM73K/8dUjCdO91fBBF26AXG7/DKFcVHfOieY78XT2hl0rJkbM0GUVaPcjw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-{% comment %} turf {% endcomment %}
-<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
-
-{% comment %} proj4js {% endcomment %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.15.0/proj4.js" integrity="sha512-zlBm5j/0UjgCzqBVLkATd/2b9Yun4SzATXJ7v1T2KfjmP0iw8FUcG5mPD60SrdxU+tRkACm3IQRq55pEkp9Qow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-{% comment %} json compress {% endcomment %}
-<script src="https://cdn.jsdelivr.net/npm/compress-json@3.1.2/bundle.min.js"></script>
-
-{% comment %} loadash {% endcomment %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% comment %} sql wasm {% endcomment %}
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/sql-wasm@1.1.4/dist/cjs/sql-wasm-browser.min.js"></script> {% endcomment %}
 
 {% compress js %}
+    <script type="text/javascript" src="{% static 'plugins/htmx/js/htmx.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/maplibre-gl/js/maplibre-gl.min.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'plugins/compress-json/js/bundle.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/shpjs/js/shp.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/proj4/js/proj4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/turf/js/turf.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/sql-wasm/js/sql-wasm.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/lodash/js/lodash.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/togeojson/js/togeojson.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/dxf-parse/js/dxf-parser.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/html2canvas/js/html2canvas.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/papaparse/js/papaparse.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/jszip/js/jszip.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/wkx/js/wkx.min.js' %}"></script>
+
     <script type="text/javascript" src="{% static 'helpers/js/utils.js' %}"></script>
     <script type="text/javascript" src="{% static 'helpers/js/theme.js' %}"></script>
     <script type="text/javascript" src="{% static 'helpers/js/cookies.js' %}"></script>
@@ -80,6 +41,8 @@
     <script type="text/javascript" src="{% static 'gis/js/handlers/sources.js' %}"></script>
     <script type="text/javascript" src="{% static 'gis/js/handlers/interactions.js' %}"></script>
     <script type="text/javascript" src="{% static 'gis/js/handlers/controls.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'plugins/alpine/js/cdn.min.js' %}"></script>
 {% endcompress %}
 
 <script type="text/javascript" src="{% static app_name|add:'/js/'|add:url_name|add:'.js' %}"></script>

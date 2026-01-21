@@ -197,13 +197,13 @@ const createFormControl = ({
 }={}) => {
     const container = customCreateElement({
         parent,
-        className: 'd-flex flex-column gap-1'
+        className: 'd-flex flex-column flex-grow-1'
     })
 
     const label = customCreateElement({
         parent: container,
         tag: 'label',
-        className: 'form-label fs-14',
+        className: 'form-label fs-14  flex-grow-1',
         innerText: labelInnerText
     })
 
@@ -227,7 +227,7 @@ const createFormSelect = ({
 }={}) => {
     const container = customCreateElement({
         parent,
-        className: 'd-flex flex-column gap-1'
+        className: 'd-flex flex-column flex-grow-1'
     })
 
     const label = customCreateElement({
@@ -240,7 +240,7 @@ const createFormSelect = ({
     const select = customCreateElement({
         tag: 'select',
         parent: container,
-        className: 'form-select form-select-sm fs-14',
+        className: 'form-select form-select-sm fs-14 flex-grow-1',
     })
 
     Object.entries(options).forEach(([value,innerText]) => {

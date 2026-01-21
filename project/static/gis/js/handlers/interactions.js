@@ -2,27 +2,11 @@ class InteractionsHandler {
     constructor(map) {
         this.map = map
         this.config = {
-            interactions: {
-                tooltip: {
-                    active: true,
-                    timeout: null,
-                    popup: null,
-                    sourceId: 'tooltipFeature',
-                    events: ['mousemove'],
-                    handler: (e) => this.createTooltipPopup(e),
-                },
-                info: {
-                    active: true,
-                    targets: {
-                        layers: true,
-                        osm: true,
-                    },
-                    timeout: null,
-                    popup: null,
-                    sourceId: 'infoFeature',
-                    events: ['click'],
-                    handler: (e) => this.createInfoPopup(e), 
-                },
+            tooltip: {
+                sourceId: 'tooltipFeature',
+            },
+            info: {
+                sourceId: 'infoFeature',
             },
         }
         
@@ -31,23 +15,29 @@ class InteractionsHandler {
 
     configCursor() {
         this.map.getCanvas().style.cursor = (
-            Object.values(this.config.interactions).find(i => i.active) 
+            Object.values(this.map._settings.config.interactions).find(i => i.active) 
             ? 'pointer' 
             : ''
         )
     }
 
     configInteractions() {
-        Object.values(this.config.interactions).forEach(i => {
-            i.events.forEach(ev => {
-                this.map.on(ev, (e) => {
-                    this.clearConfig(i)
-                    clearTimeout(i.timeout)
-                    i.timeout = setTimeout(async () => {
-                        i.handler(e)
-                    }, 100)
-                })
-            })
+        let tooltipTimeout
+        this.map.on('mousemove', (e) => {
+            this.clearConfig(this.config.tooltip)
+            clearTimeout(tooltipTimeout)
+            tooltipTimeout = setTimeout(async () => {
+                this.createTooltipPopup(e)
+            }, 100)
+        })
+
+        let infoTimeout
+        this.map.on('click', (e) => {
+            this.clearConfig(this.config.info)
+            clearTimeout(infoTimeout)
+            infoTimeout = setTimeout(async () => {
+                this.createInfoPopup(e)
+            }, 100)
         })
 
         this.configCursor()
@@ -66,7 +56,7 @@ class InteractionsHandler {
     }
 
     clearConfigs() {
-        Object.values(map.interactionsHandler.config.interactions).forEach(i => this.clearConfig(i))
+        Object.values(this.config).forEach(i => this.clearConfig(i))
     }
 
     async getCanvasData({
@@ -193,9 +183,9 @@ class InteractionsHandler {
 
     async createTooltipPopup(e) {
         const map = this.map
+        if (!this.map._settings.config.interactions.tooltip.active) return
         
-        const tooltip = this.config.interactions.tooltip
-        if (!tooltip.active) return
+        const tooltip = this.config.tooltip
 
         if (document.elementsFromPoint(CURSOR.x, CURSOR.y).find(el => {
             return el.matches('.maplibregl-popup-content') || el.matches('.maplibregl-ctrl')
@@ -207,7 +197,7 @@ class InteractionsHandler {
                 Array('geojson', 'vector').includes(source?.type)
                 && l.metadata?.tooltip?.active
                 && source?.data?.features?.length
-                && !Object.values(this.config.interactions).map(i => i.sourceId).includes(l.source)
+                && !Object.values(this.config).map(i => i.sourceId).includes(l.source)
             )
         })
         if (!validVectorLayers.length) return
@@ -256,7 +246,7 @@ class InteractionsHandler {
     }
 
     async configInfoLayer({feature, toggle}={}) {
-        const info = this.config.interactions.info
+        const info = this.config.info
 
         if (toggle?.classList.contains('text-bg-info')) {
             toggle.classList.remove('text-bg-info')
@@ -401,9 +391,9 @@ class InteractionsHandler {
 
     async createInfoPopup(e) {
         const map = this.map
+        if (!this.map._settings.config.interactions.info.active) return
 
-        const info = this.config.interactions.info
-        if (!info.active) return
+        const info = this.config.info
 
         let lngLat = e.lngLat
 
@@ -438,7 +428,10 @@ class InteractionsHandler {
             style: { maxWidth: `${popupWidth/3}px` }
         })
 
-        const targets = Object.keys(info.targets).filter(i => info.targets[i])
+        const targets = (
+            Object.entries(this.map._settings.config.interactions.info.targets)
+            .filter(i => i[1]).map(i => i[0])
+        )
 
         if (targets.includes('layers')) {
             let features = []
@@ -449,7 +442,7 @@ class InteractionsHandler {
             }))?.filter(f => (
                 f.geometry 
                 && Object.keys(f.properties).filter(i => !isSystemProperty(i)).length
-                && !Object.values(this.config.interactions).map(i => i.sourceId).includes(f.layer?.source)
+                && !Object.values(this.config).map(i => i.sourceId).includes(f.layer?.source)
             )).map(f => {
                 f.geometry = this.getRawFeature(f).geometry
                 return f

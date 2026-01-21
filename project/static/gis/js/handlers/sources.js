@@ -50,7 +50,7 @@ class SourcesHandler {
         const layerIds = this.map.getStyle().layers.map(l => l.id)
 
         if (layerName === 'basemap') {
-            return 'hillshade'
+            return layerIds[0]
         }
 
         if (layerName === 'hillshade') {

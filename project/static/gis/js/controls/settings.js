@@ -2,259 +2,27 @@ class SettingsControl {
     constructor(options={}) {
         this.config = {
             projection: 'mercator',
-            settings: {
-                protections: {
-                    title: 'Projection',
-                    radio: true,
-                    handler: (e, {name}={}) => {
-                        this.setProjection({type: name})
-                    },
-                    options: {
-                        mercator: {
-                            title: 'Web Mercator',
-                            icon: '🗺️',
-                            checked: true,
-                        },
-                        globe: {
-                            title: '3D Globe',
-                            icon: '🌍',
-                        },
-                    }
+            interactions: {
+                tooltip: {
+                    active: true,
                 },
-                popup: {
-                    title: 'Popup',
-                    handler: (e) => {
-                        const section = e.target.closest(`#${this.sections.id} > div > .collapse > div`)
-                        const toggle = section.querySelector('input[name="popup-toggle"]')
-                        const osm = section.querySelector('input[name="popup-osm"]')
-                        const layers = section.querySelector('input[name="popup-layers"]')
-                        
-                        const interactionsHandler = this.map.interactionsHandler
-                        const config = interactionsHandler.config.interactions.info
-
-                        config.active = toggle.checked
-                        config.targets.osm = osm.checked
-                        config.targets.layers = layers.checked
-                        
-                        osm.disabled = !toggle.checked
-                        layers.disabled = !toggle.checked
-
-                        interactionsHandler.configCursor()
-                    },
-                    options: {
-                        toggle: {
-                            title: 'Toggle popup',
-                            icon: '💬',
-                            checked: true,
-                        },
-                        layers: {
-                            title: 'Layers',
-                            icon: '📚',
-                            checked: true,
-                        },
-                        osm: {
-                            title: 'Openstreetmap',
-                            icon: '🗾',
-                            checked: true,
-                        },
-                    }
-                },
-                hillshade: {
-                    title: 'Hillshade',
-                    handler: (e) => {
-                        const controlsHandler = this.map.controlsHandler
-                        const config = controlsHandler.config.hillshade
-                        
-                        const section = e.target.closest(`#${this.sections.id} > div > .collapse > div`)
-                        const toggle = section.querySelector('input[name="hillshade-toggle"]')
-                        const multidirectional = section.querySelector('input[name="hillshade-multidirectional"]')
-                        
-                        config.render = toggle.checked
-                        config.method = multidirectional.checked ? 'multidirectional' : 'standard'
-
-                        controlsHandler.configHillshade()
-
-                        Array(
-                            multidirectional, 
-                            section.querySelector('input[name="hillshade-more"]')
-                        ).forEach(el => el.disabled = !toggle.checked)
-                    },
-                    options: {
-                        toggle: {
-                            title: 'Toggle hillshade',
-                            icon: '⛰️',
-                            checked: true,
-                        },
-                        multidirectional: {
-                            title: 'Multidirectional hillshade',
-                            icon: '↔️',
-                            checked: false,
-                        },
-                        more: {
-                            title: 'More hillshade options',
-                            icon: '⚙️',
-                            checked: false,
-                            handler: (e) => {
-                                e.target.checked = false
-
-                                const modalId = `hillshadeOptionsModal`
-                                document.querySelector(`#${modalId}`)?.remove()
-                                
-                                const controlsHandler = this.map.controlsHandler
-                                const config = controlsHandler.config.hillshade
-
-                                const modal = createModal({
-                                    modalId,
-                                    titleInnerText: 'Hillshade options',
-                                    isStatic: true,
-                                })
-
-                                const body = modal.querySelector('.modal-body')
-                                body.classList.add('d-flex','flex-column','gap-4')
-
-                                const baseSection = customCreateElement({
-                                    parent: body,
-                                    className: 'd-flex gap-3 flex-wrap'
-                                })
-
-                                const methodSelect = createFormSelect({
-                                    parent: baseSection,
-                                    labelInnerText: 'Method',
-                                    selected: config.method,
-                                    options: {
-                                        'standard': 'Standard',
-                                        'multidirectional': 'Multidirectional',
-                                    }
-                                }).querySelector('select')
-
-                                const exagInput = createFormControl({
-                                    parent: baseSection,
-                                    labelInnerText: 'Exaggeration',
-                                    inputAttrs: {
-                                        type: 'number',
-                                        max: 1,
-                                        min: 0,
-                                        step: 0.1,
-                                        value: config.exaggeration
-                                    }
-                                }).querySelector('input')
-
-                                const accentInput = createFormControl({
-                                    parent: baseSection,
-                                    labelInnerText: 'Accent',
-                                    inputAttrs: {
-                                        type: 'color',
-                                        value: config.accent
-                                    },
-                                }).querySelector('input')
-
-                                const standardSection = customCreateElement({
-                                    parent: body,
-                                    className: 'd-flex gap-2 flex-column',
-                                })
-
-                                const standardHeader = customCreateElement({
-                                    parent: standardSection,
-                                    className: 'fw-bold',
-                                    innerText: 'Standard hillshade'
-                                })
-
-                                standardSection.appendChild(this.createHillshadeForm(config.standard), {
-                                    name: 'standard',
-                                })
-
-                                const multiSection = customCreateElement({
-                                    parent: body,
-                                    className: 'd-flex gap-2 flex-column',
-                                })
-
-                                const multiHeader = customCreateElement({
-                                    parent: multiSection,
-                                    className: 'fw-bold',
-                                    innerText: 'Multidirectional hillshade'
-                                })
-
-                                const multiFields = customCreateElement({
-                                    parent: multiSection,
-                                    className: 'd-flex gap-2 flex-column',
-                                })
-
-                                const multiConfig = config.multidirectional
-                                const hillshadeParams = Object.keys(multiConfig)
-
-                                Object.keys(multiConfig[hillshadeParams[0]]).forEach(i => {
-                                    multiFields.appendChild(this.createHillshadeForm(Object.fromEntries(hillshadeParams.map(name => {
-                                        return [name, multiConfig[name][i]]
-                                    })), {dismissible:true,}))
-                                })
-
-                                const btnContainer = customCreateElement({
-                                    parent: multiSection,
-                                    className: 'py-2 d-flex flex-wrap gap-3'
-                                })
-
-                                const addMulti = customCreateElement({
-                                    parent: btnContainer,
-                                    tag:'button',
-                                    className: 'btn-sm btn btn-success bi bi-plus-lg d-flex gap-2 align-items-center',
-                                    innerText: 'Add to multidirectional hillshade',
-                                    events: {
-                                        click: (e) => {
-                                            multiFields.appendChild(this.createHillshadeForm(config.standard, {dismissible:true,}))
-                                        }
-                                    }
-                                })
-
-                                const resetMulti = customCreateElement({
-                                    parent: btnContainer,
-                                    tag:'button',
-                                    className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise d-flex gap-2 align-items-center',
-                                    innerText: 'Reset',
-                                    events: {
-                                        click: (e) => {
-                                            multiFields.innerHTML = ''
-
-                                            const multiConfig = MAP_DEFAULTS.hillshade.multidirectional
-                                            Object.keys(multiConfig[hillshadeParams[0]]).forEach(i => {
-                                                multiFields.appendChild(this.createHillshadeForm(Object.fromEntries(hillshadeParams.map(name => {
-                                                    return [name, multiConfig[name][i]]
-                                                })), {dismissible:true,}))
-                                            })
-                                        }
-                                    }
-                                })
-
-                                const saveBtn = modal.querySelector(`.modal-footer > button[data-bs-dismiss='modal']`)
-                                saveBtn.innerText = 'Save changes'
-                                saveBtn.addEventListener('click', () => {
-                                    config.method = methodSelect.value
-                                    e.target.closest(`#${this.sections.id} > div > .collapse > div`)
-                                    .querySelector('input[name="hillshade-multidirectional"]')
-                                    .checked = config.method === 'multidirectional'
-
-                                    config.exaggeration = parseFloat(exagInput.value)
-                                    config.accent = accentInput.value
-
-                                    hillshadeParams.forEach(name => {
-                                        const selector = `input[name="${name}"]`
-                                        const isColor = name.endsWith('-color')
-
-                                        const value = standardSection.querySelector(selector).value
-                                        config.standard[name] = isColor ? value : parseFloat(value)
-
-                                        config.multidirectional[name] = Array.from(multiFields.querySelectorAll(selector)).map(el => {
-                                            return isColor ? el.value : parseFloat(el.value)
-                                        })
-                                    })
-
-                                    controlsHandler.configHillshade()
-                                })
-                            }
-                        },
+                info: {
+                    active: true,
+                    targets: {
+                        osm: true,
+                        layers: true,
                     }
                 }
+            },
+            hillshade: {
+                render: true,
+                method: 'standard',
+                exaggeration: 0.5,
+                accent: '#000000',
+                standard: structuredClone(MAP_DEFAULTS.hillshade.standard),
+                multidirectional: structuredClone(MAP_DEFAULTS.hillshade.multidirectional)        
+            },
 
-            }
         }
     }
 
@@ -331,7 +99,19 @@ class SettingsControl {
         return container
     }
 
+    updateSettings() {
+        const settings =  JSON.stringify(this.config)
+
+        if (this.mapId) {
+
+        } else {
+            localStorage.setItem('mapConfig', settings)
+        }
+    }
+
     configSettings() {
+        this.map.setProjection({type:this.config.projection})
+
         const theme = getPreferredTheme()
 
         const dropdown = customCreateElement({
@@ -367,7 +147,292 @@ class SettingsControl {
             className: 'd-flex flex-column gap-3'
         })
 
-        Object.entries(this.config.settings).forEach(([section, params]) => {
+        // bookmark
+        const settings = {
+            projection: {
+                title: 'Projection',
+                radio: true,
+                handler: (e, {name}={}) => {
+                    this.config.projection = name
+                    this.map.setProjection({type:name})
+                    this.updateSettings()                       
+                },
+                options: {
+                    mercator: {
+                        title: 'Web Mercator',
+                        icon: '🗺️',
+                        checked: this.config.projection !== 'globe',
+                    },
+                    globe: {
+                        title: '3D Globe',
+                        icon: '🌍',
+                        checked: this.config.projection === 'globe'
+                    },
+                }
+            },
+            popup: {
+                title: 'Popup',
+                handler: (e) => {
+                    const section = e.target.closest(`#${this.sections.id} > div > .collapse > div`)
+                    const active = section.querySelector('input[name="popup-active"]')
+                    const osm = section.querySelector('input[name="popup-osm"]')
+                    const layers = section.querySelector('input[name="popup-layers"]')
+                    
+                    osm.disabled = !active.checked
+                    layers.disabled = !active.checked
+
+                    const config = this.config.interactions.info
+                    config.active = active.checked
+                    config.targets.osm = osm.checked
+                    config.targets.layers = layers.checked
+
+                    this.map.interactionsHandler.configCursor()
+
+                    this.updateSettings()
+                },
+                options: {
+                    active: {
+                        title: 'Toggle popup',
+                        icon: 'ℹ️',
+                        checked: this.config.interactions.info.active,
+                    },
+                    layers: {
+                        title: 'Layers',
+                        icon: '📚',
+                        checked: this.config.interactions.info.targets.layers,
+                        disabled: !this.config.interactions.info.active,
+                    },
+                    osm: {
+                        title: 'Openstreetmap',
+                        icon: '🗾',
+                        checked: this.config.interactions.info.targets.osm,
+                        disabled: !this.config.interactions.info.active,
+                    },
+                }
+            },
+            hillshade: {
+                title: 'Hillshade',
+                handler: (e) => {
+                    const section = e.target.closest(`#${this.sections.id} > div > .collapse > div`)
+                    const active = section.querySelector('input[name="hillshade-active"]')
+                    const multidirectional = section.querySelector('input[name="hillshade-multidirectional"]')
+                    
+                    Array(
+                        multidirectional, 
+                        section.querySelector('input[name="hillshade-more"]')
+                    ).forEach(el => el.disabled = !active.checked)
+
+                    const config = this.config.hillshade
+                    config.render = active.checked
+                    config.method = multidirectional.checked ? 'multidirectional' : 'standard'
+                    
+                    this.updateSettings()
+                    
+                    this.configHillshade()
+                },
+                options: {
+                    active: {
+                        title: 'Toggle hillshade',
+                        icon: '⛰️',
+                        checked: this.config.hillshade.render,
+                    },
+                    multidirectional: {
+                        title: 'Multidirectional hillshade',
+                        icon: '↔️',
+                        checked: this.config.hillshade.method === 'multidirectional',
+                        disabled: !this.config.hillshade.render
+                    },
+                    more: {
+                        title: 'More hillshade options',
+                        icon: '🎚️',
+                        disabled: !this.config.hillshade.render,
+                        handler: (e) => {
+                            e.target.checked = false
+
+                            const modalId = `hillshadeOptionsModal`
+                            document.querySelector(`#${modalId}`)?.remove()
+                            
+                            const config = this.config.hillshade
+
+                            const modal = createModal({
+                                modalId,
+                                titleInnerText: 'Hillshade options',
+                                isStatic: true,
+                            })
+
+                            const body = modal.querySelector('.modal-body')
+                            body.classList.add('d-flex','flex-column','gap-4')
+
+                            const baseSection = customCreateElement({
+                                parent: body,
+                                className: 'd-flex gap-3 flex-wrap'
+                            })
+
+                            const methodSelect = createFormSelect({
+                                parent: baseSection,
+                                labelInnerText: 'Method',
+                                selected: config.method,
+                                options: {
+                                    'standard': 'Standard',
+                                    'multidirectional': 'Multidirectional',
+                                }
+                            }).querySelector('select')
+
+                            const exagInput = createFormControl({
+                                parent: baseSection,
+                                labelInnerText: 'Exaggeration',
+                                inputAttrs: {
+                                    type: 'number',
+                                    max: 1,
+                                    min: 0,
+                                    step: 0.1,
+                                    value: config.exaggeration
+                                }
+                            }).querySelector('input')
+
+                            const accentInput = createFormControl({
+                                parent: baseSection,
+                                labelInnerText: 'Accent',
+                                inputAttrs: {
+                                    type: 'color',
+                                    value: config.accent
+                                },
+                            }).querySelector('input')
+
+                            const standardSection = customCreateElement({
+                                parent: body,
+                                className: 'd-flex gap-2 flex-column',
+                            })
+
+                            const standardHeader = customCreateElement({
+                                parent: standardSection,
+                                className: 'fw-bold',
+                                innerText: 'Standard hillshade'
+                            })
+
+                            standardSection.appendChild(this.createHillshadeForm(config.standard), {
+                                name: 'standard',
+                            })
+
+                            const multiSection = customCreateElement({
+                                parent: body,
+                                className: 'd-flex gap-2 flex-column',
+                            })
+
+                            const multiHeader = customCreateElement({
+                                parent: multiSection,
+                                className: 'd-flex flex-no-wrap gap-5 justify-content-between',
+                            })
+
+                            const multiTitle = customCreateElement({
+                                parent: multiHeader,
+                                className: 'fw-bold text-wrap',
+                                innerText: 'Multidirectional hillshade'
+                            })
+
+                            const multiOptions = customCreateElement({
+                                parent: multiHeader,
+                                className: 'd-flex flex-nowrap gap-2'
+                            })
+
+                            
+                            const addMulti = customCreateElement({
+                                parent: multiOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-success bi bi-plus-lg',
+                                events: {
+                                    click: (e) => {
+                                        multiFields.insertBefore(
+                                            this.createHillshadeForm(config.standard, {dismissible:true,}),
+                                            multiFields.firstChild
+                                        )
+                                    }
+                                }
+                            })
+
+                            const resetMulti = customCreateElement({
+                                parent: multiOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
+                                innerText: 'Reset',
+                                events: {
+                                    click: (e) => {
+                                        multiFields.innerHTML = ''
+
+                                        const multiConfig = MAP_DEFAULTS.hillshade.multidirectional
+                                        Object.keys(multiConfig[hillshadeParams[0]]).forEach(i => {
+                                            multiFields.appendChild(this.createHillshadeForm(Object.fromEntries(hillshadeParams.map(name => {
+                                                return [name, multiConfig[name][i]]
+                                            })), {dismissible:true,}))
+                                        })
+                                    }
+                                }
+                            })
+
+                            const multiFields = customCreateElement({
+                                parent: multiSection,
+                                className: 'd-flex gap-3 flex-column',
+                            })
+
+                            const multiConfig = config.multidirectional
+                            const hillshadeParams = Object.keys(multiConfig)
+
+                            Object.keys(multiConfig[hillshadeParams[0]]).forEach(i => {
+                                multiFields.appendChild(this.createHillshadeForm(Object.fromEntries(hillshadeParams.map(name => {
+                                    return [name, multiConfig[name][i]]
+                                })), {dismissible:true,}))
+                            })
+
+                            const saveBtn = modal.querySelector(`.modal-footer > button[data-bs-dismiss='modal']`)
+                            saveBtn.removeAttribute('data-bs-dismiss')
+                            saveBtn.innerText = 'Apply changes'
+                            saveBtn.addEventListener('click', () => {
+                                config.method = methodSelect.value
+                                e.target.closest(`#${this.sections.id} > div > .collapse > div`)
+                                .querySelector('input[name="hillshade-multidirectional"]')
+                                .checked = config.method === 'multidirectional'
+
+                                config.exaggeration = parseFloat(exagInput.value)
+                                config.accent = accentInput.value
+
+                                hillshadeParams.forEach(name => {
+                                    const selector = `input[name="${name}"]`
+                                    const isColor = name.endsWith('-color')
+
+                                    const value = standardSection.querySelector(selector).value
+                                    config.standard[name] = isColor ? value : parseFloat(value)
+
+                                    config.multidirectional[name] = Array.from(multiFields.querySelectorAll(selector)).map(el => {
+                                        return isColor ? el.value : parseFloat(el.value)
+                                    })
+                                })
+
+                                this.configHillshade()
+
+                                this.updateSettings()
+                            })
+                        }
+                    },
+                }
+            },
+            misc: {
+                title: 'Miscellaneous',
+                options: {
+                    tooltip: {
+                        title: 'Toggle tooltip',
+                        icon: '💬',
+                        checked: this.config.interactions.tooltip.active,
+                        handler: (e) => {
+                            this.config.interactions.tooltip.active = e.target.checked
+                            this.map.interactionsHandler.configCursor()
+                            this.updateSettings()
+                        }
+                    }
+                }
+            }
+        }
+
+        Object.entries(settings).forEach(([section, params]) => {
             const container = customCreateElement({
                 parent: sections,
                 className: 'd-flex flex-column gap-2 px-2'
@@ -409,8 +474,10 @@ class SettingsControl {
                     tag: isSelect ? 'select' : 'input',
                     attrs: {
                         type,
+                        value: name,
                         name: params.radio ? section : Array(section, name).join('-'),
                         ...(option.checked ? {checked: true} : {}),
+                        ...(option.disabled ? {disabled: true} : {}),
                         ...option.attrs ?? {},
                     },
                     style: option.style,
@@ -458,17 +525,40 @@ class SettingsControl {
         })
     }
 
-    setProjection({type='mercator'}={}) {
-        this.map.setProjection({type})
-        this.config.projection = type
-    }
+    configHillshade(){
+        const map = this.map
+        const config = this.config.hillshade
 
-    getProjection() {
-        return this.config.projection
+        if (map.getLayer('hillshade')) {
+            map.removeLayer('hillshade')
+        }
+        
+        const source = map.getTerrain()?.source
+        if (source && config.render) {
+            map.addLayer({
+                id: 'hillshade',
+                type: 'hillshade',
+                source,
+                paint: {
+                    'hillshade-method': config.method,
+                    'hillshade-exaggeration': config.exaggeration,
+                    'hillshade-accent-color': config.accent,
+                    ...config[config.method]
+                }
+            }, map.sourcesHandler.getBeforeId('hillshade'))
+        }
     }
 
     onAdd(map) {
         this.map = map
+        this.map._settings = this
+
+        this.mapId = this.map.getContainer().dataset.mapId
+        const config = this.map.getContainer().dataset.mapConfig || localStorage.getItem('mapConfig')
+        if (config) {
+            this.config = JSON.parse(config)
+        }
+        
         this._container = customCreateElement({className: 'maplibregl-ctrl maplibregl-ctrl-group'})
         this.configSettings()
         return this._container

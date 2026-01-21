@@ -4,5 +4,7 @@
 <div
     id="{% random_string %}"
     class='w-100 h-100'
+    data-map-id="{{map_id}}"
+    data-map-config="{{map_settings}}"
     x-data x-init="createNewMap($el)"
 ></div>

@@ -2,14 +2,6 @@ class ControlsHandler {
     constructor(map) {
         this.map = map
         this.config = {
-            hillshade: {
-                render: true,
-                method: 'standard',
-                exaggeration: 0.5,
-                accent: '#000000',
-                standard: structuredClone(MAP_DEFAULTS.hillshade.standard),
-                multidirectional: structuredClone(MAP_DEFAULTS.hillshade.multidirectional)        
-            },
             controls: {
                 placeSearch: {
                     include: true,
@@ -56,7 +48,7 @@ class ControlsHandler {
 
                         control._container.querySelector('button')
                         .addEventListener('click', () => {
-                            this.configHillshade()
+                            this.map._settings.configHillshade()
                         })
                     }
                 },
@@ -109,29 +101,6 @@ class ControlsHandler {
         this.syncTheme()
     }
 
-    configHillshade(){
-        const map = this.map
-        const config = this.config.hillshade
-
-        if (map.getLayer('hillshade')) {
-            map.removeLayer('hillshade')
-        }
-        
-        const source = map.getTerrain()?.source
-        if (source && config.render) {
-            map.addLayer({
-                id: 'hillshade',
-                type: 'hillshade',
-                source,
-                paint: {
-                    'hillshade-method': config.method,
-                    'hillshade-exaggeration': config.exaggeration,
-                    'hillshade-accent-color': config.accent,
-                    ...config[config.method]
-                }
-            }, map.sourcesHandler.getBeforeId('hillshade'))
-        }
-    }
 
     configAttributionControl() {
         const control = this.map._controls.find(c => c instanceof maplibregl.AttributionControl)
@@ -212,7 +181,8 @@ class ControlsHandler {
     }
 
     toggleBasemapGrayscale() {
-        if (!this.map.getLayer('basemap')) return
+        const map = this.map
+        if (!map.getLayer('basemap')) return
 
         let sky
         let basemap
@@ -225,11 +195,19 @@ class ControlsHandler {
             sky = MAP_DEFAULTS.sky.default
         }
 
-        this.map.sourcesHandler.updateLayerParams('basemap', {paint:basemap})
-        
-        const newStyle = structuredClone(this.map.getStyle())
+        const newStyle = structuredClone(map.getStyle())
         newStyle.sky = sky
-        this.map.setStyle(newStyle)
+        map.setStyle(newStyle)
+
+        if (map.getLayer('basemap')) {
+            map.removeLayer('basemap')
+            map.addLayer({
+                id: 'basemap',
+                type: 'raster',
+                source: 'basemap',
+                paint: basemap
+            }, map.sourcesHandler.getBeforeId('basemap'))
+        }
     }
 
     getScaleInMeters() {
