@@ -873,6 +873,17 @@ class SettingsControl {
                             this.map.interactionsHandler.configCursor()
                             this.updateSettings()
                         }
+                    },
+                    clear: {
+                        title: 'Clear stored data',
+                        icon: '🗑️',
+                        attrs: {
+                            'data-bs-toggle': 'modal',
+                            'data-bs-target': '#clearStoredDataModal',
+                        },
+                        handler: (e) => {
+                            e.target.checked = false
+                        }
                     }
                 }
             }

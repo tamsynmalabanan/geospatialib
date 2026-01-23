@@ -1,0 +1,21 @@
+<div class="modal fade" id="clearStoredDataModal" tabindex="-1" aria-labelledby="clearStoredDataModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-fullscreen-sm-down modal-dialog modal-fullscreen-sm-down modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="clearStoredDataModalLabel">Clear stored data</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small">
+                    Are you sure you want to delete locally stored data? All data for all layers will be deleted, not only the data in your current map. Some layers in your project maps may be dependent on this data.
+                </p>
+            </div>
+            <div class="modal-footer d-flex justify-content-between gap-2">
+                {% if user.is_authenticated %}
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#userSettingsModal">Go to settings</button>
+                {% endif %}
+                <button type="button" class="btn btn-sm btn-danger ms-auto" data-bs-dismiss="modal" onclick="clearGISDB()">Clear data</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -34,6 +34,7 @@
             {% include "helpers/modals/user_terms.html" %}
             {% include "helpers/modals/privacy_policy.html" %}
             {% include "helpers/modals/cookies_policy.html" %}
+            {% include "helpers/modals/clear_stored_data.html" %}
             {% if user.is_authenticated %}
                 {% include "helpers/modals/user_settings.html" %}
                 {% if not user.is_superuser and not user.is_staff %}
