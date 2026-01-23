@@ -217,34 +217,34 @@ class SettingsControl {
                 options: {
                     metric: {
                         title: 'Metric',
-                        icon: '<span class="fw-bold fs-12">m/km</span>',
+                        icon: '<span class="fs-12 font-monospace">m/km</span>',
                         checked: this.settings.unit === 'metric'
                     },
                     imperial: {
                         title: 'Imperial',
-                        icon: '<span class="fw-bold fs-12">ft/mi</span>',
+                        icon: '<span class="fs-12 font-monospace">ft/mi</span>',
                         checked: this.settings.unit === 'imperial'
                     },
                     nautical: {
                         title: 'Nautical',
-                        icon: '<span class="fw-bold fs-12">nm</span>',
+                        icon: '<span class="fs-12 font-monospace">nm</span>',
                         checked: this.settings.unit === 'nautical'
                     },
                 }
             },
-            // non-radio part, radio part
             basemap: {
                 title: 'Basemap',
-                handler: (e) => {
+                radio: true,
+                handler: (e, {name}={}) => {
                     const section = e.target.closest(`#${this.sections.id} > div > .collapse > div`)
                     const render = section.querySelector('input[name="basemap-render"]')
 
-                    Array(
-
-                    ).forEach(el => el.disabled = !render.checked)
+                    const themeRadio = Array.from(section.querySelectorAll(`input[name="basemap"]`))
+                    themeRadio.forEach(el => el.disabled = !render.checked)
 
                     const config = this.settings.basemap
                     config.render = render.checked
+                    config.theme = themeRadio.find(i => i.checked).value
 
                     this.configBasemap()
 
@@ -254,8 +254,27 @@ class SettingsControl {
                     render: {
                         title: 'Toggle basemap',
                         icon: '🗺️',
+                        type: 'checkbox',
                         checked: this.settings.basemap.render,
-                    }
+                    },
+                    auto: {
+                        title: 'Auto basemap theme',
+                        icon: '<span class="font-monospace fs-12">AUTO</span>',
+                        checked: this.settings.basemap.theme === 'auto',
+                        disabled: ! this.settings.basemap.render,
+                    },
+                    light: {
+                        title: 'Light basemap theme',
+                        icon: '🔆',
+                        checked: this.settings.basemap.theme === 'light',
+                        disabled: ! this.settings.basemap.render,
+                    },
+                    dark: {
+                        title: 'Dark basemap theme',
+                        icon: '🌙',
+                        checked: this.settings.basemap.theme === 'dark',
+                        disabled: ! this.settings.basemap.render,
+                    },
                 }
             },
             hillshade: {
@@ -902,7 +921,7 @@ class SettingsControl {
                     attrs: {
                         type,
                         value: name,
-                        name: params.radio ? section : Array(section, name).join('-'),
+                        name: type === 'radio' ? section : Array(section, name).join('-'),
                         ...(option.checked ? {checked: true} : {}),
                         ...(option.disabled ? {disabled: true} : {}),
                         ...option.attrs ?? {},
@@ -968,8 +987,6 @@ class SettingsControl {
                 : null
             )
             
-            console.log(bboxConfig, bbox)
-
             if (bbox) {
                 this.map.fitBounds(bbox, {
                     padding: bboxConfig.padding,

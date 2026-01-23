@@ -609,12 +609,19 @@ class InteractionsHandler {
         }
 
         handler()
+
+        this.map.on('move', handler)
         
-        elementMutationObserver(popupContainer, handler, {
+        const observer = elementMutationObserver(popupContainer, handler, {
             attributeFilter: ['class'],
         })
 
-        this.map.on('move', handler)
-        popup.on('close', (e) => this.map.off('move', handler))
+        document.addEventListener('themeToggled', handler)
+
+        popup.on('close', (e) => {
+            this.map.off('move', handler)
+            observer.disconnect()
+            document.removeEventListener('themeToggled', handler)
+        })
     }
 }

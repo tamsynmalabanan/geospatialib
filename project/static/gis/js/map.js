@@ -105,7 +105,7 @@ const MAP_DEFAULTS = {
             tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
             theme: 'auto',
             tileSize: 256,
-            maxzoom: 256,
+            maxzoom: 20,
             attribution: '&copy; OpenStreetMap Contributors'
         }
     }
