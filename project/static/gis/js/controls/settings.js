@@ -76,6 +76,38 @@ class SettingsControl {
         return container
     }
 
+    createBasemapTileSourceForm(url, {dismissible=true}={}) {
+        const container = customCreateElement({
+            className: 'd-flex gap-3 flex-wrap align-items-end'
+        })
+
+        const sourceInput = createFormControl({
+            parent: container,
+            labelInnerText: 'Tile source URL',
+            inputAttrs: {
+                type: 'url',
+                value: url
+            }
+        }).querySelector('input')
+
+        if (dismissible) {
+            customCreateElement({
+                parent: container,
+                children: [
+                    customCreateElement({
+                        tag: 'button',
+                        className: 'btn btn-sm btn-danger bi bi-x',
+                        events: {
+                            click: (e) => container.remove()
+                        }
+                    })
+                ]
+            })
+        }
+
+        return container
+    }
+
     updateSettings() {
         const settings =  JSON.stringify(this.settings)
 
@@ -232,6 +264,8 @@ class SettingsControl {
                     },
                 }
             },
+
+            // dark and light mode basemap and sky config - paint
             basemap: {
                 title: 'Basemap',
                 radio: true,
@@ -324,6 +358,7 @@ class SettingsControl {
                                     click: (e) => {
                                         const defaultBasemap = MAP_DEFAULTS.settings.basemap
                                         themeSelect.value = defaultBasemap.theme
+                                        attributionInput.value = defaultBasemap.attribution
                                     }
                                 }
                             })
@@ -344,6 +379,14 @@ class SettingsControl {
                                 }
                             }).querySelector('select')
 
+                            const attributionInput = createFormControl({
+                                parent: baseFields,
+                                labelInnerText: 'Attribution',
+                                inputAttrs: {
+                                    type: 'text',
+                                    value: config.attribution
+                                }
+                            }).querySelector('input')
 
                             const sourceSection = customCreateElement({
                                 parent: body,
@@ -372,7 +415,7 @@ class SettingsControl {
                                 className: 'btn-sm btn btn-success bi bi-plus-lg',
                                 events: {
                                     click: (e) => {
-                                    
+                                        sourceFields.appendChild(this.createBasemapTileSourceForm(''))
                                     }
                                 }
                             })
@@ -383,29 +426,25 @@ class SettingsControl {
                                 className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
                                 events: {
                                     click: (e) => {
-                                        const sources = MAP_DEFAULTS.settings.basemap.tiles
-                                        // themeSelect.value = defaultBasemap.theme
+                                        sourceFields.innerHTML = ''
+                                        
+                                        Object.entries(MAP_DEFAULTS.settings.basemap.tiles).forEach(([index, url]) => {
+                                            console.log(index)
+                                            sourceFields.appendChild(this.createBasemapTileSourceForm(url, {dismissible:index>0}))
+                                        })
                                     }
                                 }
                             })
 
                             const sourceFields = customCreateElement({
                                 parent: sourceSection,
-                                className: 'd-flex gap-2 flex-wrap',
+                                className: 'd-flex gap-2 flex-column',
                             })
 
-                            // const pitchInput = createFormControl({
-                            //     parent: sourceFields,
-                            //     labelInnerText: 'Pitch',
-                            //     inputAttrs: {
-                            //         type: 'number',
-                            //         max: 75,
-                            //         min: 0,
-                            //         step: 15,
-                            //         value: config.pitch
-                            //     }
-                            // }).querySelector('input')
-
+                            config.tiles.forEach(url => {
+                                sourceFields.appendChild(this.createBasemapTileSourceForm(url, {dismissible:false}))
+                            })
+                            
                             const saveBtn = modal.querySelector(`.modal-footer > button[data-bs-dismiss='modal']`)
                             saveBtn.removeAttribute('data-bs-dismiss')
                             saveBtn.innerText = 'Apply changes'
@@ -415,6 +454,10 @@ class SettingsControl {
                                     e.target.closest(`#${this.sections.id} > div > .collapse > div`)
                                     .querySelectorAll(`input[name="basemap"]`)
                                 ).forEach(el => el.checked = el.value === config.theme)
+
+                                config.attribution = attributionInput.value
+
+                                config.tiles = Array.from(sourceFields.querySelectorAll(`input[type="url"]`)).map(el => el.value)
 
                                 this.configBasemap()
 
