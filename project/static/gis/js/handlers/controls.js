@@ -83,7 +83,7 @@ class ControlsHandler {
                     order: 1,
                     constructor: maplibregl.ScaleControl,
                     options: {
-                        unit: 'nautical',
+                        unit: this.settings.unit,
                         maxWidth: 200,
                     }
                 },
@@ -179,40 +179,6 @@ class ControlsHandler {
         .forEach(b => {
             b.classList.add(`border-${theme}`)
         })
-        
-        document.addEventListener('themeToggled', (e) => {
-            this.toggleBasemapGrayscale()
-        })
-    }
-
-    toggleBasemapGrayscale() {
-        const map = this.map
-        if (!map.getLayer('basemap')) return
-
-        let sky
-        let basemap
-        
-        if (getPreferredTheme() === 'dark') {
-            sky = MAP_DEFAULTS.sky.grayscale
-            basemap = MAP_DEFAULTS.basemap.grayscale
-        } else {
-            basemap = MAP_DEFAULTS.basemap.default
-            sky = MAP_DEFAULTS.sky.default
-        }
-
-        const newStyle = structuredClone(map.getStyle())
-        newStyle.sky = sky
-        map.setStyle(newStyle)
-
-        if (map.getLayer('basemap')) {
-            map.removeLayer('basemap')
-            map.addLayer({
-                id: 'basemap',
-                type: 'raster',
-                source: 'basemap',
-                paint: basemap
-            }, map.sourcesHandler.getBeforeId('basemap'))
-        }
     }
 
     getScaleInMeters() {

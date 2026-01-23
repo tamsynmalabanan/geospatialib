@@ -88,11 +88,20 @@ class SettingsControl {
 
     applySettings() {
         this.map.setProjection({type:this.settings.projection})
-        
+
         if (this.settings.terrain) {
             this.map.getContainer()
             .querySelector(`.maplibregl-ctrl-terrain`)
             ?.click()
+        }
+    
+        document.addEventListener('themeToggled', (e) => {
+            if (this.settings.basemap.theme !== 'auto') return
+            this.configBasemapLayer()
+        })
+
+        if (this.settings.bookmark.method !== 'centroid') {
+            this.goToBookmark()
         }
     }
 
@@ -132,9 +141,8 @@ class SettingsControl {
 
         const sections = this.sections = customCreateElement({
             parent: menu,
-            className: 'd-flex flex-column gap-3'
+            className: 'd-flex flex-column gap-2'
         })
-
 
         const settings = {
             projection: {
@@ -198,6 +206,58 @@ class SettingsControl {
                     },
                 }
             },
+            unit: {
+                title: 'Units',
+                radio: true,
+                handler: (e, {name}={}) => {
+                    this.settings.unit = name
+                    this.map.controlsHandler.controls.scalebar.setUnit(name)
+                    this.updateSettings()
+                },
+                options: {
+                    metric: {
+                        title: 'Metric',
+                        icon: '<span class="fw-bold fs-12">m/km</span>',
+                        checked: this.settings.unit === 'metric'
+                    },
+                    imperial: {
+                        title: 'Imperial',
+                        icon: '<span class="fw-bold fs-12">ft/mi</span>',
+                        checked: this.settings.unit === 'imperial'
+                    },
+                    nautical: {
+                        title: 'Nautical',
+                        icon: '<span class="fw-bold fs-12">nm</span>',
+                        checked: this.settings.unit === 'nautical'
+                    },
+                }
+            },
+            // non-radio part, radio part
+            basemap: {
+                title: 'Basemap',
+                handler: (e) => {
+                    const section = e.target.closest(`#${this.sections.id} > div > .collapse > div`)
+                    const render = section.querySelector('input[name="basemap-render"]')
+
+                    Array(
+
+                    ).forEach(el => el.disabled = !render.checked)
+
+                    const config = this.settings.basemap
+                    config.render = render.checked
+
+                    this.configBasemap()
+
+                    this.updateSettings()
+                },
+                options: {
+                    render: {
+                        title: 'Toggle basemap',
+                        icon: '🗺️',
+                        checked: this.settings.basemap.render,
+                    }
+                }
+            },
             hillshade: {
                 title: 'Hillshade',
                 handler: (e) => {
@@ -214,9 +274,8 @@ class SettingsControl {
                     config.render = active.checked
                     config.method = multidirectional.checked ? 'multidirectional' : 'standard'
                     
-                    this.updateSettings()
-                    
                     this.configHillshade()
+                    this.updateSettings()
                 },
                 options: {
                     active: {
@@ -231,22 +290,21 @@ class SettingsControl {
                         disabled: !this.settings.hillshade.render
                     },
                     more: {
-                        title: 'More hillshade options',
+                        title: 'Hillshade options',
                         icon: '🎚️',
                         disabled: !this.settings.hillshade.render,
                         handler: (e) => {
                             e.target.checked = false
 
-                            const modalId = `hillshadeOptionsModal`
-                            document.querySelector(`#${modalId}`)?.remove()
+                            document.querySelector(`.in-map-modal`)?.remove()
                             
                             const config = this.settings.hillshade
 
                             const modal = createModal({
-                                modalId,
                                 titleInnerText: 'Hillshade options',
                                 isStatic: true,
                             })
+                            modal.classList.add('in-map-modal')
 
                             const body = modal.querySelector('.modal-body')
                             body.classList.add('d-flex','flex-column','gap-4')
@@ -341,7 +399,6 @@ class SettingsControl {
                                 parent: multiOptions,
                                 tag:'button',
                                 className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
-                                innerText: 'Reset',
                                 events: {
                                     click: (e) => {
                                         multiFields.innerHTML = ''
@@ -407,16 +464,13 @@ class SettingsControl {
                 options: {
                     set: {
                         title: 'Bookmark current view',
-                        icon: '➕',
+                        icon: '🔖',
                         handler: (e) => {
                             e.target.checked = false
-                            
-                            const config = this.settings.bookmark
-                            config.zoom = this.map.getZoom()
-                            config.center = this.map.getCenter()
-                            config.pitch = this.map.getPitch()
-                            config.bearing = this.map.getBearing()
-
+                            this.settings.bookmark = {
+                                ...this.settings.bookmark,
+                                ...this.getView()    
+                            }
                             this.updateSettings()
                         }
                     },
@@ -425,7 +479,365 @@ class SettingsControl {
                         icon: '🔍',
                         handler: (e) => {
                             e.target.checked = false
-                            this.map.jumpTo(this.settings.bookmark)
+                            this.goToBookmark()
+                        }
+                    },
+                    more: {
+                        title: 'Bookmark options',
+                        icon: '🎚️',
+                        handler: (e) => {
+                            e.target.checked = false
+
+                            document.querySelector(`.in-map-modal`)?.remove()
+                            
+                            const config = this.settings.bookmark
+                            const defaultBookmark = MAP_DEFAULTS.settings.bookmark
+
+                            const modal = createModal({
+                                titleInnerText: 'Bookmark options',
+                                isStatic: true,
+                            })
+                            modal.classList.add('in-map-modal')
+
+
+                            const body = modal.querySelector('.modal-body')
+                            body.classList.add('d-flex','flex-column','gap-4')
+
+                            const baseSection = customCreateElement({
+                                parent: body,
+                                className: 'd-flex gap-2 flex-column',
+                            })
+
+                            const baseHeader = customCreateElement({
+                                parent: baseSection,
+                                className: 'd-flex flex-no-wrap gap-5 justify-content-between',
+                            })
+
+                            const baseTitle = customCreateElement({
+                                parent: baseHeader,
+                                className: 'fw-bold text-wrap',
+                                innerText: 'General'
+                            })
+
+                            const baseOptions = customCreateElement({
+                                parent: baseHeader,
+                                className: 'd-flex flex-nowrap gap-2'
+                            })
+
+                            const defaultOrientation = customCreateElement({
+                                parent: baseOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
+                                events: {
+                                    click: (e) => {
+                                        pitchInput.value = defaultBookmark.pitch
+                                        bearingInput.value = defaultBookmark.bearing
+                                    }
+                                }
+                            })
+
+                            const currentOrientation = customCreateElement({
+                                parent: baseOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-success bi bi-map',
+                                events: {
+                                    click: (e) => {
+                                        const currentView = this.getView()
+                                        pitchInput.value = currentView.pitch
+                                        bearingInput.value = currentView.bearing
+                                    }
+                                }
+                            })
+
+                            const baseFields = customCreateElement({
+                                parent: baseSection,
+                                className: 'd-flex gap-2 flex-wrap',
+                            })
+
+                            const methodSelect = createFormSelect({
+                                parent: baseFields,
+                                labelInnerText: 'Method',
+                                selected: config.method,
+                                options: {
+                                    'centroid': 'Centroid',
+                                    'bbox': 'Bounding Box',
+                                }
+                            }).querySelector('select')
+
+
+                            const pitchInput = createFormControl({
+                                parent: baseFields,
+                                labelInnerText: 'Pitch',
+                                inputAttrs: {
+                                    type: 'number',
+                                    max: 75,
+                                    min: 0,
+                                    step: 15,
+                                    value: config.pitch
+                                }
+                            }).querySelector('input')
+
+                            const bearingInput = createFormControl({
+                                parent: baseFields,
+                                labelInnerText: 'Bearing',
+                                inputAttrs: {
+                                    type: 'number',
+                                    max: 360,
+                                    min: 0,
+                                    step: 45,
+                                    value: config.bearing
+                                }
+                            }).querySelector('input')
+
+                            
+                            
+                            const centroidSection = customCreateElement({
+                                parent: body,
+                                className: 'd-flex gap-2 flex-column',
+                            })
+
+                            const centroidHeader = customCreateElement({
+                                parent: centroidSection,
+                                className: 'd-flex flex-no-wrap gap-5 justify-content-between',
+                            })
+
+                            const centroidTitle = customCreateElement({
+                                parent: centroidHeader,
+                                className: 'fw-bold text-wrap',
+                                innerText: 'Centroid'
+                            })
+
+                            const centroidOptions = customCreateElement({
+                                parent: centroidHeader,
+                                className: 'd-flex flex-nowrap gap-2'
+                            })
+
+                            const defaultCenter = customCreateElement({
+                                parent: centroidOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
+                                events: {
+                                    click: (e) => {
+                                        zoomInput.value = defaultBookmark.centroid.zoom
+                                        centerLngInput.value = defaultBookmark.centroid.lng
+                                        centerLatInput.value = defaultBookmark.centroid.lat
+                                    }
+                                }
+                            })
+
+                            const currentCenter = customCreateElement({
+                                parent: centroidOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-success bi bi-map',
+                                events: {
+                                    click: (e) => {
+                                        const currentView = this.getView()
+                                        zoomInput.value = currentView.centroid.zoom
+                                        centerLngInput.value = currentView.centroid.lng
+                                        centerLatInput.value = currentView.centroid.lat
+                                    }
+                                }
+                            })
+
+                            const centroidFields = customCreateElement({
+                                parent: centroidSection,
+                                className: 'd-flex gap-2 flex-wrap',
+                            })
+
+                            const centerLngInput = createFormControl({
+                                parent: centroidFields,
+                                labelInnerText: 'Longitude',
+                                inputAttrs: {
+                                    type: 'number',
+                                    max: 180,
+                                    min: -180,
+                                    step: 15,
+                                    value: config.centroid.lng
+                                }
+                            }).querySelector('input')
+
+                            const centerLatInput = createFormControl({
+                                parent: centroidFields,
+                                labelInnerText: 'Latitude',
+                                inputAttrs: {
+                                    type: 'number',
+                                    max: 90,
+                                    min: -90,
+                                    step: 15,
+                                    value: config.centroid.lat
+                                }
+                            }).querySelector('input')
+                            
+                            const zoomInput = createFormControl({
+                                parent: centroidFields,
+                                labelInnerText: 'Zoom',
+                                inputAttrs: {
+                                    type: 'number',
+                                    max: 22,
+                                    min: 0,
+                                    step: 1,
+                                    value: config.centroid.zoom
+                                }
+                            }).querySelector('input')
+
+
+
+                            const bboxSection = customCreateElement({
+                                parent: body,
+                                className: 'd-flex gap-2 flex-column',
+                            })
+
+                            const bboxHeader = customCreateElement({
+                                parent: bboxSection,
+                                className: 'd-flex flex-no-wrap gap-5 justify-content-between',
+                            })
+
+                            const bboxTitle = customCreateElement({
+                                parent: bboxHeader,
+                                className: 'fw-bold text-wrap',
+                                innerText: 'Bounding Box'
+                            })
+
+                            const bboxOptions = customCreateElement({
+                                parent: bboxHeader,
+                                className: 'd-flex flex-nowrap gap-2'
+                            })
+
+                            const defaultBbox = customCreateElement({
+                                parent: bboxOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
+                                events: {
+                                    click: (e) => {
+                                        sInput.value = defaultBookmark.bbox.s
+                                        wInput.value = defaultBookmark.bbox.w
+                                        eInput.value = defaultBookmark.bbox.e
+                                        nInput.value = defaultBookmark.bbox.n
+                                        bboxPaddingInput.value = defaultBookmark.bbox.padding
+                                        bboxMaxZoomInput.value = defaultBookmark.bbox.maxZoom
+                                    }
+                                }
+                            })
+
+                            const currentBbox = customCreateElement({
+                                parent: bboxOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-success bi bi-map',
+                                events: {
+                                    click: (e) => {
+                                        const currentView = this.getView()
+                                        sInput.value = currentView.bbox.s
+                                        wInput.value = currentView.bbox.w
+                                        eInput.value = currentView.bbox.e
+                                        nInput.value = currentView.bbox.n
+                                        bboxPaddingInput.value = currentView.bbox.padding
+                                        bboxMaxZoomInput.value = currentView.bbox.maxZoom
+
+                                    }
+                                }
+                            })
+
+                            const bboxFields = customCreateElement({
+                                parent: bboxSection,
+                                className: 'd-flex gap-2 flex-wrap',
+                            })
+
+                            const wInput = createFormControl({
+                                parent: bboxFields,
+                                labelInnerText: 'West',
+                                inputAttrs: {
+                                    type: 'number',
+                                    max: 180,
+                                    min: -180,
+                                    step: 15,
+                                    value: config.bbox.w
+                                }
+                            }).querySelector('input')
+
+                            const sInput = createFormControl({
+                                parent: bboxFields,
+                                labelInnerText: 'South',
+                                inputAttrs: {
+                                    type: 'number',
+                                    max: 90,
+                                    min: -90,
+                                    step: 15,
+                                    value: config.bbox.s
+                                }
+                            }).querySelector('input')
+
+                            const eInput = createFormControl({
+                                parent: bboxFields,
+                                labelInnerText: 'East',
+                                inputAttrs: {
+                                    type: 'number',
+                                    max: 180,
+                                    min: -180,
+                                    step: 15,
+                                    value: config.bbox.e
+                                }
+                            }).querySelector('input')
+
+                            const nInput = createFormControl({
+                                parent: bboxFields,
+                                labelInnerText: 'North',
+                                inputAttrs: {
+                                    type: 'number',
+                                    max: 90,
+                                    min: -90,
+                                    step: 15,
+                                    value: config.bbox.n
+                                }
+                            }).querySelector('input')
+
+                            const bboxPaddingInput = createFormControl({
+                                parent: bboxFields,
+                                labelInnerText: 'Padding',
+                                inputAttrs: {
+                                    type: 'number',
+                                    min: 0,
+                                    step: 10,
+                                    value: config.bbox.padding
+                                }
+                            }).querySelector('input')
+
+                            const bboxMaxZoomInput = createFormControl({
+                                parent: bboxFields,
+                                labelInnerText: 'Maximum Zoom',
+                                inputAttrs: {
+                                    type: 'number',
+                                    min: 0,
+                                    max: 22,
+                                    step: 10,
+                                    value: config.bbox.maxZoom
+                                }
+                            }).querySelector('input')
+
+                            const saveBtn = modal.querySelector(`.modal-footer > button[data-bs-dismiss='modal']`)
+                            saveBtn.removeAttribute('data-bs-dismiss')
+                            saveBtn.innerText = 'Apply changes'
+                            saveBtn.addEventListener('click', () => {
+                                const precision = this.settings.precision
+
+                                config.method = methodSelect.value
+                                config.pitch = Math.round(parseFloat(pitchInput.value) * 100) / 100
+                                config.bearing = Math.round(parseFloat(bearingInput.value) * 100) / 100
+
+                                config.centroid.zoom = Math.round(parseFloat(zoomInput.value) * 100) / 100
+                                config.centroid.lng = Math.round(parseFloat(centerLngInput.value) * precision) / precision
+                                config.centroid.lat = Math.round(parseFloat(centerLatInput.value) * precision) / precision
+
+                                config.bbox.w = Math.round(parseFloat(wInput.value) * precision) / precision
+                                config.bbox.s = Math.round(parseFloat(sInput.value) * precision) / precision
+                                config.bbox.e = Math.max(Math.round(parseFloat(eInput.value) * precision) / precision, config.bbox.w)
+                                config.bbox.n = Math.max(Math.round(parseFloat(nInput.value) * precision) / precision, config.bbox.s)
+                                config.bbox.padding = parseInt(bboxPaddingInput.value)
+                                config.bbox.maxZoom = Math.round(parseFloat(bboxMaxZoomInput.value) * 100) / 100
+                                
+                                this.goToBookmark()
+
+                                this.updateSettings()
+                            })
                         }
                     }
                 }
@@ -450,7 +862,7 @@ class SettingsControl {
         Object.entries(settings).forEach(([section, params]) => {
             const container = customCreateElement({
                 parent: sections,
-                className: 'd-flex flex-column gap-2 px-2'
+                className: 'd-flex flex-column gap-1 px-2'
             })
 
             const body = customCreateElement({
@@ -522,7 +934,7 @@ class SettingsControl {
                             title: option.title,
                             for: input.id,
                         },
-                        innerText: option.icon,
+                        innerHTML: option.icon,
                     })
                 } else {
                     const label = customCreateElement({
@@ -538,6 +950,142 @@ class SettingsControl {
                 }
             })
         })
+    }
+
+    goToBookmark() {
+        const config = this.settings.bookmark
+
+        if (config.method === 'centroid') {
+            this.map.setZoom(config.centroid.zoom)
+            console.log(config)
+            this.map.setCenter(Array('lng','lat').map(i => config.centroid[i]))
+        } else {
+            const bboxConfig = config[config.method]
+
+            const bbox = (
+                config.method === 'bbox' 
+                ? Array('w','s','e','n').map(i => bboxConfig[i]) 
+                : null
+            )
+            
+            console.log(bboxConfig, bbox)
+
+            if (bbox) {
+                this.map.fitBounds(bbox, {
+                    padding: bboxConfig.padding,
+                    maxZoom: bboxConfig.maxZoom,
+                    duration: 0
+                })
+            } 
+        }
+
+        this.map.setPitch(config.pitch)
+        this.map.setBearing(config.bearing)
+
+    }
+
+    getView() {
+        const bounds = this.map.getBounds().toArray().flatMap(i => i)
+        const precision = this.settings.precision
+
+        return {
+            pitch: Math.round(this.map.getPitch() * 100) / 100,
+            bearing: Math.round(this.map.getBearing() * 100) / 100,
+
+            centroid: {
+                zoom: Math.round(this.map.getZoom() * 100) / 100,
+                ...(Object.fromEntries(
+                    Object.entries(this.map.getCenter())
+                    .map(([k,v]) => [k, Math.round(v * precision) / precision])
+                ))
+            },
+
+            bbox: {
+                w: bounds[0],
+                s: bounds[1],
+                e: bounds[2],
+                n: bounds[3],
+                padding: 0,
+                maxZoom: 22,
+            }
+        }
+    }
+
+    configBasemapLayer() {
+        const map = this.map
+
+        if (map.getLayer('basemap')) {
+            map.removeLayer('basemap')
+        }
+
+        const style = structuredClone(map.getStyle())
+        
+        if (!this.settings.basemap.render) {
+            delete style.sky
+            map.setStyle(style)
+            return
+        }
+
+        const isLight = (
+            this.settings.basemap.theme === 'light'
+            || (
+                this.settings.basemap.theme === 'auto' 
+                && getPreferredTheme() !== 'dark'
+            )
+        )
+
+        let sky
+        let basemap
+        
+        if (isLight) {
+            basemap = MAP_DEFAULTS.basemap.default
+            sky = MAP_DEFAULTS.sky.default
+        } else {
+            sky = MAP_DEFAULTS.sky.grayscale
+            basemap = MAP_DEFAULTS.basemap.grayscale
+        }
+
+        style.sky = sky
+        map.setStyle(style)
+
+        map.addLayer({
+            id: 'basemap',
+            type: 'raster',
+            source: 'basemap',
+            paint: basemap
+        }, map.sourcesHandler.getBeforeId('basemap'))
+    }
+
+    configBasemap() {
+        const map = this.map
+        const config = this.settings.basemap
+        const id = 'basemap'
+
+        if (map.getLayer(id)) {
+            map.removeLayer(id)
+        }
+
+        if (map.getSource(id)) {
+            map.removeSource(id)
+        }
+
+        const style = structuredClone(map.getStyle())
+        if (style.sky) {
+            delete style.sky
+            map.setStyle(style)
+        }
+
+        if (!config.render) return
+
+        map.addSource(id, {
+            type: 'raster',
+            tileSize: config.tileSize,
+            maxzoom: config.maxzoom,
+            tiles: config.tiles,
+            attribution: config.attribution,
+        })
+
+        this.configBasemapLayer()
     }
 
     configHillshade(){

@@ -1,0 +1,3 @@
+.in-map-modal.show + .modal-backdrop.fade.show {
+    opacity: 0;
+}

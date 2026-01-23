@@ -261,3 +261,9 @@ const createFormSelect = ({
 
     return container
 }
+
+const clampNumnerToRange = (number, max, min) => {
+    if (number > max) return max
+    if (number < min) return min
+    return number
+}

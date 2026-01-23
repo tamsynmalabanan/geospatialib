@@ -38,8 +38,10 @@ const MAP_DEFAULTS = {
         }
     },
     settings: {
+        unit: 'metric',
         terrain: false,
         projection: 'mercator',
+        precision: 1000000,
         interactions: {
             tooltip: {
                 active: true,
@@ -81,10 +83,30 @@ const MAP_DEFAULTS = {
             }  
         },
         bookmark: {
-            zoom: 1,
-            center: new maplibregl.LngLat(0,3),
+            method: 'centroid',
             pitch: 0,
             bearing: 0,
+            centroid: {
+                zoom: 1,
+                lng: 0,
+                lat: 3,
+            },
+            bbox: {
+                w: -140,
+                s: -70,
+                e: 160,
+                n: 90,
+                padding: 0,
+                maxZoom: 1,
+            }
+        },
+        basemap: {
+            render: true,
+            tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            theme: 'auto',
+            tileSize: 256,
+            maxzoom: 256,
+            attribution: '&copy; OpenStreetMap Contributors'
         }
     }
 }
@@ -93,13 +115,23 @@ const createNewMap = (el) => {
     let settings = el.dataset.mapSettings || localStorage.getItem('mapSettings')
     settings = settings ? JSON.parse(settings) : structuredClone(MAP_DEFAULTS.settings)
 
+    const isLight = (
+        settings.basemap.theme === 'light'
+        || (
+            settings.basemap.theme === 'auto' 
+            && getPreferredTheme() !== 'dark'
+        )
+    )
+
     const map = new maplibregl.Map({
         container: el.id,
 
-        zoom: settings.bookmark.zoom,
-        center: settings.bookmark.center,
         pitch: settings.bookmark.pitch,
         bearing: settings.bookmark.bearing,
+        ...(settings.bookmark.method === 'centroid' ? {
+            zoom: settings.bookmark.centroid.zoom,
+            center: Array('lng', 'lat').map(i => settings.bookmark.centroid[i]),
+        } : {}),
         
         hash: false,
         style: {
@@ -107,10 +139,10 @@ const createNewMap = (el) => {
             sources: {
                 basemap: {
                     type: 'raster',
-                    tileSize: 256,
-                    maxzoom: 20,
-                    tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
-                    attribution: '&copy; OpenStreetMap Contributors',
+                    tileSize: settings.basemap.tileSize,
+                    maxzoom: settings.basemap.maxzoom,
+                    tiles: settings.basemap.tiles,
+                    attribution: settings.basemap.attribution,
                 },
                 terrain: {
                     type: 'raster-dem',
@@ -121,25 +153,19 @@ const createNewMap = (el) => {
                 },
             },
             layers: [
-                {
+                ...(settings.basemap.render ? [{
                     id: 'basemap',
                     type: 'raster',
                     source: 'basemap',
-                    paint: (
-                        getPreferredTheme() === 'light' 
-                        ? MAP_DEFAULTS.basemap.default 
-                        : MAP_DEFAULTS.basemap.grayscale
-                    )
-                },         
+                    paint: isLight ? MAP_DEFAULTS.basemap.default : MAP_DEFAULTS.basemap.grayscale
+                }] : []),         
             ],
-            sky: (
-                getPreferredTheme() === 'light' 
-                ? MAP_DEFAULTS.sky.default 
-                : MAP_DEFAULTS.sky.grayscale
-            )
+            ...(settings.basemap.render ? {
+                sky: isLight? MAP_DEFAULTS.sky.default : MAP_DEFAULTS.sky.grayscale
+            }: {})
         },
         maxZoom: 22,
-        maxPitch: 85
+        maxPitch: 75,
     })
 
     map.on('load', () => {

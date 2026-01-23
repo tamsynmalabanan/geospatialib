@@ -17,9 +17,8 @@ class InteractionsHandler {
 
     configCursor() {
         this.map.getCanvas().style.cursor = (
-            Object.values(this.map._settings.settings.interactions).find(i => i.active) 
-            ? 'pointer' 
-            : ''
+            Object.values(this.map._settings.settings.interactions).find(i => i.active)
+            ? 'pointer' : ''
         )
     }
 
