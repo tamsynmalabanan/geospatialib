@@ -102,8 +102,8 @@ const MAP_DEFAULTS = {
         },
         basemap: {
             render: true,
-            tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
             theme: 'auto',
+            tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
             tileSize: 256,
             maxzoom: 20,
             attribution: '&copy; OpenStreetMap Contributors'

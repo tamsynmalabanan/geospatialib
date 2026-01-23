@@ -141,7 +141,7 @@ class SettingsControl {
 
         const sections = this.sections = customCreateElement({
             parent: menu,
-            className: 'd-flex flex-column gap-2'
+            className: 'd-flex flex-column gap-2 accordion'
         })
 
         const settings = {
@@ -275,6 +275,153 @@ class SettingsControl {
                         checked: this.settings.basemap.theme === 'dark',
                         disabled: ! this.settings.basemap.render,
                     },
+                    more: {
+                        title: 'Basemap options',
+                        icon: '🎚️',
+                        type: 'checkbox',
+                        handler: (e) => {
+                            e.target.checked = false
+
+                            document.querySelector(`.in-map-modal`)?.remove()
+                            
+                            const config = this.settings.basemap
+
+                            const modal = createModal({
+                                titleInnerText: 'Basemap options',
+                                isStatic: true,
+                            })
+                            modal.classList.add('in-map-modal')
+
+                            const body = modal.querySelector('.modal-body')
+                            body.classList.add('d-flex','flex-column','gap-4')
+
+                            const baseSection = customCreateElement({
+                                parent: body,
+                                className: 'd-flex gap-2 flex-column',
+                            })
+
+                            const baseHeader = customCreateElement({
+                                parent: baseSection,
+                                className: 'd-flex flex-no-wrap gap-5 justify-content-between',
+                            })
+
+                            const baseTitle = customCreateElement({
+                                parent: baseHeader,
+                                className: 'fw-bold text-wrap',
+                                innerText: 'General'
+                            })
+
+                            const baseOptions = customCreateElement({
+                                parent: baseHeader,
+                                className: 'd-flex flex-nowrap gap-2'
+                            })
+
+                            const defaultBasemap = customCreateElement({
+                                parent: baseOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
+                                events: {
+                                    click: (e) => {
+                                        const defaultBasemap = MAP_DEFAULTS.settings.basemap
+                                        themeSelect.value = defaultBasemap.theme
+                                    }
+                                }
+                            })
+
+                            const baseFields = customCreateElement({
+                                parent: baseSection,
+                                className: 'd-flex gap-2 flex-wrap',
+                            })
+
+                            const themeSelect = createFormSelect({
+                                parent: baseFields,
+                                labelInnerText: 'Basemap theme',
+                                selected: config.theme,
+                                options: {
+                                    'auto': 'Auto',
+                                    'light': 'Light',
+                                    'dark': 'Dark',
+                                }
+                            }).querySelector('select')
+
+
+                            const sourceSection = customCreateElement({
+                                parent: body,
+                                className: 'd-flex gap-2 flex-column',
+                            })
+
+                            const sourceHeader = customCreateElement({
+                                parent: sourceSection,
+                                className: 'd-flex flex-no-wrap gap-5 justify-content-between',
+                            })
+
+                            const sourceTitle = customCreateElement({
+                                parent: sourceHeader,
+                                className: 'fw-bold text-wrap',
+                                innerText: 'Tile sources'
+                            })
+
+                            const sourceOptions = customCreateElement({
+                                parent: sourceHeader,
+                                className: 'd-flex flex-nowrap gap-2'
+                            })
+
+                            const addSource = customCreateElement({
+                                parent: sourceOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-success bi bi-plus-lg',
+                                events: {
+                                    click: (e) => {
+                                    
+                                    }
+                                }
+                            })
+
+                            const defaultSources = customCreateElement({
+                                parent: sourceOptions,
+                                tag:'button',
+                                className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
+                                events: {
+                                    click: (e) => {
+                                        const sources = MAP_DEFAULTS.settings.basemap.tiles
+                                        // themeSelect.value = defaultBasemap.theme
+                                    }
+                                }
+                            })
+
+                            const sourceFields = customCreateElement({
+                                parent: sourceSection,
+                                className: 'd-flex gap-2 flex-wrap',
+                            })
+
+                            // const pitchInput = createFormControl({
+                            //     parent: sourceFields,
+                            //     labelInnerText: 'Pitch',
+                            //     inputAttrs: {
+                            //         type: 'number',
+                            //         max: 75,
+                            //         min: 0,
+                            //         step: 15,
+                            //         value: config.pitch
+                            //     }
+                            // }).querySelector('input')
+
+                            const saveBtn = modal.querySelector(`.modal-footer > button[data-bs-dismiss='modal']`)
+                            saveBtn.removeAttribute('data-bs-dismiss')
+                            saveBtn.innerText = 'Apply changes'
+                            saveBtn.addEventListener('click', () => {
+                                config.theme = themeSelect.value
+                                Array.from(
+                                    e.target.closest(`#${this.sections.id} > div > .collapse > div`)
+                                    .querySelectorAll(`input[name="basemap"]`)
+                                ).forEach(el => el.checked = el.value === config.theme)
+
+                                this.configBasemap()
+
+                                this.updateSettings()
+                            })
+                        }
+                    }
                 }
             },
             hillshade: {
@@ -892,16 +1039,19 @@ class SettingsControl {
         Object.entries(settings).forEach(([section, params]) => {
             const container = customCreateElement({
                 parent: sections,
-                className: 'd-flex flex-column gap-1 px-2'
+                className: 'd-flex flex-column gap-1 px-2 accordion-item border-0'
             })
 
             const body = customCreateElement({
-                className: 'collapse show',
+                className: `collapse accordion-collapse ${Object.keys(settings)[0] === section ? 'show' : ''}`,
+                attrs: {
+                    'data-bs-parent': `#${sections.id}`
+                }
             })
 
             const header = customCreateElement({
                 parent: container,
-                innerText: params.title.toUpperCase(),
+                innerText: params.title,
                 className: 'fs-12 fw-bold',
                 attrs: {
                     'data-bs-toggle': 'collapse',
