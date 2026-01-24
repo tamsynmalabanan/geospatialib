@@ -76,16 +76,17 @@ class SettingsControl {
         return container
     }
 
-    createBasemapTileSourceForm(url, {dismissible=true}={}) {
+    createTileSourceForm(url, {dismissible=true}={}) {
         const container = customCreateElement({
             className: 'd-flex gap-3 flex-wrap align-items-end'
         })
 
         const sourceInput = createFormControl({
             parent: container,
-            labelInnerText: 'Tile source URL',
+            labelInnerText: 'URL',
             inputAttrs: {
                 type: 'url',
+                name: 'source',
                 value: url
             }
         }).querySelector('input')
@@ -357,8 +358,16 @@ class SettingsControl {
                                 events: {
                                     click: (e) => {
                                         const defaultBasemap = MAP_DEFAULTS.settings.basemap
+
                                         themeSelect.value = defaultBasemap.theme
                                         attributionInput.value = defaultBasemap.attribution
+
+                                        sourceFields.innerHTML = ''
+                                        Object.entries(defaultBasemap.tiles).forEach(([index, url]) => {
+                                            sourceFields.appendChild(this.createTileSourceForm(url, {dismissible:index>0}))
+                                        })
+
+                                        evaluateAttribution()
                                     }
                                 }
                             })
@@ -385,8 +394,17 @@ class SettingsControl {
                                 inputAttrs: {
                                     type: 'text',
                                     value: config.attribution
-                                }
+                                },
+                                invalidFeedbackContent: 'This field is required.',
                             }).querySelector('input')
+                            
+                            const evaluateAttribution = () => {
+                                const isInvalid = attributionInput.value.trim() === ''
+                                attributionInput.classList.toggle('is-invalid', isInvalid)
+                                saveBtn.disabled = isInvalid
+                            }
+
+                            attributionInput.addEventListener('change', evaluateAttribution)
 
                             const sourceSection = customCreateElement({
                                 parent: body,
@@ -415,23 +433,7 @@ class SettingsControl {
                                 className: 'btn-sm btn btn-success bi bi-plus-lg',
                                 events: {
                                     click: (e) => {
-                                        sourceFields.appendChild(this.createBasemapTileSourceForm(''))
-                                    }
-                                }
-                            })
-
-                            const defaultSources = customCreateElement({
-                                parent: sourceOptions,
-                                tag:'button',
-                                className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
-                                events: {
-                                    click: (e) => {
-                                        sourceFields.innerHTML = ''
-                                        
-                                        Object.entries(MAP_DEFAULTS.settings.basemap.tiles).forEach(([index, url]) => {
-                                            console.log(index)
-                                            sourceFields.appendChild(this.createBasemapTileSourceForm(url, {dismissible:index>0}))
-                                        })
+                                        sourceFields.appendChild(this.createTileSourceForm(''))
                                     }
                                 }
                             })
@@ -439,10 +441,20 @@ class SettingsControl {
                             const sourceFields = customCreateElement({
                                 parent: sourceSection,
                                 className: 'd-flex gap-2 flex-column',
+                                events: {
+                                    'change': (e) => {
+                                        const sourceInputs = Array.from(sourceFields.querySelectorAll(`input[name="source"][type="url"]`))
+                                        if (!sourceInputs.includes(e.target)) return
+                                        if (sourceInputs.find(el => el.value.includes('openstreetmap'))) return
+                                        if (attributionInput.value.trim() !== MAP_DEFAULTS.settings.basemap.attribution) return
+                                        attributionInput.value = ''
+                                        evaluateAttribution()
+                                    }
+                                }
                             })
 
-                            config.tiles.forEach(url => {
-                                sourceFields.appendChild(this.createBasemapTileSourceForm(url, {dismissible:false}))
+                            Object.entries(config.tiles).forEach(([index, url]) => {
+                                sourceFields.appendChild(this.createTileSourceForm(url, {dismissible:index>0}))
                             })
                             
                             const saveBtn = modal.querySelector(`.modal-footer > button[data-bs-dismiss='modal']`)
@@ -457,7 +469,7 @@ class SettingsControl {
 
                                 config.attribution = attributionInput.value
 
-                                config.tiles = Array.from(sourceFields.querySelectorAll(`input[type="url"]`)).map(el => el.value)
+                                config.tiles = Array.from(sourceFields.querySelectorAll(`input[name="source"][type="url"]`)).map(el => el.value)
 
                                 this.configBasemap()
 
@@ -1024,7 +1036,7 @@ class SettingsControl {
 
                             const saveBtn = modal.querySelector(`.modal-footer > button[data-bs-dismiss='modal']`)
                             saveBtn.removeAttribute('data-bs-dismiss')
-                            saveBtn.innerText = 'Apply changes'
+                            saveBtn.innerText = 'Apply changes and zoom to bookmark'
                             saveBtn.addEventListener('click', () => {
                                 const precision = this.settings.precision
 

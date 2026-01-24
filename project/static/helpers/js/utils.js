@@ -194,6 +194,7 @@ const createFormControl = ({
     parent,
     labelInnerText,
     inputAttrs,
+    invalidFeedbackContent,
 }={}) => {
     const container = customCreateElement({
         parent,
@@ -203,7 +204,7 @@ const createFormControl = ({
     const label = customCreateElement({
         parent: container,
         tag: 'label',
-        className: 'form-label fs-14  flex-grow-1',
+        className: 'form-label fs-14 flex-grow-1',
         innerText: labelInnerText
     })
 
@@ -213,6 +214,14 @@ const createFormControl = ({
         className: 'form-control form-control-sm fs-14',
         attrs: inputAttrs
     })
+
+    if (invalidFeedbackContent) {
+        const invalidFeedback = customCreateElement({
+            parent: container,
+            className: 'invalid-feedback',
+            innerHTML: invalidFeedbackContent
+        })
+    }
 
     label.setAttribute('for', input.id)
 
@@ -240,7 +249,7 @@ const createFormSelect = ({
     const select = customCreateElement({
         tag: 'select',
         parent: container,
-        className: 'form-select form-select-sm fs-14 flex-grow-1',
+        className: 'form-select form-select-sm fs-14',
     })
 
     Object.entries(options).forEach(([value,innerText]) => {

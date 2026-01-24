@@ -107,12 +107,11 @@ class ControlsHandler {
         this.syncTheme()
     }
 
-
     configAttributionControl() {
         const control = this.map._controls.find(c => c instanceof maplibregl.AttributionControl)
         
         const container = control._container
-        container.style.maxWidth = `${window.innerWidth * 0.6}px`
+        container.style.maxWidth = `60vw`
         container.style.marginTop = `0px`
 
         const toggle = container.querySelector(`.maplibregl-ctrl-attrib-button`)

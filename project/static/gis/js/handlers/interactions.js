@@ -319,7 +319,7 @@ class InteractionsHandler {
                 tag: 'td',
                 parent: tr,
                 className: 'text-wrap',
-                style: {maxWidth: `${window.innerWidth * 0.25}px`},
+                style: {maxWidth: `${window.innerWidth * 0.4}px`},
                 innerHTML: data   
             })
         })
@@ -399,7 +399,7 @@ class InteractionsHandler {
         let lngLat = e.lngLat
 
         const theme = getPreferredTheme()
-        const popupWidth = Math.max(window.innerWidth * 0.75, 300)
+        const popupWidth = Math.max(window.innerWidth * 0.75, 400)
 
         const popup = info.popup = new maplibregl.Popup()
         .setLngLat(lngLat)
