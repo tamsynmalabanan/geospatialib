@@ -265,7 +265,6 @@ class SettingsControl {
                     },
                 }
             },
-
             // dark and light mode basemap and sky config - paint
             basemap: {
                 title: 'Basemap',
@@ -357,7 +356,7 @@ class SettingsControl {
                                 className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
                                 events: {
                                     click: (e) => {
-                                        const defaultBasemap = MAP_DEFAULTS.settings.basemap
+                                        const defaultBasemap = MAP_DEFAULT_SETTINGS.settings.basemap
 
                                         themeSelect.value = defaultBasemap.theme
                                         attributionInput.value = defaultBasemap.attribution
@@ -446,7 +445,7 @@ class SettingsControl {
                                         const sourceInputs = Array.from(sourceFields.querySelectorAll(`input[name="source"][type="url"]`))
                                         if (!sourceInputs.includes(e.target)) return
                                         if (sourceInputs.find(el => el.value.includes('openstreetmap'))) return
-                                        if (attributionInput.value.trim() !== MAP_DEFAULTS.settings.basemap.attribution) return
+                                        if (attributionInput.value.trim() !== MAP_DEFAULT_SETTINGS.settings.basemap.attribution) return
                                         attributionInput.value = ''
                                         evaluateAttribution()
                                     }
@@ -469,7 +468,17 @@ class SettingsControl {
 
                                 config.attribution = attributionInput.value
 
-                                config.tiles = Array.from(sourceFields.querySelectorAll(`input[name="source"][type="url"]`)).map(el => el.value)
+                                config.tiles = (
+                                    Array.from(sourceFields.querySelectorAll(`input[name="source"][type="url"]`))
+                                    .map(el => el.value.trim())
+                                    .filter(url => {
+                                        try {
+                                            return new URL(url)
+                                        } catch (error) {
+                                            return false
+                                        }
+                                    })
+                                )
 
                                 this.configBasemap()
 
@@ -624,7 +633,7 @@ class SettingsControl {
                                     click: (e) => {
                                         multiFields.innerHTML = ''
 
-                                        const multiConfig = MAP_DEFAULTS.settings.hillshade.multidirectional
+                                        const multiConfig = MAP_DEFAULT_SETTINGS.settings.hillshade.multidirectional
                                         Object.keys(multiConfig[hillshadeParams[0]]).forEach(i => {
                                             multiFields.appendChild(this.createHillshadeForm(Object.fromEntries(hillshadeParams.map(name => {
                                                 return [name, multiConfig[name][i]]
@@ -712,7 +721,7 @@ class SettingsControl {
                             document.querySelector(`.in-map-modal`)?.remove()
                             
                             const config = this.settings.bookmark
-                            const defaultBookmark = MAP_DEFAULTS.settings.bookmark
+                            const defaultBookmark = MAP_DEFAULT_SETTINGS.settings.bookmark
 
                             const modal = createModal({
                                 titleInnerText: 'Bookmark options',
@@ -1267,25 +1276,14 @@ class SettingsControl {
             )
         )
 
-        let sky
-        let basemap
-        
-        if (isLight) {
-            basemap = MAP_DEFAULTS.basemap.default
-            sky = MAP_DEFAULTS.sky.default
-        } else {
-            sky = MAP_DEFAULTS.sky.grayscale
-            basemap = MAP_DEFAULTS.basemap.grayscale
-        }
-
-        style.sky = sky
+        style.sky = this.settings.basemap.paints.sky[isLight ? 'light' : 'dark']
         map.setStyle(style)
 
         map.addLayer({
             id: 'basemap',
             type: 'raster',
             source: 'basemap',
-            paint: basemap
+            paint: this.settings.basemap.paints.basemap[isLight ? 'light' : 'dark']
         }, map.sourcesHandler.getBeforeId('basemap'))
     }
 
