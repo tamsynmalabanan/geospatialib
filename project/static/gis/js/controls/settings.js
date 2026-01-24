@@ -233,13 +233,6 @@ class SettingsControl {
         if (this.settings.bookmark.method !== 'centroid') {
             this.goToBookmark()
         }
-    
-        // window.addEventListener("error", (event) => {
-        //     if (event.message.includes("Attempting to run(), but is already running")) {
-        //         console.warn("MapLibre run() error detected:", event);
-        //         // handle gracefully here
-        //     }
-        // })
     }
 
     configSettingsControl() {
