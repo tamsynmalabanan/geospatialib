@@ -356,7 +356,7 @@ class SettingsControl {
                                 className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
                                 events: {
                                     click: (e) => {
-                                        const defaultBasemap = MAP_DEFAULT_SETTINGS.settings.basemap
+                                        const defaultBasemap = MAP_DEFAULT_SETTINGS.basemap
 
                                         themeSelect.value = defaultBasemap.theme
                                         attributionInput.value = defaultBasemap.attribution
@@ -445,7 +445,7 @@ class SettingsControl {
                                         const sourceInputs = Array.from(sourceFields.querySelectorAll(`input[name="source"][type="url"]`))
                                         if (!sourceInputs.includes(e.target)) return
                                         if (sourceInputs.find(el => el.value.includes('openstreetmap'))) return
-                                        if (attributionInput.value.trim() !== MAP_DEFAULT_SETTINGS.settings.basemap.attribution) return
+                                        if (attributionInput.value.trim() !== MAP_DEFAULT_SETTINGS.basemap.attribution) return
                                         attributionInput.value = ''
                                         evaluateAttribution()
                                     }
@@ -633,7 +633,7 @@ class SettingsControl {
                                     click: (e) => {
                                         multiFields.innerHTML = ''
 
-                                        const multiConfig = MAP_DEFAULT_SETTINGS.settings.hillshade.multidirectional
+                                        const multiConfig = MAP_DEFAULT_SETTINGS.hillshade.multidirectional
                                         Object.keys(multiConfig[hillshadeParams[0]]).forEach(i => {
                                             multiFields.appendChild(this.createHillshadeForm(Object.fromEntries(hillshadeParams.map(name => {
                                                 return [name, multiConfig[name][i]]
@@ -721,7 +721,7 @@ class SettingsControl {
                             document.querySelector(`.in-map-modal`)?.remove()
                             
                             const config = this.settings.bookmark
-                            const defaultBookmark = MAP_DEFAULT_SETTINGS.settings.bookmark
+                            const defaultBookmark = MAP_DEFAULT_SETTINGS.bookmark
 
                             const modal = createModal({
                                 titleInnerText: 'Bookmark options',
@@ -1045,7 +1045,7 @@ class SettingsControl {
 
                             const saveBtn = modal.querySelector(`.modal-footer > button[data-bs-dismiss='modal']`)
                             saveBtn.removeAttribute('data-bs-dismiss')
-                            saveBtn.innerText = 'Apply changes and zoom to bookmark'
+                            saveBtn.innerText = 'Update bookmark'
                             saveBtn.addEventListener('click', () => {
                                 const precision = this.settings.precision
 
@@ -1064,8 +1064,6 @@ class SettingsControl {
                                 config.bbox.padding = parseInt(bboxPaddingInput.value)
                                 config.bbox.maxZoom = Math.round(parseFloat(bboxMaxZoomInput.value) * 100) / 100
                                 
-                                this.goToBookmark()
-
                                 this.updateSettings()
                             })
                         }
@@ -1201,7 +1199,6 @@ class SettingsControl {
 
         if (config.method === 'centroid') {
             this.map.setZoom(config.centroid.zoom)
-            console.log(config)
             this.map.setCenter(Array('lng','lat').map(i => config.centroid[i]))
         } else {
             const bboxConfig = config[config.method]
