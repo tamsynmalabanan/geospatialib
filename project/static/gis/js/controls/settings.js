@@ -109,6 +109,103 @@ class SettingsControl {
         return container
     }
 
+    createBasemapStyleForm(config) {
+        const container = customCreateElement({
+            className: 'd-flex gap-3 flex-wrap align-items-end'
+        })
+
+        Object.entries(config).forEach(([name, value]) => {
+            const labelInnerText = toTitleCase(name.replaceAll('-', ' '))
+            
+            if (Array('opacity', 'blend').some(i => name.includes(i))) {
+                createFormControl({
+                    parent: container,
+                    labelInnerText,
+                    inputAttrs: {
+                        type: 'number',
+                        min: 0,
+                        max: 1,
+                        step: 0.1,
+                        name,
+                        value,
+                    }
+                }).querySelector('input')
+            }
+            
+            if (Array('brightness').some(i => name.includes(i))) {
+                createFormControl({
+                    parent: container,
+                    labelInnerText,
+                    inputAttrs: {
+                        type: 'number',
+                        min: 0,
+                        max: 1,
+                        step: 0.001,
+                        name,
+                        value,
+                    }
+                }).querySelector('input')
+            }
+            
+            if (Array('saturation', 'contrast').some(i => name.includes(i))) {
+                createFormControl({
+                    parent: container,
+                    labelInnerText,
+                    inputAttrs: {
+                        type: 'number',
+                        min: -1,
+                        max: 1,
+                        step: 0.001,
+                        name,
+                        value,
+                    }
+                }).querySelector('input')
+            }
+            
+            if (Array('resampling').some(i => name.includes(i))) {
+                createFormSelect({
+                    parent: container,
+                    labelInnerText,
+                    selected: value,
+                    inputAttrs: {name},
+                    options: {
+                        'linear': 'Linear',
+                        'nearest': 'Nearest',
+                    }
+                }).querySelector('select')
+            }
+            
+            if (Array('hue').some(i => name.includes(i))) {
+                createFormControl({
+                    parent: container,
+                    labelInnerText,
+                    inputAttrs: {
+                        type: 'number',
+                        min: 0,
+                        max: 360,
+                        step: 15,
+                        name,
+                        value,
+                    }
+                }).querySelector('input')
+            }
+            
+            if (Array('color',).some(i => name.includes(i))) {
+                createFormControl({
+                    parent: container,
+                    labelInnerText,
+                    inputAttrs: {
+                        type: 'color',
+                        name,
+                        value
+                    }
+                }).querySelector('input')
+            }
+        })
+
+        return container
+    }
+
     updateSettings() {
         const settings =  JSON.stringify(this.settings)
 
@@ -136,6 +233,13 @@ class SettingsControl {
         if (this.settings.bookmark.method !== 'centroid') {
             this.goToBookmark()
         }
+    
+        // window.addEventListener("error", (event) => {
+        //     if (event.message.includes("Attempting to run(), but is already running")) {
+        //         console.warn("MapLibre run() error detected:", event);
+        //         // handle gracefully here
+        //     }
+        // })
     }
 
     configSettingsControl() {
@@ -378,7 +482,7 @@ class SettingsControl {
 
                             const themeSelect = createFormSelect({
                                 parent: baseFields,
-                                labelInnerText: 'Basemap theme',
+                                labelInnerText: 'Theme',
                                 selected: config.theme,
                                 options: {
                                     'auto': 'Auto',
@@ -455,6 +559,79 @@ class SettingsControl {
                             Object.entries(config.tiles).forEach(([index, url]) => {
                                 sourceFields.appendChild(this.createTileSourceForm(url, {dismissible:index>0}))
                             })
+
+
+
+                            const styleSection = customCreateElement({
+                                parent: body,
+                                className: 'd-flex gap-2 flex-column',
+                            })
+
+                            const styleHeader = customCreateElement({
+                                parent: styleSection,
+                                className: 'd-flex flex-no-wrap gap-5 justify-content-between',
+                            })
+
+                            const styleTitle = customCreateElement({
+                                parent: styleHeader,
+                                className: 'fw-bold text-wrap',
+                                innerText: 'Styles'
+                            })
+
+                            const styleOptions = customCreateElement({
+                                parent: styleHeader,
+                                className: 'd-flex flex-nowrap gap-2'
+                            })
+
+                            const styleFields = customCreateElement({
+                                parent: styleSection,
+                                className: 'd-flex gap-3 flex-column',
+                            })
+
+                            Object.entries(config.paints).forEach(([layerName, layerParams]) => {
+                                Object.entries(layerParams).forEach(([themeName, themeParams]) => {
+                                    const container = customCreateElement({
+                                        parent: styleFields,
+                                        className: 'd-flex flex-column gap-2 border p-3 rounded',
+                                        attrs: {
+                                            'data-style-layer': layerName,
+                                            'data-style-theme': themeName,
+                                        }
+                                    })
+
+                                    const header = customCreateElement({
+                                        parent: container,
+                                        className: 'd-flex justify-content-between',
+                                    })
+                                    
+                                    const title = customCreateElement({
+                                        parent: header,
+                                        className: 'fw-medium',
+                                        innerText: `${toTitleCase(layerName)} ${themeName} theme`
+                                    })
+
+                                    const options = customCreateElement({
+                                        parent: header,
+                                        classList: 'd-flex gap-2 felx-nowrap'
+                                    })
+
+                                    const defaultStyle = customCreateElement({
+                                        parent: options,
+                                        tag:'button',
+                                        className: 'btn-sm btn btn-secondary bi bi-arrow-counterclockwise',
+                                        events: {
+                                            click: (e) => {
+                                                header.nextElementSibling?.remove()
+                                                container.appendChild(this.createBasemapStyleForm(
+                                                    MAP_DEFAULT_SETTINGS.basemap.paints[layerName][themeName]
+                                                ))
+                                            }
+                                        }
+                                    })
+
+                                    container.appendChild(this.createBasemapStyleForm(themeParams))
+                                })
+                            })
                             
                             const saveBtn = modal.querySelector(`.modal-footer > button[data-bs-dismiss='modal']`)
                             saveBtn.removeAttribute('data-bs-dismiss')
@@ -479,6 +656,14 @@ class SettingsControl {
                                         }
                                     })
                                 )
+
+                                Array.from(styleFields.children).forEach(el => {
+                                    Array.from(el.querySelectorAll('input[name]')).forEach(field => {
+                                        config.paints[el.dataset.styleLayer][el.dataset.styleTheme][field.getAttribute('name')] = (
+                                            field.getAttribute('type') === 'number' ? parseFloat(field.value) : field.value
+                                        )
+                                    })
+                                })
 
                                 this.configBasemap()
 

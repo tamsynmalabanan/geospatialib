@@ -88,7 +88,7 @@ const hashJSON = async (jsonObj) => {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
-const hslaColor = (color='hsla(0, 0%, 100%, 1)') => {
+const hslaColor = (color='hsl(0, 0%, 100%)') => {
     if (!color || !color.startsWith('hsl')) return
     
     const [h,s,l,a] = color.split(',').map(str => parseNumber(str))
@@ -193,7 +193,7 @@ const createModal = ({
 const createFormControl = ({
     parent,
     labelInnerText,
-    inputAttrs,
+    inputAttrs = {},
     invalidFeedbackContent,
 }={}) => {
     const container = customCreateElement({
@@ -232,7 +232,9 @@ const createFormSelect = ({
     parent,
     labelInnerText,
     selected,
-    options = {}
+    options = {},
+    inputAttrs = {},
+
 }={}) => {
     const container = customCreateElement({
         parent,
@@ -250,6 +252,7 @@ const createFormSelect = ({
         tag: 'select',
         parent: container,
         className: 'form-select form-select-sm fs-14',
+        attrs: inputAttrs,
     })
 
     Object.entries(options).forEach(([value,innerText]) => {
@@ -275,4 +278,78 @@ const clampNumnerToRange = (number, max, min) => {
     if (number > max) return max
     if (number < min) return min
     return number
+}
+
+const toTitleCase = (str) => {
+  return str
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
+const hslToHex = ({h=0, s=100, l=50}={}) => {
+    l /= 100
+    const a = s * Math.min(l, 1 - l) / 100
+    const f = n => {
+      const k = (n + h / 30) % 12
+      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
+      return Math.round(255 * color).toString(16).padStart(2, '0')
+    }
+    return `#${f(0)}${f(8)}${f(4)}`
+}
+
+const hexToRGB = (hex) => {
+    hex = hex.replace(/^#/, '');
+    if (hex.length === 3) {
+      hex = hex.split('').map(c => c + c).join('')
+    }
+    const bigint = parseInt(hex, 16)
+    const r = (bigint >> 16) & 255
+    const g = (bigint >> 8) & 255
+    const b = bigint & 255
+
+    return `rgb(${r}, ${g}, ${b})`
+}
+
+const rgbToHSLA = (rgb) => {
+    rgb = rgb.split('(')[rgb.split('(').length-1].split(',')
+    
+    let r = parseInt(rgb[0]) / 255
+    let g = parseInt(rgb[1]) / 255
+    let b = parseInt(rgb[2]) / 255
+  
+    let max = Math.max(r, g, b)
+    let min = Math.min(r, g, b)
+    let delta = max - min
+  
+    let l = (max + min) / 2;
+  
+    let s = 0
+    if (delta !== 0) {
+      s = l < 0.5 ? delta / (max + min) : delta / (2 - max - min);
+    }
+  
+    let h = 0
+    if (delta !== 0) {
+      if (max === r) {
+        h = (g - b) / delta
+      } else if (max === g) {
+        h = 2 + (b - r) / delta
+      } else if (max === b) {
+        h = 4 + (r - g) / delta
+      }
+    }
+    h = Math.round(h * 60)
+    if (h < 0) {
+      h += 360
+    }
+  
+    s = +(s * 100).toFixed(1)
+    l = +(l * 100).toFixed(1)
+  
+    return `hsla(${h}, ${s}%, ${l}%, 1)`
+}
+
+const hexToHSLA = (hex) => {
+    return rgbToHSLA(hexToRGB(hex))
 }

@@ -71,6 +71,7 @@ const MAP_DEFAULT_SETTINGS = {
         paints: {
             basemap: {
                 light: {
+                    'raster-resampling': 'linear',
                     'raster-opacity': 1,
                     'raster-hue-rotate': 0,
                     'raster-brightness-min': 0,
@@ -79,17 +80,18 @@ const MAP_DEFAULT_SETTINGS = {
                     'raster-contrast': 0,
                 },
                 dark: {
+                    'raster-resampling': 'linear',
                     'raster-opacity': 1, // 0 to 1
-                    'raster-hue-rotate': 200, // 0 to 360
+                    'raster-hue-rotate': 0, // 0 to 360
                     'raster-brightness-min': 0, // 0 to 1
-                    'raster-brightness-max': 0.01, // 0 to 1
+                    'raster-brightness-max': 0.001, // 0 to 1
                     'raster-saturation': -1, // -1 to 1
-                    'raster-contrast': 0.99, // -1 to 1
+                    'raster-contrast': 0.995, // -1 to 1
                 }
             },
             sky: {
                 light: {
-                    "sky-color": "#88C6FC",
+                    "sky-color": "#88c6fc",
                     "horizon-color": "#ffffff",
                     "fog-color": "#ffffff",
                     "fog-ground-blend": 0.5,
@@ -98,9 +100,9 @@ const MAP_DEFAULT_SETTINGS = {
                     "atmosphere-blend": 0.8
                 },
                 dark: {
-                    "sky-color": "hsla(208, 95%, 15%, 1.00)",
-                    "horizon-color": "hsla(0, 0%, 50%, 1.00)",
-                    "fog-color": "hsla(0, 0%, 50%, 1.00)",
+                    "sky-color": "#02294b",
+                    "horizon-color": "#808080",
+                    "fog-color": "#808080",
                     "fog-ground-blend": 0.5,
                     "horizon-fog-blend": 0.8,
                     "sky-horizon-blend": 0.8,
