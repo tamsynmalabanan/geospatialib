@@ -69,8 +69,8 @@ const MAP_DEFAULT_SETTINGS = {
         maxzoom: 20,
         attribution: '&copy; OpenStreetMap Contributors',
         paints: {
-            basemap: {
-                light: {
+            light: {
+                basemap: {
                     'raster-resampling': 'linear',
                     'raster-opacity': 1,
                     'raster-hue-rotate': 0,
@@ -79,18 +79,7 @@ const MAP_DEFAULT_SETTINGS = {
                     'raster-saturation': 0,
                     'raster-contrast': 0,
                 },
-                dark: {
-                    'raster-resampling': 'linear',
-                    'raster-opacity': 1, // 0 to 1
-                    'raster-hue-rotate': 0, // 0 to 360
-                    'raster-brightness-min': 0, // 0 to 1
-                    'raster-brightness-max': 0.001, // 0 to 1
-                    'raster-saturation': -1, // -1 to 1
-                    'raster-contrast': 0.995, // -1 to 1
-                }
-            },
-            sky: {
-                light: {
+                sky: {
                     "sky-color": "#88c6fc",
                     "horizon-color": "#ffffff",
                     "fog-color": "#ffffff",
@@ -99,7 +88,18 @@ const MAP_DEFAULT_SETTINGS = {
                     "sky-horizon-blend": 0.8,
                     "atmosphere-blend": 0.8
                 },
-                dark: {
+            },
+            dark: {
+                basemap: {
+                    'raster-resampling': 'linear',
+                    'raster-opacity': 1, // 0 to 1
+                    'raster-hue-rotate': 0, // 0 to 360
+                    'raster-brightness-min': 0, // 0 to 1
+                    'raster-brightness-max': 0.005, // 0 to 1
+                    'raster-saturation': -1, // -1 to 1
+                    'raster-contrast': 0.995, // -1 to 1
+                },
+                sky: {
                     "sky-color": "#02294b",
                     "horizon-color": "#808080",
                     "fog-color": "#808080",
@@ -117,13 +117,12 @@ const createNewMap = (el) => {
     let settings = el.dataset.mapSettings || localStorage.getItem('mapSettings')
     settings = settings ? JSON.parse(settings) : structuredClone(MAP_DEFAULT_SETTINGS)
 
-    const isLight = (
-        settings.basemap.theme === 'light'
-        || (
+    const basemapTheme = settings.basemap.paints[(
+        settings.basemap.theme === 'light' || (
             settings.basemap.theme === 'auto' 
             && getPreferredTheme() !== 'dark'
         )
-    )
+    ) ? 'light' : 'dark']
 
     const map = new maplibregl.Map({
         container: el.id,
@@ -159,11 +158,11 @@ const createNewMap = (el) => {
                     id: 'basemap',
                     type: 'raster',
                     source: 'basemap',
-                    paint: settings.basemap.paints.basemap[isLight ? 'light' : 'dark']
+                    paint: basemapTheme.basemap
                 }] : []),         
             ],
             ...(settings.basemap.render ? {
-                sky: settings.basemap.paints.sky[isLight ? 'light' : 'dark']
+                sky: basemapTheme.sky
             }: {})
         },
         maxZoom: 22,

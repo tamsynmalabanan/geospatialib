@@ -581,11 +581,27 @@ class SettingsControl {
                                 className: 'd-flex gap-3 flex-column',
                             })
 
-                            Object.entries(config.paints).forEach(([layerName, layerParams]) => {
-                                Object.entries(layerParams).forEach(([themeName, themeParams]) => {
+                            Object.entries(config.paints).forEach(([themeName, themeParams]) => {
+                                const themeContainer = customCreateElement({
+                                    parent: styleFields,
+                                    className: 'd-flex flex-column gap-4 border p-3 rounded',
+                                })
+
+                                const header = customCreateElement({
+                                    parent: themeContainer,
+                                    className: 'd-flex justify-content-between',
+                                })
+                                
+                                const title = customCreateElement({
+                                    parent: header,
+                                    className: 'fw-medium',
+                                    innerText: `${toTitleCase(themeName)} theme`
+                                })
+
+                                Object.entries(themeParams).forEach(([layerName, layerParams]) => {
                                     const container = customCreateElement({
-                                        parent: styleFields,
-                                        className: 'd-flex flex-column gap-2 border p-3 rounded',
+                                        parent: themeContainer,
+                                        className: 'd-flex flex-column gap-2',
                                         attrs: {
                                             'data-style-layer': layerName,
                                             'data-style-theme': themeName,
@@ -599,8 +615,8 @@ class SettingsControl {
                                     
                                     const title = customCreateElement({
                                         parent: header,
-                                        className: 'fw-medium',
-                                        innerText: `${toTitleCase(layerName)} ${themeName} theme`
+                                        className: '',
+                                        innerText: `${toTitleCase(layerName)}`
                                     })
 
                                     const options = customCreateElement({
@@ -616,13 +632,13 @@ class SettingsControl {
                                             click: (e) => {
                                                 header.nextElementSibling?.remove()
                                                 container.appendChild(this.createBasemapStyleForm(
-                                                    MAP_DEFAULT_SETTINGS.basemap.paints[layerName][themeName]
+                                                    MAP_DEFAULT_SETTINGS.basemap.paints[themeName][layerName]
                                                 ))
                                             }
                                         }
                                     })
 
-                                    container.appendChild(this.createBasemapStyleForm(themeParams))
+                                    container.appendChild(this.createBasemapStyleForm(layerParams))
                                 })
                             })
                             
@@ -652,7 +668,7 @@ class SettingsControl {
 
                                 Array.from(styleFields.children).forEach(el => {
                                     Array.from(el.querySelectorAll('input[name]')).forEach(field => {
-                                        config.paints[el.dataset.styleLayer][el.dataset.styleTheme][field.getAttribute('name')] = (
+                                        config.paints[el.dataset.styleTheme][el.dataset.styleLayer][field.getAttribute('name')] = (
                                             field.getAttribute('type') === 'number' ? parseFloat(field.value) : field.value
                                         )
                                     })
@@ -1443,22 +1459,21 @@ class SettingsControl {
             return
         }
 
-        const isLight = (
-            this.settings.basemap.theme === 'light'
-            || (
+        const basemapTheme = this.settings.basemap.paints[(
+            this.settings.basemap.theme === 'light' || (
                 this.settings.basemap.theme === 'auto' 
                 && getPreferredTheme() !== 'dark'
-            )
-        )
+            ) ? 'light' : 'dark'
+        )]
 
-        style.sky = this.settings.basemap.paints.sky[isLight ? 'light' : 'dark']
+        style.sky = basemapTheme.sky
         map.setStyle(style)
 
         map.addLayer({
             id: 'basemap',
             type: 'raster',
             source: 'basemap',
-            paint: this.settings.basemap.paints.basemap[isLight ? 'light' : 'dark']
+            paint: basemapTheme.basemap
         }, map.sourcesHandler.getBeforeId('basemap'))
     }
 
