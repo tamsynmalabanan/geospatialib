@@ -90,14 +90,26 @@ class ControlsHandler {
                 settings: {
                     include: true,
                     position: 'bottom-right',
-                    order: 101,
+                    order: 4,
                     constructor: SettingsControl,
                 },
                 fullscreen: {
                     include: true,
                     position: 'bottom-right',
-                    order: 100,
+                    order: 3,
                     constructor: maplibregl.FullscreenControl,
+                },
+                legend: {
+                    include: true,
+                    position: 'top-right',
+                    order: 1,
+                    constructor: LegendControl,
+                },
+                layers: {
+                    include: true,
+                    position: 'bottom-right',
+                    order: 5,
+                    constructor: LayersControl,
                 },
             },
         }

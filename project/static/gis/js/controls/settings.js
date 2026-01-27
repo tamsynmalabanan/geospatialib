@@ -233,6 +233,10 @@ class SettingsControl {
         if (this.settings.bookmark.method !== 'centroid') {
             this.goToBookmark()
         }
+
+        if (this.settings.locked) {
+            this.lockMapView()
+        }
     }
 
     configSettingsControl() {
@@ -1277,6 +1281,18 @@ class SettingsControl {
                             this.updateSettings()
                         }
                     },
+                    lock: {
+                        title: 'Lock map view',
+                        icon: '🔒',
+                        checked: this.settings.locked,
+                        handler: (e) => {
+                            this.settings.locked = e.target.checked
+                            
+                            this.settings.locked ? this.lockMapView() : this.unlockMapView()
+
+                            this.updateSettings()
+                        }
+                    },
                     clear: {
                         title: 'Clear stored data',
                         icon: '🗑️',
@@ -1388,7 +1404,33 @@ class SettingsControl {
         })
     }
 
+    lockMapView() {
+        const map = this.map
+
+        map.scrollZoom.disable();
+        map.doubleClickZoom.disable();
+        map.dragPan.disable();
+        map.keyboard.disable();
+        map.touchZoomRotate.disable();
+
+        map.getContainer().querySelector(`.maplibregl-ctrl-top-left`).classList.add('d-none')
+    }
+    
+    unlockMapView() {
+        const map = this.map
+        
+        map.scrollZoom.enable();
+        map.doubleClickZoom.enable();
+        map.dragPan.enable();
+        map.keyboard.enable();
+        map.touchZoomRotate.enable();
+
+        map.getContainer().querySelector(`.maplibregl-ctrl-top-left`).classList.remove('d-none')
+    }
+
     goToBookmark() {
+        if (this.settings.locked) return
+
         const config = this.settings.bookmark
 
         if (config.method === 'centroid') {
@@ -1414,7 +1456,6 @@ class SettingsControl {
 
         this.map.setPitch(config.pitch)
         this.map.setBearing(config.bearing)
-
     }
 
     getView() {
@@ -1533,6 +1574,17 @@ class SettingsControl {
         }
     }
 
+    configFitBounds() {
+        const original = this.map.fitBounds.bind(this.map)
+
+        this.map.fitBounds = (bounds, options) => {
+            if (this.settings.locked) return
+            const result = original(bounds, options)
+            return result
+        }
+    }
+
+
     onAdd(map) {
         this.map = map
         this.map._settings = this
@@ -1540,6 +1592,7 @@ class SettingsControl {
         this.mapId = this.map.getContainer().dataset.mapId
         this.settings = this.map.controlsHandler.settings
         
+        this.configFitBounds()
         this.applySettings()
         this.configSettingsControl()
         return this._container

@@ -1,4 +1,5 @@
 const MAP_DEFAULT_SETTINGS = {
+    locked: false,
     unit: 'metric',
     terrain: false,
     projection: 'mercator',
@@ -167,6 +168,8 @@ const createNewMap = (el) => {
         },
         maxZoom: 22,
         maxPitch: 75,
+
+        interactive: !settings.locked
     })
 
     map.on('load', () => {
@@ -174,7 +177,6 @@ const createNewMap = (el) => {
         new ControlsHandler(map, settings)
         new InteractionsHandler(map)
         
-        window.map = map
         console.log(map)
     })   
 }

@@ -15,7 +15,7 @@ const themeClasses = Array(
     
     [['table-light'],['table-dark']],
     [['img-light'],['img-dark']],
-    [['bi-moon'],['bi-sun']],
+    [['bi-sun'],['bi-moon']],
 )
 
 const toggleThemedElements = (theme, parent=document) => {
