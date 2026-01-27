@@ -12,7 +12,18 @@ class InteractionsHandler {
             },
         }
         
+        this.configFitBounds()
         this.configInteractions()
+    }
+
+    configFitBounds() {
+        const original = this.map.fitBounds.bind(this.map)
+
+        this.map.fitBounds = (bounds, options) => {
+            if (this.settings.locked) return
+            const result = original(bounds, options)
+            return result
+        }
     }
 
     configCursor() {

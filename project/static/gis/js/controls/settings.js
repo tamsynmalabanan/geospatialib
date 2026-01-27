@@ -1574,17 +1574,6 @@ class SettingsControl {
         }
     }
 
-    configFitBounds() {
-        const original = this.map.fitBounds.bind(this.map)
-
-        this.map.fitBounds = (bounds, options) => {
-            if (this.settings.locked) return
-            const result = original(bounds, options)
-            return result
-        }
-    }
-
-
     onAdd(map) {
         this.map = map
         this.map._settings = this
@@ -1592,7 +1581,6 @@ class SettingsControl {
         this.mapId = this.map.getContainer().dataset.mapId
         this.settings = this.map.controlsHandler.settings
         
-        this.configFitBounds()
         this.applySettings()
         this.configSettingsControl()
         return this._container
