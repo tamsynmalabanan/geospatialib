@@ -3,7 +3,7 @@ const pushURLParams = (url, params) => {
     for (const key in params) {
         urlObj.searchParams.set(key, params[key])
     }
-    return urlObj.toString()
+    return decodeURIComponent(urlObj.toString())
 }
 
 const customFetchMap = new Map()

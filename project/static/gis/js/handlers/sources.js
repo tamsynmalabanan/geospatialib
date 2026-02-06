@@ -641,4 +641,26 @@ class SourcesHandler {
             return result
         }
     }
+
+    getXYZSource(sourceId, params) {
+        const map = this.map
+        
+        let source = map.getSource(sourceId)
+  
+        if (!source) {
+            const url = pushURLParams(params.url, params.get ?? {})
+
+            map.addSource(sourceId, {
+                tileSize: 256,
+                type: "raster",
+                tiles: [url],
+            })
+
+            source = map.getSource(sourceId)
+            source.metadata = {params}
+        }
+
+        return source
+    }
+
 }

@@ -70,3 +70,35 @@ class ChangeLog(BaseModel):
 
 class Tag(models.Model):
     tag = models.CharField('Tag', max_length=50)
+
+class URL(models.Model):
+    path = models.URLField('URL', max_length=200)
+
+class Collection(models.Model):
+    url = models.ForeignKey("helpers.URL", verbose_name='URL', on_delete=models.CASCADE)
+    format = models.CharField('Format', max_length=50, choices=[
+        ("Open Geospatial Consortium (OGC)", [
+            ("wms", "Web Map Service (WMS)"),
+            ("wfs", "Web Feature Service (WFS)"),
+        ]),
+        ("OpenStreetMap (OSM)", [
+            ("osm", "OpenStreetMap Export (map.osm)"),
+            ("overpass", "Overpass API Query"),
+        ]),
+        ("Vector Files", [
+            ("geojson", "GeoJSON"),
+            ("csv", "Comma-separated Values (CSV)"),
+            ("gpx", "GPX Exchange Format (GPX)"),
+            ("kml", "Keyhole Markup Language (KML)"),
+            ("kmz", "Compressed Keyhole Markup Language (KMZ)"),
+            ("shp", "Shapefile (SHP)"),
+            ("dxf", "AutoCAD Drawing Exchange Format (DXF)"),
+            ("gpkg", "GeoPackage (GPKG)"),
+            ("sqlite", "Database file (SQLite, Spatialite)"),
+            ("zip", "Compressed vector files"),
+        ]),
+        ("Rasters and Tiles", [
+            ("xyz", "XYZ Tiles"),
+        ]),
+    ]
+)

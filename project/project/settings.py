@@ -99,6 +99,7 @@ INSTALLED_APPS = [
     'django_htmx',
     'celery',
     'compressor',
+    'widget_tweaks',
 
     # apps
     'tags',
@@ -183,6 +184,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'apps.helpers.context_processors.forms',
+
             ],
         },
     },

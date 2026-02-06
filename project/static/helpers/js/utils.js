@@ -1,13 +1,3 @@
-const CURSOR = {
-    x: null,
-    y: null,
-}
-
-document.addEventListener("mousemove", (e) => {
-    CURSOR.x = e.clientX
-    CURSOR.y = e.clientY
-})
-
 const generateRandomString = (length=16) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
     let result = ''
@@ -70,13 +60,21 @@ const customCreateElement = ({
     return element
 }
 
-const canonicalize = (obj) => {
-    const jsonStr = JSON.stringify(obj, Object.keys(obj).sort())
-    if (_.isEqual(obj, JSON.parse(jsonStr))) {
-        return jsonStr
-    } else {
-        return JSON.stringify(obj)
+const sortObjectKeys = (obj) => {
+    if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+        return Object.keys(obj).sort().reduce((acc, key) => {
+            acc[key] = sortObjectKeys(obj[key])
+            return acc
+        }, {})
+    } else if (Array.isArray(obj)) {
+        return obj.map(sortObjectKeys)
     }
+
+    return obj
+}
+
+const canonicalize = (obj) => {
+    return JSON.stringify(sortObjectKeys(obj))
 }
 
 const hashJSON = async (jsonObj) => {
@@ -195,6 +193,7 @@ const createFormControl = ({
     labelInnerText,
     inputAttrs = {},
     invalidFeedbackContent,
+    fs = 'fs-14',
 }={}) => {
     const container = customCreateElement({
         parent,
@@ -204,14 +203,14 @@ const createFormControl = ({
     const label = customCreateElement({
         parent: container,
         tag: 'label',
-        className: 'form-label fs-14 flex-grow-1',
+        className: `form-label flex-grow-1 ${fs}`,
         innerText: labelInnerText
     })
 
     const input = customCreateElement({
         tag: 'input',
         parent: container,
-        className: 'form-control form-control-sm fs-14',
+        className: `form-control form-control-sm ${fs}`,
         attrs: inputAttrs
     })
 
@@ -234,7 +233,7 @@ const createFormSelect = ({
     selected,
     options = {},
     inputAttrs = {},
-
+    fs = 'fs-14',
 }={}) => {
     const container = customCreateElement({
         parent,
@@ -244,14 +243,14 @@ const createFormSelect = ({
     const label = customCreateElement({
         parent: container,
         tag: 'label',
-        className: 'form-label fs-14',
+        className: `form-label ${fs}`,
         innerText: labelInnerText
     })
 
     const select = customCreateElement({
         tag: 'select',
         parent: container,
-        className: 'form-select form-select-sm fs-14',
+        className: `form-select form-select-sm ${fs}`,
         attrs: inputAttrs,
     })
 
@@ -352,4 +351,54 @@ const rgbToHSLA = (rgb) => {
 
 const hexToHSLA = (hex) => {
     return rgbToHSLA(hexToRGB(hex))
+}
+
+const validateURL = (url) => {
+    try {
+        const parsed = new URL(url.trim())
+     
+        if (!Array("http:", "https:").includes(parsed.protocol)) {
+            return null
+        }
+
+        const normalized = decodeURIComponent(
+            parsed.href.replace(/^http:/, "https:")
+        )
+
+        return normalized
+    } catch (error) {
+        return null
+    }
+}
+
+const getBestMatch = (text, options) => {
+    let bestScore = 0
+    let bestOption = ""
+
+    const textLower = text.toLowerCase()
+
+    for (const [option, keywords] of Object.entries(options)) {
+        let score = 0
+
+        for (const kw of [option, ...keywords]) {
+            const similarity = stringSimilarity.compareTwoStrings(textLower, kw.toLowerCase())
+            score = Math.max(score, similarity)
+        }
+
+        if (score > bestScore) {
+            bestScore = score
+            bestOption = option
+        }
+    }
+
+    return bestScore > 0.1 ? bestOption : ''
+}
+
+const slugify = (str) => {
+  return str
+    .toLowerCase()
+    .trim() 
+    .replace(/[^a-z0-9\s-]/g, '') // remove non-alphanumeric chars
+    .replace(/\s+/g, '-') // replace spaces with hyphens
+    .replace(/-+/g, '-') // collapse multiple hyphens
 }

@@ -5,6 +5,6 @@ from . import views
 app_name = 'customuser'
 
 urlpatterns = [
-        path("accounts/logout/", LogoutView.as_view(), name="logout_account"),
-        path("accounts/delete/", views.delete_account, name="delete_account"),
+        path("logout/", LogoutView.as_view(), name="logout_account"),
+        path("delete/", views.delete_account, name="delete_account"),
 ]

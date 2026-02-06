@@ -1,0 +1,29 @@
+{% load widget_tweaks %}
+{% load helper_tags %}
+
+{% if not prefix and not suffix %}
+    {% var field.label as prefix %}
+{% endif %}
+
+{% if field %}
+    {% with WIDGET_ERROR_CLASS='is-invalid' %}
+        <div class="input-group">
+            {% if prefix %}
+                <span class="input-group-text fs-12">{{ prefix }}</span>
+            {% endif %}
+            {% render_field field %}
+            <div class="invalid-feedback">
+                <ul class="list-unstyled p-0 m-0">
+                    {% for error in field.errors %}
+                        {{error}}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if suffix %}
+                <span class="input-group-text fs-12">{{ suffix }}</span>
+            {% endif %}
+        </div>        
+    {% endwith %}
+{% endif %}
+
+

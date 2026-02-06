@@ -3,9 +3,12 @@ class LegendControl {
     }
 
     createLegendContainer() {
-        const container = this.legendContainer =  customCreateElement({
+        const container = this.legendCollapse =  customCreateElement({
             parent: this._container,
-            className: 'd-none py-2 px-3',
+            className: 'py-2 px-3',
+            style: {
+                maxWidth: `85vw`
+            }
         })
 
         const content = customCreateElement({
@@ -74,12 +77,121 @@ class LegendControl {
             parent: content,
         })
 
-        const layerLegend = customCreateElement({
+        this.legendContainer = customCreateElement({
             parent: layerLegendContainer,
-            innerText: 'legend'
+            className: 'd-flex flex-column gap-3'
         })
 
         return container
+    }
+
+    handleAddLayer() {
+        const map = this.map
+        map.on('layeradded', (e) => {
+            const layer = e.layer
+            const params = layer.metadata?.params
+            if (!params) return
+            
+            console.log(e)
+
+            const container = customCreateElement({
+                parent: this.legendContainer,
+                className: 'd-flex flex-column gap-2',
+                attrs: {
+                    'data-layer-id': Array(layer.source, layer.metadata.name).join('-')
+                }
+            })
+
+            const header = customCreateElement({
+                parent: container,
+                className: 'd-flex flex-nowrap justify-content-between'
+            })
+
+            const collapse = customCreateElement({
+                parent: container,
+                className: 'collapse show'
+            })
+
+            const title = customCreateElement({
+                parent: header,
+                tag: 'span',
+                className: 'text-wrap text-break flex-grow-1 fw-bold',
+                innerText: layer.metadata.params.title,
+                attrs: {
+                    'data-bs-toggle': 'collapse',
+                    'data-bs-target': `#${collapse.id}`,
+                },
+            })
+
+            const options = customCreateElement({
+                parent: header,
+                className: 'ms-5 d-flex flex-nowrap gap-2'
+            })
+
+            const menuContainer = customCreateElement({
+                parent: options,
+            })
+
+            const menuToggle = customCreateElement({
+                tag: 'i',
+                parent: menuContainer,
+                className: 'bi bi-three-dots',
+                attrs: {
+                    'data-bs-toggle': 'dropdown',
+                }
+            })
+
+            const menu = customCreateElement({
+                parent: menuContainer,
+                className: 'dropdown-menu',
+                tag: 'ul',
+            })
+
+            const remove = customCreateElement({
+                parent: menu,
+                tag: 'li',
+                className: 'dropdown-item fs-12',
+                innerText: 'Remove',
+                events: {
+                    click: (e) => {
+                        map.removeLayer(layer.id)
+                    }
+                }
+            })
+
+            const body = customCreateElement({
+                parent: collapse,
+                className: 'd-flex flex-column gap-2'
+            })
+
+            const legend = customCreateElement({
+                parent: body,
+                innerHTML: this.getLayerLegend(layer)
+            })
+
+            const attr = customCreateElement({
+                parent: body,
+                innerHTML: layer.metadata.params.attribution,
+            })
+        })
+    }
+
+    getLayerLegend(layer) {
+        const params = layer.metadata.params
+
+        if (params.type === 'xyz') {
+            return ''
+            // return `<img class="rounded" src="${params.thumbnail}" alt="Image not found." height="100">`
+        }
+    }
+
+    handleRemoveLayer() {
+        const map = this.map
+        map.on('layerremoved', (e) => {
+            console.log(e)
+            Array.from(this.legendContainer.querySelectorAll(`[data-layer-id]`))
+            .find(el => e.layerId.startsWith(el.dataset.layerId))?.remove()
+        })
     }
 
     onAdd(map) {
@@ -91,7 +203,7 @@ class LegendControl {
         const button = this.control = customCreateElement({
             tag:'button',
             parent: this._container,
-            className: 'fs-16',
+            className: 'fs-16 d-none',
             attrs: {
                 type: 'button',
                 title: 'Show legend'
@@ -100,12 +212,14 @@ class LegendControl {
             events: {
                 click: (e) => {
                     button.classList.add('d-none')
-                    this.legendContainer.classList.remove('d-none')
+                    this.legendCollapse.classList.remove('d-none')
                 }
             }
         })
 
         this.createLegendContainer()
+        this.handleAddLayer()
+        this.handleRemoveLayer()
 
         return this._container
     }

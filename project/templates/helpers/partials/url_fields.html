@@ -1,0 +1,36 @@
+{% load helper_tags %}
+{% load static %}
+
+<div class='d-flex flex-column gap-3'>
+    <div class="d-flex flex-column gap-2">
+        {% csrf_token %}
+        {% include "helpers/partials/input_group.html" with field=form.url %}
+        {% include "helpers/partials/input_group.html" with field=form.format %}
+    </div>
+    {% random_string as id %}
+    <div class='d-none'>
+        <div class='d-flex gap-2 justify-content-start'>
+            <button 
+                type="button" 
+                name='collapseParams'
+                class="btn btn-sm btn-secondary fs-12 bi bi-caret-up-fill"
+                data-bs-toggle="collapse"
+                data-bs-target="#{{id}}"
+            ></button>
+            <button 
+                type="button" 
+                name='resetParams'
+                class="btn btn-sm btn-secondary fs-12 bi bi-arrow-counterclockwise"
+            ></button>
+            <button type="button" name='getParams' class="btn btn-sm btn-secondary fs-12 ms-auto">Add GET params</button>
+            <button type="button" name='headerParams' class="btn btn-sm btn-secondary fs-12">Add header params</button>
+            <button type="button" name='getLayers' class="btn btn-sm btn-success fs-12">Get layers</button>
+        </div>
+        <div id="{{id}}" class="collapse show">
+            <div class='d-flex flex-column gap-3 overflow-y-auto pe-2 mt-3' style="max-height:300px;">
+                <div id='addLayersURLParams-getParams' class='d-flex flex-column gap-1'></div>
+                <div id='addLayersURLParams-headerParams' class='d-flex flex-column gap-1'></div>
+            </div>
+        </div>
+    </div>
+</div>

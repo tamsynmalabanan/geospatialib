@@ -20,7 +20,7 @@ class InteractionsHandler {
         const original = this.map.fitBounds.bind(this.map)
 
         this.map.fitBounds = (bounds, options) => {
-            if (this.settings.locked) return
+            if (this.map._settings.settings.locked) return
             const result = original(bounds, options)
             return result
         }
@@ -636,3 +636,14 @@ class InteractionsHandler {
         })
     }
 }
+
+const CURSOR = { x: null, y: null, }
+
+let mousemoveTimeout
+document.addEventListener("mousemove", (e) => {
+    clearTimeout(mousemoveTimeout)
+    mousemoveTimeout = setTimeout(() => {
+        CURSOR.x = e.clientX
+        CURSOR.y = e.clientY
+    }, 100)
+})

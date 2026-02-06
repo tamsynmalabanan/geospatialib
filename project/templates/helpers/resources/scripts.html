@@ -6,9 +6,12 @@
 
 {% compress js %}
     <script type="text/javascript" src="{% static 'plugins/htmx/js/htmx.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'plugins/htmx-ext-ws/js/htmx-ext-ws@2.0.4.js' %}"></script>
     <script type="text/javascript" src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'plugins/maplibre-gl/js/maplibre-gl.min.js' %}"></script>
 
+
+    <script type="text/javascript" src="{% static 'plugins/string-similarity/js/string-similarity.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'plugins/compress-json/js/bundle.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'plugins/shpjs/js/shp.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'plugins/proj4/js/proj4.min.js' %}"></script>
@@ -27,11 +30,13 @@
     <script type="text/javascript" src="{% static 'helpers/js/cookies.js' %}"></script>
     <script type="text/javascript" src="{% static 'helpers/js/observers.js' %}"></script>
     <script type="text/javascript" src="{% static 'helpers/js/fetch.js' %}"></script>
-
+    
     <script type="text/javascript" src="{% static 'gis/js/utils.js' %}"></script>
     <script type="text/javascript" src="{% static 'gis/js/indexdb.js' %}"></script>
     <script type="text/javascript" src="{% static 'gis/js/geojson.js' %}"></script>
     <script type="text/javascript" src="{% static 'gis/js/data.js' %}"></script>
+    <script type="text/javascript" src="{% static 'gis/js/xyz.js' %}"></script>
+    <script type="text/javascript" src="{% static 'gis/js/ogc.js' %}"></script>
     <script type="text/javascript" src="{% static 'gis/js/map.js' %}"></script>
     
     <script type="text/javascript" src="{% static 'gis/js/controls/settings.js' %}"></script>
@@ -40,6 +45,7 @@
     <script type="text/javascript" src="{% static 'gis/js/controls/legend.js' %}"></script>
     <script type="text/javascript" src="{% static 'gis/js/controls/layers.js' %}"></script>
     
+    <script type="text/javascript" src="{% static 'gis/js/handlers/layers.js' %}"></script>
     <script type="text/javascript" src="{% static 'gis/js/handlers/sources.js' %}"></script>
     <script type="text/javascript" src="{% static 'gis/js/handlers/interactions.js' %}"></script>
     <script type="text/javascript" src="{% static 'gis/js/handlers/controls.js' %}"></script>

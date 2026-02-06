@@ -28,8 +28,9 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
 
     # apps
-    path('htmx/', include('apps.htmx.urls')),
-    path('', include('apps.customuser.urls')),
+    path(f'{config('HTMX_PATH')}/', include('apps.htmx.urls')),
+    path(f'{config('CUSTOMUSER_PATH')}/', include('apps.customuser.urls')),
+    
     path('', include('apps.main.urls')),
     re_path(r'^.*$', redirect_to_index, name='redirect_to_index'),
 ]

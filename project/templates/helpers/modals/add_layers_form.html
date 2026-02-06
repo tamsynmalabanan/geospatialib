@@ -1,0 +1,94 @@
+{% load helper_tags %}
+
+<div class="modal fade" id="addLayersModal" tabindex="-1" aria-labelledby="addLayersModalLabel" aria-hidden="true">
+    <div class="modal-fullscreen-sm-down modal-dialog modal-dialog-centered">
+        <form id='addLayersForm' class="modal-content">
+            <div class="modal-header d-flex flex-column gap-3 border-0">
+                <div class='d-flex justify-content-between w-100'>
+                    <h6 class="modal-title" id="addLayersModalLabel">Add layers</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class='d-flex flex-column gap-3 w-100 small'>
+                    <div class='d-flex flex-nowrap gap-2 justify-content-start align-items-center w-100'>
+                        <div class='d-flex gap-3 flex-wrap'>
+                            <span class='mb-1 text-nowrap'>Data source</span>
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="source" value='url' checked>
+                                    <label class="form-check-label">URL</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="source" value='files'>
+                                    <label class="form-check-label">Files</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='ms-auto d-flex gap-2'>
+                            <div>
+                                <button type="button" name='collapseFields' class="btn btn-sm btn-secondary bi bi-caret-up-fill fs-12" data-bs-toggle="collapse" data-bs-target="#addLayersFields"></button>
+                            </div>
+                            <div>
+                                <button type="button" name='reset' class="btn btn-sm btn-secondary bi bi-arrow-counterclockwise fs-12 "></button>
+                            </div>
+                            <div>
+                                <button type="button" name='vector' class="btn btn-sm btn-success fs-12 d-flex flex-nowrap gap-2">
+                                    <i class="bi bi-circle-square"></i>
+                                    <span class='d-none d-md-block'>Create vector layer</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id='addLayersFields' class="collapse show">
+                        <div class='d-flex flex-column'>
+                            <div id="addLayersFields-url">
+                                {% include "helpers/partials/url_fields.html" with form=collection_form %}          
+                            </div>
+                            <div id="addLayersFields-files" class='d-none'>
+                                <input 
+                                    name="files" 
+                                    class="form-control form-control-sm fs-12" 
+                                    type="file"
+                                    multiple="true" 
+                                    {% comment %} hx-post="/htmx/forms/layers/" 
+                                    hx-trigger="get-layer-forms" 
+                                    hx-target="#addLayersResults-files"
+                                    hx-indicator='#addLayersIndicator',
+                                    hx-swap="innerHTML" 
+                                    hx-params="not files"  {% endcomment %}
+                                    accept="
+                                        .geojson,
+                                        .zip,
+                                        .csv,
+                                        .gpx,
+                                        .kml,
+                                        .kmz,
+                                        .osm,
+                                        .json,
+                                        .dxf,
+                                        .shp,
+                                        .dbf,
+                                        .prj,
+                                        .cpg,
+                                        .shx,
+                                        .gpkg,
+                                        .sqlite,
+                                    "
+                                >
+                                <div class="invalid-feedback"><ul class="unordered-list p-0 m-0"></ul></div>
+                            </div>
+                            <div id='addLayersIndicator' class='d-flex justify-content-center htmx-indicator p-3'>
+                                <div class="spinner-border spinner-border-sm" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="addLayersResults" class="modal-body">
+                <div id='addLayersResults-url' class='w-100'>url results</div>
+                <div id='addLayersResults-files' class='d-none w-100'>files results</div>
+            </div>
+        </form>
+    </div>
+</div>

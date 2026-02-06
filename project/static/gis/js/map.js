@@ -180,3 +180,7 @@ const createNewMap = (el) => {
         console.log(map)
     })   
 }
+
+document.addEventListener('DOMContentLoaded', (e) => {
+    new LayersHandler()
+})

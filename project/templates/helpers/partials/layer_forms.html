@@ -1,0 +1,61 @@
+{% comment %} {% load static %}
+{% load helper_tags %}
+
+{% variable request.COOKIES|get:'theme' 'dark' as theme %}
+{% if form %}
+    {% variable 'url' as source %}
+{% else %}
+    {% variable 'files' as source %}
+{% endif %}
+
+{% if layers and layers.keys|length > 0 %}
+    <div
+        class="d-flex gap-2 align-items-center text-bg-{{theme}}"
+        {% if not collection and cache_key %}
+            hx-post="{% url 'htmx:update_collection' %}"
+            hx-trigger='update-collection'
+            hx-vals='{"cache_key": "{{cache_key}}"}'
+            hx-swap='none'
+        {% endif %}
+    >
+        <input class="form-check-input mt-0 fs-12" type="checkbox" value="all">
+        <input type="text" class="form-control form-control-sm border-0 box-shadow-none fs-12" value="Select all layers ({{layers.keys|length|format_number}})" readonly>
+    </div>
+    <div class='d-flex flex-column gap-2 overflow-y-auto pe-2' style="max-height:50vh;">
+        {% for name, params in layers.items %}
+            <div class='d-flex align-items-center'>
+                <input class="form-check-input mt-0 fs-12" type="checkbox" value="{{name}}" data-map-layer-metadata="{{params|dump_json}}">
+                <div class="form-floating flex-grow-1 ms-2 w-50">
+                    {% random_string as id %}
+                    {% variable params.title '' as value %}
+                    <input id="{{id}}" type="text" class="form-control form-control-sm fs-12" name='title' title="{{name}}" value="{{value}}" placeholder="{{value}}">
+                    <label for="{{id}}">Title</label>
+                </div>
+
+                {% if params.type == 'csv' %}
+                    <div class="form-floating ms-2">
+                        {% random_string as id %}
+                        {% variable params.xField '' as value %}
+                        <input id="{{id}}" type="text" name='xField' class='form-control form-control-sm fs-12' value="{{value}}"  placeholder="{{value}}">
+                        <label for="{{id}}">X Field</label>
+                    </div>
+                    <div class="form-floating ms-2">
+                        {% random_string as id %}
+                        {% variable params.yField '' as value %}
+                        <input id="{{id}}" type="text" name='yField' class='form-control form-control-sm fs-12' value="{{value}}"  placeholder="{{value}}">
+                        <label for="{{id}}">Y Field</label>
+                    </div>
+                {% endif %}
+
+                {% if params.type == 'csv' or params.type == 'dxf' %}
+                    <div class="form-floating ms-2">
+                        {% random_string as id %}
+                        {% variable params.srid '' as value %}
+                        <input id="{{id}}" type="number" name='srid' class='form-control form-control-sm fs-12' value="{{value}}" placeholder="{{value}}"> 
+                        <label for="{{id}}">SRID</label>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %} {% endcomment %}

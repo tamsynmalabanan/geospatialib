@@ -64,7 +64,7 @@ class SettingsControl {
                 children: [
                     customCreateElement({
                         tag: 'button',
-                        className: 'btn btn-sm btn-danger bi bi-x',
+                        className: 'bi bi-x bg-transparent p-0 border-0 pb-1',
                         events: {
                             click: (e) => container.remove()
                         }
@@ -76,19 +76,20 @@ class SettingsControl {
         return container
     }
 
-    createTileSourceForm(url, {dismissible=true}={}) {
+    createTileSourceForm(url, {dismissible=true, dismissHandler}={}) {
         const container = customCreateElement({
             className: 'd-flex gap-3 flex-wrap align-items-end'
         })
 
         const sourceInput = createFormControl({
             parent: container,
-            labelInnerText: 'URL',
             inputAttrs: {
                 type: 'url',
                 name: 'source',
-                value: url
-            }
+                value: url,
+                placeholder: 'URL',
+            },
+            invalidFeedbackContent: 'At least one tile source URL is required.'
         }).querySelector('input')
 
         if (dismissible) {
@@ -97,9 +98,12 @@ class SettingsControl {
                 children: [
                     customCreateElement({
                         tag: 'button',
-                        className: 'btn btn-sm btn-danger bi bi-x',
+                        className: 'bi bi-x bg-transparent p-0 border-0 pb-1',
                         events: {
-                            click: (e) => container.remove()
+                            click: (e) => {
+                                container.remove()
+                                dismissHandler?.()
+                            }
                         }
                     })
                 ]
@@ -366,11 +370,12 @@ class SettingsControl {
                     },
                 }
             },
-            // dark and light mode basemap and sky config - paint
             basemap: {
                 title: 'Basemap',
                 radio: true,
                 handler: (e, {name}={}) => {
+                    if (name === 'more') return
+                     
                     const section = e.target.closest(`#${this.sections.id} > div > .collapse > div`)
                     const render = section.querySelector('input[name="basemap-render"]')
 
@@ -464,10 +469,13 @@ class SettingsControl {
 
                                         sourceFields.innerHTML = ''
                                         Object.entries(defaultBasemap.tiles).forEach(([index, url]) => {
-                                            sourceFields.appendChild(this.createTileSourceForm(url, {dismissible:index>0}))
+                                            sourceFields.appendChild(this.createTileSourceForm(url, {
+                                                dismissible:index>0, 
+                                                dismissHandler: evaluateFields
+                                            }))
                                         })
 
-                                        evaluateAttribution()
+                                        evaluateFields()
                                     }
                                 }
                             })
@@ -498,13 +506,23 @@ class SettingsControl {
                                 invalidFeedbackContent: 'This field is required.',
                             }).querySelector('input')
                             
-                            const evaluateAttribution = () => {
+                            const evaluateFields = () => {
                                 const isInvalid = attributionInput.value.trim() === ''
+                                
                                 attributionInput.classList.toggle('is-invalid', isInvalid)
                                 saveBtn.disabled = isInvalid
+                            
+                                const sourceInputs = Array.from(sourceFields.querySelectorAll(`input[name="source"][type="url"]`))
+                                if (sourceInputs.find(el => el.value.trim() !== '')) {
+                                    sourceInputs.forEach(el => el.classList.remove('is-invalid'))
+                                    addSource.disabled = false
+                                } else {
+                                    sourceInputs[0].classList.add('is-invalid')
+                                    addSource.disabled = true
+                                }
                             }
 
-                            attributionInput.addEventListener('change', evaluateAttribution)
+                            attributionInput.addEventListener('change', evaluateFields)
 
                             const sourceSection = customCreateElement({
                                 parent: body,
@@ -533,7 +551,9 @@ class SettingsControl {
                                 className: 'btn-sm btn btn-success bi bi-plus-lg',
                                 events: {
                                     click: (e) => {
-                                        sourceFields.appendChild(this.createTileSourceForm(''))
+                                        sourceFields.appendChild(this.createTileSourceForm('', {
+                                            dismissHandler: evaluateFields
+                                        }))
                                     }
                                 }
                             })
@@ -545,19 +565,24 @@ class SettingsControl {
                                     'change': (e) => {
                                         const sourceInputs = Array.from(sourceFields.querySelectorAll(`input[name="source"][type="url"]`))
                                         if (!sourceInputs.includes(e.target)) return
-                                        if (sourceInputs.find(el => el.value.includes('openstreetmap'))) return
-                                        if (attributionInput.value.trim() !== MAP_DEFAULT_SETTINGS.basemap.attribution) return
-                                        attributionInput.value = ''
-                                        evaluateAttribution()
+                                        
+                                        if (!sourceInputs.find(el => el.value.includes('openstreetmap'))) {
+                                            if (attributionInput.value.trim() === MAP_DEFAULT_SETTINGS.basemap.attribution) {
+                                                attributionInput.value = ''
+                                            }
+                                        }
+
+                                        evaluateFields()
                                     }
                                 }
                             })
 
                             Object.entries(config.tiles).forEach(([index, url]) => {
-                                sourceFields.appendChild(this.createTileSourceForm(url, {dismissible:index>0}))
+                                sourceFields.appendChild(this.createTileSourceForm(url, {
+                                    dismissible:index>0,
+                                    dismissHandler: evaluateFields
+                                }))
                             })
-
-
 
                             const styleSection = customCreateElement({
                                 parent: body,
@@ -670,7 +695,7 @@ class SettingsControl {
                                     })
                                 )
 
-                                Array.from(styleFields.children).forEach(el => {
+                                Array.from(styleFields.children).flatMap(el => Array.from(el.children)).forEach(el => {
                                     Array.from(el.querySelectorAll('input[name]')).forEach(field => {
                                         config.paints[el.dataset.styleTheme][el.dataset.styleLayer][field.getAttribute('name')] = (
                                             field.getAttribute('type') === 'number' ? parseFloat(field.value) : field.value

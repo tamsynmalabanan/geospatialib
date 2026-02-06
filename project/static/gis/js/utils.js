@@ -5,4 +5,3 @@ const isLngLatString = (value) => {
     if (coords[1] > 90 || coords[1] < -90) return false
     return coords
 }
-
