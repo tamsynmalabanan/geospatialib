@@ -663,4 +663,41 @@ class SourcesHandler {
         return source
     }
 
+    getWMSSource(sourceId, params) {
+        const map = this.map
+
+        let source = map.getSource(sourceId)
+        
+        if (!source) {
+            const url = pushURLParams(params.url, {
+                ...params.get,
+                SERVICE: 'WMS',
+                VERSION: '1.1.1',
+                REQUEST: 'GetMap',
+                LAYERS: params.name,
+                BBOX: "{bbox-epsg-3857}",
+                WIDTH: 256,
+                HEIGHT: 256,
+                SRS: "EPSG:3857",
+                FORMAT: "image/png",
+                TRANSPARENT: true,
+                ...(
+                   params.style 
+                   ? {STYLES: params.style} 
+                   : {}
+                )
+            })
+
+            map.addSource(sourceId, {
+                type: "raster",
+                tiles: [url],
+                tileSize: 256,
+            })
+
+            source = map.getSource(sourceId)
+            source.metadata = {params}
+        }
+
+        return source
+    }
 }

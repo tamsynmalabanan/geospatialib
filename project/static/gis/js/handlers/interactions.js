@@ -20,7 +20,7 @@ class InteractionsHandler {
         const original = this.map.fitBounds.bind(this.map)
 
         this.map.fitBounds = (bounds, options) => {
-            if (this.map._settings.settings.locked) return
+            if (this.map._settings.locked) return
             const result = original(bounds, options)
             return result
         }
@@ -28,7 +28,7 @@ class InteractionsHandler {
 
     configCursor() {
         this.map.getCanvas().style.cursor = (
-            Object.values(this.map._settings.settings.interactions).find(i => i.active)
+            Object.values(this.map._settings.interactions).find(i => i.active)
             ? 'pointer' : ''
         )
     }
@@ -195,7 +195,7 @@ class InteractionsHandler {
 
     async createTooltipPopup(e) {
         const map = this.map
-        if (!this.map._settings.settings.interactions.tooltip.active) return
+        if (!this.map._settings.interactions.tooltip.active) return
         
         const tooltip = this.config.tooltip
 
@@ -403,7 +403,7 @@ class InteractionsHandler {
 
     async createInfoPopup(e) {
         const map = this.map
-        if (!this.map._settings.settings.interactions.info.active) return
+        if (!this.map._settings.interactions.info.active) return
 
         const info = this.config.info
 
@@ -441,7 +441,7 @@ class InteractionsHandler {
         })
 
         const targets = (
-            Object.entries(this.map._settings.settings.interactions.info.targets)
+            Object.entries(this.map._settings.interactions.info.targets)
             .filter(i => i[1]).map(i => i[0])
         )
 

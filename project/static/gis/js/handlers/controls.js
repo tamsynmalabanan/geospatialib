@@ -1,9 +1,8 @@
 class ControlsHandler {
-    constructor(map, settings) {
+    constructor(map) {
         this.map = map
         this.map.controlsHandler = this
 
-        this.settings = settings
         this.config = {
             controls: {
                 placeSearch: {
@@ -51,10 +50,11 @@ class ControlsHandler {
 
                         const button = control._container.querySelector('button')
                         button.addEventListener('click', (e) => {
-                            const settings = this.map._settings
-                            settings.configHillshade()
-                            settings.settings.terrain = button.classList.contains('maplibregl-ctrl-terrain-enabled')
-                            settings.updateSettings()
+                            const settingsControl = this.controls?.settings
+                            settingsControl?.configHillshade()
+                            
+                            this.map._settings.terrain = button.classList.contains('maplibregl-ctrl-terrain-enabled')
+                            settingsControl?.updateSettings()
                         })
                     }
                 },
@@ -83,7 +83,7 @@ class ControlsHandler {
                     order: 1,
                     constructor: maplibregl.ScaleControl,
                     options: {
-                        unit: this.settings.unit,
+                        unit: this.map._settings.unit,
                         maxWidth: 200,
                     }
                 },

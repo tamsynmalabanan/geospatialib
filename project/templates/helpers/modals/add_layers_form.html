@@ -1,7 +1,7 @@
 {% load helper_tags %}
 
 <div class="modal fade" id="addLayersModal" tabindex="-1" aria-labelledby="addLayersModalLabel" aria-hidden="true">
-    <div class="modal-fullscreen-sm-down modal-dialog modal-dialog-centered">
+    <div class="modal-fullscreen-sm-down modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form id='addLayersForm' class="modal-content">
             <div class="modal-header d-flex flex-column gap-3 border-0">
                 <div class='d-flex justify-content-between w-100'>
@@ -83,11 +83,14 @@
                             </div>
                         </div>
                     </div>
+                    <div id='addLayersFilter' class='d-none'>
+                        <input type="search" name='filter' class='w-100 border-0 border-bottom outline-none fs-14 text-bg-{{theme}}' placeholder='Filter layers...'>
+                    </div>
                 </div>
             </div>
             <div id="addLayersResults" class="modal-body">
-                <div id='addLayersResults-url' class='w-100'>url results</div>
-                <div id='addLayersResults-files' class='d-none w-100'>files results</div>
+                <div id='addLayersResults-url' class='w-100'></div>
+                <div id='addLayersResults-files' class='d-none w-100'></div>
             </div>
         </form>
     </div>

@@ -11,11 +11,19 @@ class LayersControl {
             params.bbox = [-180, -90, 180, 90]
         }
         
+        if (!params.crs) {
+            params.crs = 'EPSG:4326'
+        }
+        
         if (!params.title) {
             params.title = params.name
         }
 
-        if (!params.attribution) {
+        if (!params.style || !(params.style in params.styles)) {
+            params.style = Object.keys(params.styles)[0]
+        }
+
+        if (!params.attribution && params.url) {
             const domain = (new URL(params.url)).host.split('.').slice(-2).join('.')
             params.attribution = `Data from <a class='text-decoration-none text-reset text-muted' href="https://www.${domain}/" target="_blank">${domain}</a>`
         }
@@ -56,12 +64,17 @@ class LayersControl {
         map.getContainer().addEventListener('addLayer', async (e) => {
             const params = this.normalizeLayerParams(e.detail.layer)
             
-            const sourcePrefix = await hashJSON(params)
+            const sourceId = await hashJSON(params) 
             
             let source
 
             if (params.type === 'xyz') {
-                source = map.sourcesHandler.getXYZSource(sourcePrefix, params)
+                source = map.sourcesHandler.getXYZSource(sourceId, params)
+                this.addRasterLayer(source, params)
+            }
+            
+            if (params.type === 'wms') {
+                source = map.sourcesHandler.getWMSSource(sourceId, params)
                 this.addRasterLayer(source, params)
             }
         })

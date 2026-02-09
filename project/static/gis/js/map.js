@@ -173,8 +173,10 @@ const createNewMap = (el) => {
     })
 
     map.on('load', () => {
+        map._settings = settings
+        
         new SourcesHandler(map)
-        new ControlsHandler(map, settings)
+        new ControlsHandler(map)
         new InteractionsHandler(map)
         
         console.log(map)

@@ -13,11 +13,17 @@ class LayersHandler {
         )
 
         const form = this.form = this.modal.querySelector('form')
+        
         form.elements.resetParams.addEventListener('click', (e) => {
             this.resetURLParams()
         })
-        form.elements.getLayers.addEventListener('click', (e) => {
-            this.updateURLResults()
+        
+        form.elements.getLayers.addEventListener('click', async (e) => {
+            await this.updateURLResults()
+        })
+        
+        form.addEventListener('submit', (e) => {
+            e.preventDefault()
         })
 
         this.handleSourceRadio()
@@ -25,34 +31,64 @@ class LayersHandler {
         this.handleURLParamsBtns()
         this.handleURLSource()
         this.handleFilesSource()
-        this.handleReserBtn()
+        this.handleResetBtn()
+        this.handleFilterLayers()
     }
 
+    handleFilterLayers() {
+        const container = this.modal.querySelector('#addLayersFilter')
+        const filterField = this.form.elements.filter
+
+        const observer = elementMutationObserver(this.modal, (m) => {
+            container.classList.toggle('d-none', this.resultsContainers[
+                Array.from(this.form.elements.source)
+                .find(el => el.checked).value
+            ].innerHTML === '')
+        }, {childList: true, subtree: true})
+
+        filterField.addEventListener('change', (e) => {
+            const value = filterField.value = filterField.value.trim().toLowerCase()
+            Object.values(this.resultsContainers).forEach(el => {
+                Array.from(el.firstElementChild?.children || []).forEach(child => {
+                    value.split(' ').every(i => !child.innerHTML.toLowerCase().includes(i))
+                    child.classList.toggle('d-none', value.split(' ').some(i => !child.innerHTML.toLowerCase().includes(i)))
+                })
+            })
+        })
+    }
+    
     getResultsContent(layers) {
+        const filterField = this.form.elements.filter
+        
         const container = customCreateElement({
             className: 'd-flex flex-column gap-2'
         })
 
+        console.log(layers)
+
         layers.forEach(layer => {
             const card = customCreateElement({
                 parent: container,
-                className: 'd-flex flex-nowrap flex-grow-1 gap-3 border rounded p-2',
+                className: 'd-flex flex-nowrap flex-grow-1 gap-3 rounded p-2 d-none',
             })
         
             const img = customCreateElement({
                 tag: 'img',
                 parent: card,
-                className: 'rounded',
+                className: 'img-thumbnail',
                 attrs: {
-                    src: layer.thumbnail,
+                    src: layer.styles[layer.style].thumbnail,
                     alt: 'Image not found.',
-                    height: 100, 
+                },
+                style: {
+                    width: '100px', 
+                    height: '100px', 
                 }
             })
 
             const body = customCreateElement({
                 parent:card,
-                className: 'd-flex flex-wrap gap-3 flex-grow-1'
+                className: 'd-flex gap-3 flex-grow-1'
             })
 
             const info = customCreateElement({
@@ -97,6 +133,7 @@ class LayersHandler {
                 }
             })
 
+            card.classList.toggle('d-none', filterField.value.split(' ').some(i => !card.innerHTML.toLowerCase().includes(i)))
         })
 
         return container
@@ -178,7 +215,7 @@ class LayersHandler {
             },
             events: {
                 click: (e) => {
-                    if (keyField.value || valueField.value) {
+                    if (keyField.value && valueField.value) {
                         this.resultsContainers.url.innerHTML = ''
                     } 
 
@@ -262,8 +299,8 @@ class LayersHandler {
         return slugify(toTitleCase(Array(host, pathname).flatMap(i => i).join(' ')))
     }
 
-    getXYZTilesThumbnailURL(url, {fetchParams}={}) {
-        url = decodeURIComponent(pushURLParams(url, fetchParams.get))
+    getXYZTilesThumbnailURL(url, {get}={}) {
+        url = decodeURIComponent(pushURLParams(url, get))
 
         Array('x', 'y', 'z').forEach(i => {
             url = url.replace(`{${i}}`, '0')
@@ -298,24 +335,124 @@ class LayersHandler {
         return Array(href, z, x, y).join("{")
     }
 
-    getLayersFromURL(url, format, {
-        fetchParams,
-    }={}) {
+    getWMSThumbnailURL(url, name, style) {
+        return pushURLParams(url, {
+            "service": "WMS",
+            "request": "GetMap",
+            "version": "1.3.0",
+            "layers": name,
+            "styles": style,
+            "crs": "EPSG:4326",
+            "bbox": '-180,-90,180,90',
+            "width": "100",
+            "height": "100",
+            "format": "image/png",
+            "transparent": "true"
+        })
+    }
+
+    getWMSBbox(layer) {
+        let bbox = [-180, -90, 180, 90]
+        
+        const geoBBox = layer.querySelector("EX_GeographicBoundingBox")
+        if (geoBBox) {
+            bbox = Array(
+                'westBoundLongitude', 
+                'southBoundLatitude', 
+                'eastBoundLongitude', 
+                'northBoundLatitude'
+            ).map(i => parseFloat(geoBBox.querySelector(i)?.textContent))
+        } else {
+            const bboxes = layer.querySelectorAll("BoundingBox").forEach(box => {
+                return {
+                    crs: box.getAttribute('CRS') || box.getAttribute('SRS'), 
+                    bbox: Array('minx', 'miny', 'maxx', 'maxy').map(i => parseFloat(box.getAttribute(i)))
+                }
+            })
+            const bboxWGS84 = bboxes.find(i => i.crs === "EPSG:4326")
+            if (bboxWGS84) {
+                bbox = bboxWGS84.bbox
+            } else {
+                console.log('No wgs 84 bbox, convert coordinates', bboxes)
+            }
+        }
+
+        return normalizeBbox(bbox)
+    }
+
+    async getWMSLayers(url) {
+        return await customFetch(pushURLParams(url, {
+            service: 'WMS',
+            request: 'GetCapabilities',
+        }), {
+            callback: async (response) => {
+                const text = await response.text()
+                const parser = new DOMParser()
+                const xmlDoc = parser.parseFromString(text, "application/xml")
+        
+                const layers = []
+        
+                Array.from(xmlDoc.querySelectorAll("Layer")).slice(1).forEach(layer => {
+                    const name = layer.querySelector("Name")?.textContent || null
+                    const title = layer.querySelector("Title")?.textContent || name
+                    const crs = layer.querySelector("CRS")?.textContent || null
+                    const styles = Object.fromEntries(Array.from(layer.querySelectorAll("Style")).map(style => {
+                        const styleName = style.querySelector("Name")?.textContent || null
+                        if (!styleName) return
+                        return [styleName, {
+                            title: style.querySelector("Name")?.textContent || styleName,
+                            legendURL: style.querySelector("LegendURL OnlineResource")?.getAttribute('xlink:href') || null,
+                            thumbnail: this.getWMSThumbnailURL(url, name, styleName),
+                        }]
+                    }).filter(Boolean))
+                    const style = Object.keys(styles)[0]
+                    const bbox = this.getWMSBbox(layer)
+            
+                    layers.push({
+                        name,
+                        title,
+                        crs,
+                        styles,
+                        style,
+                        bbox,
+                    })
+                })
+
+                return layers
+            }
+        }).catch(error => {
+            console.log(error)
+        })
+    }
+
+    async getLayersFromURL(url, format) {
+        const {get, header} = this.getURLFetchParams()
+
+        const baseLayer = {url, format, get, header}
+
+        let layers = []
+
         if (format === 'xyz') {
-            return [{
-                url, 
-                format, 
-                ...fetchParams,
+            layers = [{
+                ...baseLayer,
                 name: this.getXYZTilesLayerName(url),
-                thumbnail: this.getXYZTilesThumbnailURL(url, {fetchParams}),
+                style: 'default',
+                styles: {
+                    default: {
+                        thumbnail: this.getXYZTilesThumbnailURL(url, {get}),
+                    }
+                }
             }]
         }
         
         if (Array('wms').includes(format)) {
-
+            layers = await this.getWMSLayers(url)
+            layers = layers.map(layer => {
+                return {...baseLayer, ...layer}
+            })
         }
 
-        return []
+        return layers
     }
 
     normalizeURLBasedOnFormat(url, format) {
@@ -331,7 +468,6 @@ class LayersHandler {
         return [url, params]
     }
 
-
     handleURLSource() {
         const urlField = this.form.elements.url
         const formatField = this.form.elements.format
@@ -345,9 +481,13 @@ class LayersHandler {
             Array(urlField, formatField).forEach(el => {
                 el.classList.remove('is-invalid')
             })
+            
             paramsCollapse.classList.add('d-none')
             this.resultsContainers.url.innerHTML = ''
-            this.resetURLParams()
+
+            if (Array(urlField, formatField).includes(e.target)) {
+                this.resetURLParams()
+            }
             
             let url = validateURL(urlField.value)
             let format = formatField.value
@@ -366,7 +506,7 @@ class LayersHandler {
                     formatField.parentElement.querySelector(`.invalid-feedback ul`)
                     .innerHTML = `<li>Please select the correct format.</li>`
                 } else {
-                    [url, params] = [urlField.value, _] = this.normalizeURLBasedOnFormat(url, format)
+                    [url, params] = [urlField.value, params] = this.normalizeURLBasedOnFormat(url, format)
                     
                     Object.entries(params).forEach(([keyName, valueString]) => {
                         this.createURLFetchParamsFields('get', {keyName, valueString})
@@ -387,7 +527,7 @@ class LayersHandler {
         })
     }
 
-    handleReserBtn() {
+    handleResetBtn() {
         this.form.elements.reset.addEventListener('click', (e) => {
             Array('url', 'files').forEach(name => {
                 const el = this.form.elements[name]
@@ -419,7 +559,7 @@ class LayersHandler {
         }))
     }
 
-    updateURLResults() {
+    async updateURLResults() {
         this.resultsContainers.url.innerHTML = ''
 
         const formatField = this.form.elements.format
@@ -427,8 +567,7 @@ class LayersHandler {
         const url = this.form.elements.url.value
         const format = formatField.value
 
-        const fetchParams = this.getURLFetchParams()
-        const layers = this.getLayersFromURL(url, format, {fetchParams})
+        const layers = await this.getLayersFromURL(url, format)
         if (layers.length) {
             this.resultsContainers.url.appendChild(this.getResultsContent(layers))
         } else {

@@ -1,6 +1,5 @@
 class SettingsControl {
     constructor(options={}) {
-        this.settings = null
     }
 
     createHillshadeForm(config, {dismissible=false}={}) {
@@ -211,39 +210,44 @@ class SettingsControl {
     }
 
     updateSettings() {
-        const settings =  JSON.stringify(this.settings)
-
-        if (this.mapId) {
-
+        const settings = this.map._settings
+        
+        if (this.map.getContainer().dataset.mapId) {
+            console.log('update map in server')
         } else {
-            localStorage.setItem('mapSettings', settings)
+            localStorage.setItem('mapSettings', JSON.stringify(settings))
         }
     }
-
+    
     applySettings() {
-        this.map.setProjection({type:this.settings.projection})
+        const settings =  this.map._settings
 
-        if (this.settings.terrain) {
+        this.map.setProjection({type:settings.projection})
+
+        if (settings.terrain) {
             this.map.getContainer()
             .querySelector(`.maplibregl-ctrl-terrain`)
             ?.click()
+            
+            this.configHillshade()
         }
     
         document.addEventListener('themeToggled', (e) => {
-            if (this.settings.basemap.theme !== 'auto') return
+            if (settings.basemap.theme !== 'auto') return
             this.configBasemapLayer()
         })
 
-        if (this.settings.bookmark.method !== 'centroid') {
+        if (settings.bookmark.method !== 'centroid') {
             this.goToBookmark()
         }
 
-        if (this.settings.locked) {
+        if (settings.locked) {
             this.lockMapView()
         }
     }
 
     configSettingsControl() {
+        const settings =  this.map._settings
 
         this._container = customCreateElement({className: 'maplibregl-ctrl maplibregl-ctrl-group'})
 
@@ -282,12 +286,12 @@ class SettingsControl {
             className: 'd-flex flex-column gap-2 accordion'
         })
 
-        const settings = {
+        const settingsParams = {
             projection: {
                 title: 'Projection',
                 radio: true,
                 handler: (e, {name}={}) => {
-                    this.settings.projection = name
+                    settings.projection = name
                     this.map.setProjection({type:name})
                     this.updateSettings()                       
                 },
@@ -295,12 +299,12 @@ class SettingsControl {
                     mercator: {
                         title: 'Web Mercator',
                         icon: '🗺️',
-                        checked: this.settings.projection !== 'globe',
+                        checked: settings.projection !== 'globe',
                     },
                     globe: {
                         title: '3D Globe',
                         icon: '🌍',
-                        checked: this.settings.projection === 'globe'
+                        checked: settings.projection === 'globe'
                     },
                 }
             },
@@ -315,7 +319,7 @@ class SettingsControl {
                     osm.disabled = !active.checked
                     layers.disabled = !active.checked
 
-                    const config = this.settings.interactions.info
+                    const config = settings.interactions.info
                     config.active = active.checked
                     config.targets.osm = osm.checked
                     config.targets.layers = layers.checked
@@ -328,19 +332,19 @@ class SettingsControl {
                     active: {
                         title: 'Toggle popup',
                         icon: 'ℹ️',
-                        checked: this.settings.interactions.info.active,
+                        checked: settings.interactions.info.active,
                     },
                     layers: {
                         title: 'Layers',
                         icon: '📚',
-                        checked: this.settings.interactions.info.targets.layers,
-                        disabled: !this.settings.interactions.info.active,
+                        checked: settings.interactions.info.targets.layers,
+                        disabled: !settings.interactions.info.active,
                     },
                     osm: {
                         title: 'Openstreetmap',
                         icon: '🗾',
-                        checked: this.settings.interactions.info.targets.osm,
-                        disabled: !this.settings.interactions.info.active,
+                        checked: settings.interactions.info.targets.osm,
+                        disabled: !settings.interactions.info.active,
                     },
                 }
             },
@@ -348,7 +352,7 @@ class SettingsControl {
                 title: 'Units',
                 radio: true,
                 handler: (e, {name}={}) => {
-                    this.settings.unit = name
+                    settings.unit = name
                     this.map.controlsHandler.controls.scalebar.setUnit(name)
                     this.updateSettings()
                 },
@@ -356,17 +360,17 @@ class SettingsControl {
                     metric: {
                         title: 'Metric',
                         icon: '<span class="fs-12 font-monospace">m/km</span>',
-                        checked: this.settings.unit === 'metric'
+                        checked: settings.unit === 'metric'
                     },
                     imperial: {
                         title: 'Imperial',
                         icon: '<span class="fs-12 font-monospace">ft/mi</span>',
-                        checked: this.settings.unit === 'imperial'
+                        checked: settings.unit === 'imperial'
                     },
                     nautical: {
                         title: 'Nautical',
                         icon: '<span class="fs-12 font-monospace">nm</span>',
-                        checked: this.settings.unit === 'nautical'
+                        checked: settings.unit === 'nautical'
                     },
                 }
             },
@@ -382,7 +386,7 @@ class SettingsControl {
                     const themeRadio = Array.from(section.querySelectorAll(`input[name="basemap"]`))
                     themeRadio.forEach(el => el.disabled = !render.checked)
 
-                    const config = this.settings.basemap
+                    const config = settings.basemap
                     config.render = render.checked
                     config.theme = themeRadio.find(i => i.checked).value
 
@@ -395,25 +399,25 @@ class SettingsControl {
                         title: 'Toggle basemap',
                         icon: '🗺️',
                         type: 'checkbox',
-                        checked: this.settings.basemap.render,
+                        checked: settings.basemap.render,
                     },
                     auto: {
                         title: 'Auto basemap theme',
                         icon: '<span class="font-monospace fs-12">AUTO</span>',
-                        checked: this.settings.basemap.theme === 'auto',
-                        disabled: ! this.settings.basemap.render,
+                        checked: settings.basemap.theme === 'auto',
+                        disabled: ! settings.basemap.render,
                     },
                     light: {
                         title: 'Light basemap theme',
                         icon: '🔆',
-                        checked: this.settings.basemap.theme === 'light',
-                        disabled: ! this.settings.basemap.render,
+                        checked: settings.basemap.theme === 'light',
+                        disabled: ! settings.basemap.render,
                     },
                     dark: {
                         title: 'Dark basemap theme',
                         icon: '🌙',
-                        checked: this.settings.basemap.theme === 'dark',
-                        disabled: ! this.settings.basemap.render,
+                        checked: settings.basemap.theme === 'dark',
+                        disabled: ! settings.basemap.render,
                     },
                     more: {
                         title: 'Basemap options',
@@ -424,7 +428,7 @@ class SettingsControl {
 
                             document.querySelector(`.in-map-modal`)?.remove()
                             
-                            const config = this.settings.basemap
+                            const config = settings.basemap
 
                             const modal = createModal({
                                 titleInnerText: 'Basemap options',
@@ -723,7 +727,7 @@ class SettingsControl {
                         section.querySelector('input[name="hillshade-more"]')
                     ).forEach(el => el.disabled = !active.checked)
 
-                    const config = this.settings.hillshade
+                    const config = settings.hillshade
                     config.render = active.checked
                     config.method = multidirectional.checked ? 'multidirectional' : 'standard'
                     
@@ -734,24 +738,24 @@ class SettingsControl {
                     active: {
                         title: 'Toggle hillshade',
                         icon: '⛰️',
-                        checked: this.settings.hillshade.render,
+                        checked: settings.hillshade.render,
                     },
                     multidirectional: {
                         title: 'Multidirectional hillshade',
                         icon: '↔️',
-                        checked: this.settings.hillshade.method === 'multidirectional',
-                        disabled: !this.settings.hillshade.render
+                        checked: settings.hillshade.method === 'multidirectional',
+                        disabled: !settings.hillshade.render
                     },
                     more: {
                         title: 'Hillshade options',
                         icon: '🎚️',
-                        disabled: !this.settings.hillshade.render,
+                        disabled: !settings.hillshade.render,
                         handler: (e) => {
                             e.target.checked = false
 
                             document.querySelector(`.in-map-modal`)?.remove()
                             
-                            const config = this.settings.hillshade
+                            const config = settings.hillshade
 
                             const modal = createModal({
                                 titleInnerText: 'Hillshade options',
@@ -920,8 +924,8 @@ class SettingsControl {
                         icon: '🔖',
                         handler: (e) => {
                             e.target.checked = false
-                            this.settings.bookmark = {
-                                ...this.settings.bookmark,
+                            settings.bookmark = {
+                                ...settings.bookmark,
                                 ...this.getView()    
                             }
                             this.updateSettings()
@@ -943,7 +947,7 @@ class SettingsControl {
 
                             document.querySelector(`.in-map-modal`)?.remove()
                             
-                            const config = this.settings.bookmark
+                            const config = settings.bookmark
                             const defaultBookmark = MAP_DEFAULT_SETTINGS.bookmark
 
                             const modal = createModal({
@@ -1270,7 +1274,7 @@ class SettingsControl {
                             saveBtn.removeAttribute('data-bs-dismiss')
                             saveBtn.innerText = 'Update bookmark'
                             saveBtn.addEventListener('click', () => {
-                                const precision = this.settings.precision
+                                const precision = settings.precision
 
                                 config.method = methodSelect.value
                                 config.pitch = Math.round(parseFloat(pitchInput.value) * 100) / 100
@@ -1299,9 +1303,9 @@ class SettingsControl {
                     tooltip: {
                         title: 'Toggle tooltip',
                         icon: '💬',
-                        checked: this.settings.interactions.tooltip.active,
+                        checked: settings.interactions.tooltip.active,
                         handler: (e) => {
-                            this.settings.interactions.tooltip.active = e.target.checked
+                            settings.interactions.tooltip.active = e.target.checked
                             this.map.interactionsHandler.configCursor()
                             this.updateSettings()
                         }
@@ -1309,11 +1313,11 @@ class SettingsControl {
                     lock: {
                         title: 'Lock map view',
                         icon: '🔒',
-                        checked: this.settings.locked,
+                        checked: settings.locked,
                         handler: (e) => {
-                            this.settings.locked = e.target.checked
+                            settings.locked = e.target.checked
                             
-                            this.settings.locked ? this.lockMapView() : this.unlockMapView()
+                            settings.locked ? this.lockMapView() : this.unlockMapView()
 
                             this.updateSettings()
                         }
@@ -1333,14 +1337,14 @@ class SettingsControl {
             }
         }
 
-        Object.entries(settings).forEach(([section, params]) => {
+        Object.entries(settingsParams).forEach(([section, params]) => {
             const container = customCreateElement({
                 parent: sections,
                 className: 'd-flex flex-column gap-1 px-2 accordion-item border-0'
             })
 
             const body = customCreateElement({
-                className: `collapse accordion-collapse ${Object.keys(settings)[0] === section ? 'show' : ''}`,
+                className: `collapse accordion-collapse ${Object.keys(settingsParams)[0] === section ? 'show' : ''}`,
                 attrs: {
                     'data-bs-parent': `#${sections.id}`
                 }
@@ -1454,9 +1458,11 @@ class SettingsControl {
     }
 
     goToBookmark() {
-        if (this.settings.locked) return
+        const settings =  this.map._settings
 
-        const config = this.settings.bookmark
+        if (settings.locked) return
+
+        const config = settings.bookmark
 
         if (config.method === 'centroid') {
             this.map.setZoom(config.centroid.zoom)
@@ -1484,8 +1490,10 @@ class SettingsControl {
     }
 
     getView() {
+        const settings =  this.map._settings
+
         const bounds = this.map.getBounds().toArray().flatMap(i => i)
-        const precision = this.settings.precision
+        const precision = settings.precision
 
         return {
             pitch: Math.round(this.map.getPitch() * 100) / 100,
@@ -1512,6 +1520,7 @@ class SettingsControl {
 
     configBasemapLayer() {
         const map = this.map
+        const settings =  map._settings
 
         if (map.getLayer('basemap')) {
             map.removeLayer('basemap')
@@ -1519,15 +1528,15 @@ class SettingsControl {
 
         const style = structuredClone(map.getStyle())
         
-        if (!this.settings.basemap.render) {
+        if (!settings.basemap.render) {
             delete style.sky
             map.setStyle(style)
             return
         }
 
-        const basemapTheme = this.settings.basemap.paints[(
-            this.settings.basemap.theme === 'light' || (
-                this.settings.basemap.theme === 'auto' 
+        const basemapTheme = settings.basemap.paints[(
+            settings.basemap.theme === 'light' || (
+                settings.basemap.theme === 'auto' 
                 && getPreferredTheme() !== 'dark'
             ) ? 'light' : 'dark'
         )]
@@ -1545,7 +1554,9 @@ class SettingsControl {
 
     configBasemap() {
         const map = this.map
-        const config = this.settings.basemap
+        const settings =  map._settings
+
+        const config = settings.basemap
         const id = 'basemap'
 
         if (map.getLayer(id)) {
@@ -1577,7 +1588,9 @@ class SettingsControl {
 
     configHillshade(){
         const map = this.map
-        const config = this.settings.hillshade
+        const settings = map._settings
+
+        const config = settings.hillshade
 
         if (map.getLayer('hillshade')) {
             map.removeLayer('hillshade')
@@ -1601,13 +1614,11 @@ class SettingsControl {
 
     onAdd(map) {
         this.map = map
-        this.map._settings = this
-
-        this.mapId = this.map.getContainer().dataset.mapId
-        this.settings = this.map.controlsHandler.settings
         
         this.applySettings()
         this.configSettingsControl()
+        this.updateSettings()
+
         return this._container
     }
 

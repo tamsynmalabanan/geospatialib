@@ -29,3 +29,7 @@
 .w-auto {
     width: auto;
 }
+
+.outline-none {
+    outline: unset;
+}

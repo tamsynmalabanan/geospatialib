@@ -99,6 +99,11 @@ class LegendControl {
                 className: 'd-flex flex-column gap-2',
                 attrs: {
                     'data-layer-id': Array(layer.source, layer.metadata.name).join('-')
+                },
+                handlers: {
+                    insertBefore: (el) => {
+                        this.legendContainer.insertBefore(el, this.legendContainer.firstElementChild)
+                    }
                 }
             })
 
@@ -180,8 +185,11 @@ class LegendControl {
         const params = layer.metadata.params
 
         if (params.type === 'xyz') {
-            return ''
-            // return `<img class="rounded" src="${params.thumbnail}" alt="Image not found." height="100">`
+            return `<img class="" src="${params.styles[params.style].thumbnail}" alt="Image not found." height="100">`
+        }
+
+        if (params.type === 'wms') {
+            return `<img class="" src="${params.styles[params.style].legendURL}" alt="Image not found.">`
         }
     }
 

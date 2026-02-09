@@ -31,16 +31,9 @@ const saveToGISDB = async (data, {
     id = `local-${generateRandomString(64)}`,
     params = {},
     extent,
-    normalize=true,
 }={}) => {
-    if (data?.type === 'FeatureCollection') {
-        if (normalize) {
-            await normalizeGeoJSON(data)
-        }
-
-        if (!extent) {
-            extent = turf.envelope(data).geometry
-        }
+    if (!extent && data?.type === 'FeatureCollection') {
+        extent = turf.envelope(data).geometry
     }
 
     const request = requestGISDB()
@@ -160,12 +153,8 @@ const updateGISDB = async (id, {
     params,
 }) => {
     return new Promise(async (resolve, reject) => {
-        if (data?.type === 'FeatureCollection') {
-            await normalizeGeoJSON(data)
-
-            if (!extent) {
-                extent = turf.envelope(data).geometry
-            }
+        if (!extent && data?.type === 'FeatureCollection') {
+            extent = turf.envelope(data).geometry
         }
         
         const storedContent = await getFromGISDB(id)
@@ -195,7 +184,6 @@ const updateGISDB = async (id, {
                             id, 
                             extent: content.extent, 
                             params,
-                            normalize: false,
                         })
                         worker.terminate()
                         resolve(id)
@@ -213,7 +201,6 @@ const updateGISDB = async (id, {
             id, 
             extent, 
             params,
-            normalize: false,
         })
 
         resolve(id)

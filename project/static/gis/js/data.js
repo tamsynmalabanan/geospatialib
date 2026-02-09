@@ -23,7 +23,8 @@ const fetchSearchNominatim = async (params, {
         callback: async (response) => {
             const data = await parseJSONResponse(response, {id})
             if (data?.features?.length) {
-                await updateGISDB(id, {data})
+                await normalizeGeoJSON(data)
+                updateGISDB(id, {data})
             }
             return data
         }
