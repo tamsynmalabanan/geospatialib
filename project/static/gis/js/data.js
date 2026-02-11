@@ -63,40 +63,30 @@ const fetchReverseNominatim = async ({
 const fetchWMSData = async (params, {
     map, 
     point,
-    style, 
     abortEvents, 
     abortController, 
 } = {}) => {
-    const cleanURL = removeQueryParams(params.url)
-
-    const getParams = {
+    const url = pushURLParams(params.url, {
         SERVICE: 'WMS',
         VERSION: '1.1.1',
         REQUEST: 'GetFeatureInfo',
         FORMAT: 'application/json',
         INFO_FORMAT: 'application/json',
-        TRANSPARENT: true,
-        QUERY_LAYERS: params.name,
-        LAYERS: params.name,
         exceptions: 'application/vnd.ogc.se_inimage',
         SRS: "EPSG:4326",
         CRS: 'EPSG:4326',
+        TRANSPARENT: true,
         
-        BBOX: map._settingsControl.getMapBbox(),
+        QUERY_LAYERS: params.name,
+        LAYERS: params.name,
+        STYLES: params.style,
+        
+        BBOX: normalizeBbox(map.getBounds().toArray().flatMap(i => i)),
         WIDTH: map.getCanvas().width,
         HEIGHT: map.getCanvas().height,
         X: Math.floor(point.x),
         Y: Math.floor(point.y),
-    }
-    
-    const styles = JSON.parse(params.styles ?? '{}')
-    if (style && style in styles) {
-        getParams.STYLES = style
-    } else if (Object.keys(styles).length) {
-        getParams.STYLES = Object.keys(styles)[0]
-    }
-    
-    const url = pushQueryParamsToURLString(cleanURL, getParams)
+    })
     
     return await customFetch(url, {
         abortEvents,
@@ -110,26 +100,32 @@ const fetchWMSData = async (params, {
                     throw new Error('Failed to parse JSON.')
                 }
             } else if (contentType.includes('xml')) {
-                return response.text()
-                .then(xmlString => {
+                return response.text().then(xmlString => {
                     const features = []
 
                     const [namespace, rootElement] = parseXML(xmlString)
                     if (namespace === 'http://www.esri.com/wms') {
+                        const lngLat = map.unproject(point)
+                        
                         rootElement.childNodes.forEach(child => {
-                            const tagName = child.tagName
-                            if (!tagName || tagName.toLowerCase() !== 'fields') return
+                            const tagName = child.tagName?.toLowerCase()
+                            if (tagName.toLowerCase() !== 'fields') return
                             
                             const attributes = Object.values(child.attributes)
                             if (attributes.length == 0) return
                             
-                            const feature = {type: "Feature", properties:{}}
-                            attributes.forEach(attr => feature.properties[attr.name] = attr.value)
-                            features.push(feature)
+                            features.push(turf.point(
+                                Object.values(lngLat),
+                                Object.fromEntries(attributes.map(attr => {
+                                    return [attr.name, attr.value]
+                                }))
+                            ))
                         })
+                    } else {
+                        throw new Error('Content not supported.')
                     }
                     
-                    return geojson = turf.featureCollection(features)
+                    return turf.featureCollection(features)
                 })
             }
         }

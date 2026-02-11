@@ -2,83 +2,6 @@ class LayersControl {
     constructor(options={}) {
     }
 
-    normalizeLayerParams(params) {
-        if (!params.type) {
-            params.type = params.format
-        }
-        
-        if (!params.bbox) {
-            params.bbox = [-180, -90, 180, 90]
-        }
-        
-        if (!params.crs) {
-            params.crs = 'EPSG:4326'
-        }
-        
-        if (!params.title) {
-            params.title = params.name
-        }
-
-        if (!params.style || !(params.style in params.styles)) {
-            params.style = Object.keys(params.styles)[0]
-        }
-
-        if (!params.attribution && params.url) {
-            const domain = (new URL(params.url)).host.split('.').slice(-2).join('.')
-            params.attribution = `Data from <a class='text-decoration-none text-reset text-muted' href="https://www.${domain}/" target="_blank">${domain}</a>`
-        }
-        
-        return params
-    }
-
-    addRasterLayer (source, params) {
-        const map = this.map
-        
-        const name = generateRandomString()
-        const id = `${source.id}-${name}`
-        const beforeId = map.sourcesHandler.getBeforeId(id)
-
-        map.addLayer({
-            id,
-            type: "raster",
-            source: source.id,
-            metadata: {
-                ...source.metadata,
-                params: {
-                    ...source.metadata.params,
-                    ...params,
-                },
-                name,
-                popup: {
-                    active: params.type === 'wms' ? true : false,
-                }
-            }
-        }, beforeId)   
-
-        return map.getLayer(id)
-    }
-
-    addLayerHandler() {
-        const map = this.map
-
-        map.getContainer().addEventListener('addLayer', async (e) => {
-            const params = this.normalizeLayerParams(e.detail.layer)
-            
-            const sourceId = await hashJSON(params) 
-            
-            let source
-
-            if (params.type === 'xyz') {
-                source = map.sourcesHandler.getXYZSource(sourceId, params)
-                this.addRasterLayer(source, params)
-            }
-            
-            if (params.type === 'wms') {
-                source = map.sourcesHandler.getWMSSource(sourceId, params)
-                this.addRasterLayer(source, params)
-            }
-        })
-    }
 
     onAdd(map) {
         this.map = map
@@ -109,7 +32,9 @@ class LayersControl {
             }
         })
 
-        this.addLayerHandler()
+        this.map.getContainer().addEventListener('addLayer', (e) => {
+            this.map.sourcesHandler.addLayer(e.detail.layer)
+        })
 
         return this._container
     }

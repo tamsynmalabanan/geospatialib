@@ -228,7 +228,7 @@ class SettingsControl {
             this.map.getContainer()
             .querySelector(`.maplibregl-ctrl-terrain`)
             ?.click()
-            
+
             this.configHillshade()
         }
     
@@ -244,6 +244,14 @@ class SettingsControl {
         if (settings.locked) {
             this.lockMapView()
         }
+
+        Object.entries(settings.legend.sources).forEach(([id, metadata]) => {
+            this.map.sourcesHandler.getSource(id, {params: metadata.params})
+        })
+
+        Object.entries(settings.legend.layers).forEach(([id, metadata]) => {
+            this.map.sourcesHandler.addLayer(metadata.params, {sourceId: id.split('-')[0]})
+        })
     }
 
     configSettingsControl() {
@@ -1331,6 +1339,15 @@ class SettingsControl {
                         },
                         handler: (e) => {
                             e.target.checked = false
+                        }
+                    },
+                    reset: {
+                        title: 'Reset map',
+                        icon: '↩️',
+                        handler: (e) => {
+                            e.target.checked = false
+
+
                         }
                     }
                 }

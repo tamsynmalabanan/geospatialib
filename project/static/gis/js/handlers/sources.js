@@ -10,6 +10,10 @@ class SourcesHandler {
                 'tooltipFeature', 
                 'searchResultBounds',
             ],
+            baseLayers: [
+                'basemap',
+                'hillshade', 
+            ],
         }
 
         this.configAddLayer()
@@ -642,6 +646,22 @@ class SourcesHandler {
         }
     }
 
+    getSource(id, {params}={}) {
+        if (params) {
+            const type = params.type
+    
+            if (type === 'xyz') {
+                return this.getXYZSource(id, params)
+            }
+    
+            if (type === 'wms') {
+                return this.getWMSSource(id, params)
+            }
+        }
+
+        return this.map.getSource(id)
+    }
+
     getXYZSource(sourceId, params) {
         const map = this.map
         
@@ -699,5 +719,75 @@ class SourcesHandler {
         }
 
         return source
+    }
+
+    normalizeLayerParams(params) {
+        if (!params.type) {
+            params.type = params.format
+        }
+        
+        if (!params.bbox) {
+            params.bbox = [-180, -90, 180, 90]
+        }
+        
+        if (!params.crs) {
+            params.crs = 'EPSG:4326'
+        }
+        
+        if (!params.title) {
+            params.title = params.name
+        }
+
+        if (!params.style || !(params.style in params.styles)) {
+            params.style = Object.keys(params.styles)[0]
+        }
+
+        if (!params.attribution && params.url) {
+            const domain = (new URL(params.url)).host.split('.').slice(-2).join('.')
+            params.attribution = `Data from <a class='text-decoration-none text-reset text-muted' href="https://www.${domain}/" target="_blank">${domain}</a>`
+        }
+        
+        return params
+    }
+
+    addRasterLayer (source, params) {
+        const map = this.map
+        
+        const name = generateRandomString()
+        const id = `${source.id}-${name}`
+        const beforeId = this.getBeforeId(id)
+
+        map.addLayer({
+            id,
+            type: "raster",
+            source: source.id,
+            metadata: {
+                ...source.metadata,
+                params: {
+                    ...source.metadata.params,
+                    ...params,
+                },
+                name,
+                popup: {
+                    active: params.type === 'wms' ? true : false,
+                }
+            }
+        }, beforeId)   
+
+        return map.getLayer(id)
+    }
+
+    async addLayer(params, {sourceId}={}) {
+        params = this.normalizeLayerParams(params)
+        
+        if (!sourceId) {
+            sourceId = await hashJSON(params) 
+        }
+        
+        const source = this.getSource(sourceId, {params})
+
+        if (Array('xyz', 'wms').includes(params.type)) {
+            this.addRasterLayer(source, params)
+        }
     }
 }

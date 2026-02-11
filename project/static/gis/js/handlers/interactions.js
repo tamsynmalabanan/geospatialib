@@ -74,29 +74,27 @@ class InteractionsHandler {
     async getCanvasData({
         bbox, point,
         layers, filter,
-        queryRasters=false,
+        rasters=false,
     }) {
-        let features = this.map.queryRenderedFeatures(bbox ?? point, {layers, filter})
+        const map = this.map
 
-        if (queryRasters && point) {
-            console.log('update features with features from rasters i.e. wms, dems, etc.')
+        let features = map.queryRenderedFeatures(bbox ?? point, {layers, filter})
 
-            const sources = {}
- 
-            this.map.getStyle().layers.forEach(l => {
-                if (l.source in sources) return
+        if (rasters && point) {
+            const sources = map.getStyle().layers.map(l => {
                 if (layers?.length && !layers.includes(l.id)) return
 
-                const source = this.map.getStyle().sources[l.source]
+                const source = map.getSource(l.source)
                 if (Array('vector', 'geojson').includes(source.type)) return
+                if (Array('xyz').includes(source.metadata?.params.type)) return
                 
-                sources[l.source] = source
-            })
+                return source
+            }).filter(Boolean)
 
-            const lngLat = this.map.unproject(point)
+            const lngLat = map.unproject(point)
             const feature = turf.point(Object.values(lngLat))
 
-            for (const source of Object.values(sources)) {
+            for (const source of sources) {
                 const metadata = source.metadata
                 const params = metadata?.params
 
@@ -105,23 +103,23 @@ class InteractionsHandler {
                 let data
 
                 if (Array('wms').includes(params?.type)) {
-                    data = await fetchWMSData(params, {
-                        map: this.map,
-                        point, 
-                        style: metadata.style,
-                    })
+                    data = await fetchWMSData(params, {map, point})
+                    console.log(data)
                 }
                 
                 if (data?.features?.length) {
                     features = [
                         ...features,
-                        ...data.features
+                        ...data.features.map(f => {
+                            f.layer = {source:source.id}
+                            return f
+                        })
                     ]
                 }
             }
         }
 
-        if (features?.length && features.length > 1) {
+        if (features.length > 1) {
             const uniqueFeatures = []
             features.forEach(f1 => {
                 if (!uniqueFeatures.find(f2 => {
@@ -139,7 +137,7 @@ class InteractionsHandler {
     }
 
     getLayerTitle(layer) {
-        const source = this.map.getSource(layer.source)
+        const source = this.map.getSource(layer?.source)
         return (
             layer.metadata?.params?.title 
             ?? layer.metadata?.params?.name 
@@ -301,6 +299,9 @@ class InteractionsHandler {
             tag: 'table',
             className: `table ${tableClass}`,
             parent: container,
+            style: {
+                userSelect: 'text'
+            }
         })
 
         const tbody = customCreateElement({
@@ -329,7 +330,7 @@ class InteractionsHandler {
             const value = customCreateElement({
                 tag: 'td',
                 parent: tr,
-                className: 'text-wrap',
+                className: 'text-wrap text-break',
                 style: {maxWidth: `${window.innerWidth * 0.4}px`},
                 innerHTML: data   
             })
@@ -398,7 +399,12 @@ class InteractionsHandler {
     }
 
     getRawFeature(f) {
-        return this.map.getStyle().sources[f.source].data.features.find(i => i.properties.__id__ === f.id)
+        const source = this.map.getStyle().sources[f.source]
+        if (source) {
+            return source.data.features.find(i => i.properties.__id__ === f.id)
+        } else {
+            return f
+        }
     }
 
     async createInfoPopup(e) {
@@ -449,7 +455,7 @@ class InteractionsHandler {
             let features = []
 
             features = (await this.getCanvasData({
-                point:e.point, queryRasters:true, 
+                point:e.point, rasters:true, 
                 layers: this.map.getStyle().layers.filter(l => l.metadata?.popup?.active).map(l => l.id)
             }))?.filter(f => (
                 f.geometry 
@@ -476,25 +482,24 @@ class InteractionsHandler {
                     return polygonFeatures.filter(f2 => turf.booleanIntersects(f1, f2))
                 }).reduce((a, b) => (b.length > a.length ? b : a))
                 
-                if (features.length > 1) {
-                    try {
-                        const intersection = turf.intersect(turf.featureCollection(features))
-                        lngLat = new maplibregl.LngLat(...turf.pointOnFeature(intersection).geometry.coordinates)
-                    } catch (error) {console.log(error)}
-                }
+                // if (features.length > 1) {
+                //     try {
+                //         const intersection = turf.intersect(turf.featureCollection(features))
+                //         lngLat = new maplibregl.LngLat(...turf.pointOnFeature(intersection).geometry.coordinates)
+                //     } catch (error) {console.log(error)}
+                // }
 
                 features = features.map(f => f.original_f ?? f)
             }
 
-            if (features?.length === 1) {
-                lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
-            }
+            // if (features?.length === 1) {
+            //     lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
+            // }
     
             popup.setLngLat(lngLat)
 
             if (features?.length) {
                 const carouselContainer = customCreateElement({
-                    className: 'd-flex',
                     style: {maxWidth: `400px`,}
                 })
                 container.insertBefore(carouselContainer, footer)
@@ -507,7 +512,7 @@ class InteractionsHandler {
                 const carousel = customCreateElement({
                     className: 'carousel slide flex-grow-1',
                 })
-    
+                
                 const carouselInner = customCreateElement({
                     parent: carousel,
                     className: 'carousel-inner'
@@ -559,14 +564,13 @@ class InteractionsHandler {
                     //     innerHTML: title,
                     // })
     
-                    const propertiesTable = this.featurePropertiesToTable(feature.properties, {
-                        parent: content, 
+                    content.appendChild(this.featurePropertiesToTable(feature.properties, {
                         tableClass: `table-sm table-striped m-0 fs-12 table-${theme}`,
                         containerClass: `overflow-y-auto flex-grow-1`,
-                    })
-    
+                    }))
+
                 })
-                
+
                 if (features.length > 1) {
                     Array.from(customCreateElement({
                         innerHTML: `
@@ -581,7 +585,7 @@ class InteractionsHandler {
                         `
                     }).children).forEach(b => carousel.appendChild(b))
                 }
-    
+                
                 carouselContainer.appendChild(carousel)
             }
         }

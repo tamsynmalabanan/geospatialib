@@ -111,7 +111,11 @@ const MAP_DEFAULT_SETTINGS = {
                 }
             },
         }
-    }
+    },
+    legend: {
+        sources: {},
+        layers: {}
+    },
 }
 
 const createNewMap = (el) => {
@@ -179,6 +183,7 @@ const createNewMap = (el) => {
         new ControlsHandler(map)
         new InteractionsHandler(map)
         
+        window.map = map
         console.log(map)
     })   
 }

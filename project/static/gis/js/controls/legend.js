@@ -85,6 +85,32 @@ class LegendControl {
         return container
     }
 
+    updateSettings() {
+        const map = this.map
+        const settings = map._settings
+        const layers = map.getStyle().layers
+        const sourcesHandler = map.sourcesHandler
+        const excludedPrefix = [
+            ...sourcesHandler.config.systemOverlays,
+            ...sourcesHandler.config.baseLayers,
+        ]
+
+        const legendSources = {}
+        const legendLayers = {}
+
+        layers.forEach(layer => {
+            if (excludedPrefix.find(prefix => layer.id.startsWith(prefix))) return
+            const source = map.getSource(layer.source)
+            legendSources[layer.source] = source.metadata
+            legendLayers[`${layer.source}-${layer.metadata.name}`] = layer.metadata
+        })
+
+        settings.legend.sources = legendSources
+        settings.legend.layers = legendLayers
+
+        map.controlsHandler.controls?.settings?.updateSettings()
+    }
+
     handleAddLayer() {
         const map = this.map
         map.on('layeradded', (e) => {
@@ -178,6 +204,8 @@ class LegendControl {
                 parent: body,
                 innerHTML: layer.metadata.params.attribution,
             })
+
+            this.updateSettings()
         })
     }
 
@@ -196,9 +224,12 @@ class LegendControl {
     handleRemoveLayer() {
         const map = this.map
         map.on('layerremoved', (e) => {
-            console.log(e)
-            Array.from(this.legendContainer.querySelectorAll(`[data-layer-id]`))
-            .find(el => e.layerId.startsWith(el.dataset.layerId))?.remove()
+            const container = Array.from(this.legendContainer.querySelectorAll(`[data-layer-id]`))
+            .find(el => e.layerId.startsWith(el.dataset.layerId))
+            if (container) {
+                container.remove()
+                this.updateSettings()
+            }
         })
     }
 
