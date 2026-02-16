@@ -1,5 +1,10 @@
 class LayersHandler {
     constructor() {
+        this.abortControllers = {
+            url: null,
+            files: null,
+        }
+
         const modal = this.modal = document.querySelector(`#addLayersModal`)
 
         this.fieldContainers = Object.fromEntries(
@@ -77,7 +82,7 @@ class LayersHandler {
                 parent: card,
                 className: 'img-thumbnail',
                 attrs: {
-                    src: layer.styles[layer.style].thumbnail,
+                    src: layer.styles?.[layer.style]?.thumbnail,
                     alt: 'Image not found.',
                 },
                 style: {
@@ -88,7 +93,7 @@ class LayersHandler {
 
             const body = customCreateElement({
                 parent:card,
-                className: 'd-flex gap-3 flex-grow-1'
+                className: 'd-flex gap-5 flex-grow-1'
             })
 
             const info = customCreateElement({
@@ -111,6 +116,23 @@ class LayersHandler {
                     parent: info,
                     className: 'lead fs-14 text-wrap text-break',
                     innerText: layer.name,
+                })
+            }
+
+            if (Object.keys(layer.styles).length > 1) {
+                const styles = createFormSelect({
+                    parent: info,
+                    selected: layer.style,
+                    options: Object.fromEntries(Object.entries(layer.styles).map(([name, params]) => {
+                        return [name, params.title || name]
+                    })),
+                    fs: 'fs-12',
+                    events: {
+                        change: (e) => {
+                            layer.style = e.target.value
+                            img.setAttribute('src', layer.styles[layer.style].thumbnail)
+                        }
+                    }
                 })
             }
 
@@ -216,7 +238,8 @@ class LayersHandler {
             events: {
                 click: (e) => {
                     if (keyField.value && valueField.value) {
-                        this.resultsContainers.url.innerHTML = ''
+                        const event = new Event('change', { bubbles: true })
+                        this.fieldContainers.url.dispatchEvent(event)
                     } 
 
                     container.remove()
@@ -335,7 +358,7 @@ class LayersHandler {
         return Array(href, z, x, y).join("{")
     }
 
-    getWMSThumbnailURL(url, name, style) {
+    getWMSThumbnailURL(url, name, style, bbox) {
         return pushURLParams(url, {
             "service": "WMS",
             "request": "GetMap",
@@ -343,7 +366,8 @@ class LayersHandler {
             "layers": name,
             "styles": style,
             "crs": "EPSG:4326",
-            "bbox": '-180,-90,180,90',
+            "bbox": bbox.join(','),
+            // "bbox": '-180,-90,180,90',
             "width": "100",
             "height": "100",
             "format": "image/png",
@@ -369,7 +393,7 @@ class LayersHandler {
                     bbox: Array('minx', 'miny', 'maxx', 'maxy').map(i => parseFloat(box.getAttribute(i)))
                 }
             })
-            const bboxWGS84 = bboxes.find(i => i.crs === "EPSG:4326")
+            const bboxWGS84 = bboxes?.find(i => i.crs === "EPSG:4326")
             if (bboxWGS84) {
                 bbox = bboxWGS84.bbox
             } else {
@@ -385,6 +409,7 @@ class LayersHandler {
             service: 'WMS',
             request: 'GetCapabilities',
         }), {
+            abortController: this.abortControllers.url,
             callback: async (response) => {
                 const text = await response.text()
                 const parser = new DOMParser()
@@ -396,17 +421,17 @@ class LayersHandler {
                     const name = layer.querySelector("Name")?.textContent || null
                     const title = layer.querySelector("Title")?.textContent || name
                     const crs = layer.querySelector("CRS")?.textContent || null
+                    const bbox = this.getWMSBbox(layer)
                     const styles = Object.fromEntries(Array.from(layer.querySelectorAll("Style")).map(style => {
                         const styleName = style.querySelector("Name")?.textContent || null
                         if (!styleName) return
                         return [styleName, {
                             title: style.querySelector("Name")?.textContent || styleName,
                             legendURL: style.querySelector("LegendURL OnlineResource")?.getAttribute('xlink:href') || null,
-                            thumbnail: this.getWMSThumbnailURL(url, name, styleName),
+                            thumbnail: this.getWMSThumbnailURL(url, name, styleName, bbox),
                         }]
                     }).filter(Boolean))
                     const style = Object.keys(styles)[0]
-                    const bbox = this.getWMSBbox(layer)
             
                     layers.push({
                         name,
@@ -422,6 +447,7 @@ class LayersHandler {
             }
         }).catch(error => {
             console.log(error)
+            return []
         })
     }
 
@@ -446,7 +472,7 @@ class LayersHandler {
         }
         
         if (Array('wms').includes(format)) {
-            layers = await this.getWMSLayers(url)
+            layers = await this.getWMSLayers(url, )
             layers = layers.map(layer => {
                 return {...baseLayer, ...layer}
             })
@@ -478,6 +504,8 @@ class LayersHandler {
         ).parentElement
 
         this.fieldContainers.url.addEventListener('change', (e) => {
+            this.abortControllers.url?.abort('Field changed.')
+
             Array(urlField, formatField).forEach(el => {
                 el.classList.remove('is-invalid')
             })
@@ -485,7 +513,7 @@ class LayersHandler {
             paramsCollapse.classList.add('d-none')
             this.resultsContainers.url.innerHTML = ''
 
-            if (Array(urlField, formatField).includes(e.target)) {
+            if (Array(urlField).includes(e.target)) {
                 this.resetURLParams()
             }
             
@@ -512,6 +540,8 @@ class LayersHandler {
                         this.createURLFetchParamsFields('get', {keyName, valueString})
                     })
 
+                    this.fieldContainers.url.querySelector(`.spinner-border`).classList.add('d-none')
+                    this.form.elements.getLayers.disabled = false
                     paramsCollapse.classList.remove('d-none')
                 }
             } else {
@@ -560,6 +590,14 @@ class LayersHandler {
     }
 
     async updateURLResults() {
+        const abortController = this.abortControllers.url = new AbortController()
+
+        const getLayersBtn = this.form.elements.getLayers
+        const spinner = this.fieldContainers.url.querySelector(`.spinner-border`)
+
+        getLayersBtn.disabled = true
+        spinner.classList.remove('d-none')
+
         this.resultsContainers.url.innerHTML = ''
 
         const formatField = this.form.elements.format
@@ -568,12 +606,20 @@ class LayersHandler {
         const format = formatField.value
 
         const layers = await this.getLayersFromURL(url, format)
-        if (layers.length) {
-            this.resultsContainers.url.appendChild(this.getResultsContent(layers))
-        } else {
-            formatField.classList.add('is-invalid')
-            formatField.parentElement.querySelector(`.invalid-feedback ul`)
-            .innerHTML = `<li>No layers retrieved in this format.</li>`
+
+        if(abortController === this.abortControllers.url && !abortController.signal.aborted) {
+            if (layers.length) {
+                this.resultsContainers.url.appendChild(this.getResultsContent(layers))
+            } else {
+                formatField.classList.add('is-invalid')
+                formatField.parentElement.querySelector(`.invalid-feedback ul`)
+                .innerHTML = `<li>Failed to retrieve layers in this format.</li>`
+            }
+        }
+
+        spinner.classList.add('d-none')
+        if (!formatField.classList.contains('is-invalid')) {
+            getLayersBtn.disabled = false
         }
     }
 }

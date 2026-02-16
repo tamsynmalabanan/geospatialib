@@ -103,10 +103,13 @@ class InteractionsHandler {
                 let data
 
                 if (Array('wms').includes(params?.type)) {
-                    data = await fetchWMSData(params, {map, point})
-                    console.log(data)
+                    try {
+                        data = await fetchWMSData(params, {map, point})
+                    } catch (error) {
+                        console.log(error)
+                    }
                 }
-                
+                                
                 if (data?.features?.length) {
                     features = [
                         ...features,
@@ -149,14 +152,14 @@ class InteractionsHandler {
     getFeatureLabel(f) {
         return f.properties[
             f.layer?.metadata?.label
-             ?? Array(
+            || Object.keys(f.properties).find(i => Array(
                 'display_name',
                 'name:en', 
                 'name', 
                 'title', 
-                'id', 
-            ).find(i => Object.keys(f.properties).find(j => j.startsWith(i)))
-            ?? Object.keys(f.properties).filter(i => !isSystemProperty(i)).pop()
+                'label', 
+            ).find(j => i.includes(j))) 
+            || Object.keys(f.properties).find(i => i !== '__sys__')
         ]
     }
 
@@ -310,7 +313,7 @@ class InteractionsHandler {
         })
         
         Object.keys(properties).forEach(property => {
-            if (isSystemProperty(property)) return 
+            if (property === '__sys__') return 
 
             const data = properties[property] ?? null
 
@@ -398,10 +401,15 @@ class InteractionsHandler {
         return coords
     }
 
+    getFeatureId(f) {
+        return f.properties?.__sys__?.id ?? JSON.parse(f.properties.__sys__ ?? '{}').id
+    }
+
     getRawFeature(f) {
+        const id = this.getFeatureId(f)
         const source = this.map.getStyle().sources[f.source]
-        if (source) {
-            return source.data.features.find(i => i.properties.__id__ === f.id)
+        if (id && source) {
+            return source.data.features.find(i => i.properties.__sys__.id === id)
         } else {
             return f
         }
@@ -446,6 +454,9 @@ class InteractionsHandler {
             style: { maxWidth: `${popupWidth/3}px` }
         })
 
+        this.createCoordinatesToggle({parent: footer, lngLat})
+        .addEventListener('click', (e) => popup.setLngLat(lngLat))
+
         const targets = (
             Object.entries(this.map._settings.interactions.info.targets)
             .filter(i => i[1]).map(i => i[0])
@@ -459,7 +470,7 @@ class InteractionsHandler {
                 layers: this.map.getStyle().layers.filter(l => l.metadata?.popup?.active).map(l => l.id)
             }))?.filter(f => (
                 f.geometry 
-                && Object.keys(f.properties).filter(i => !isSystemProperty(i)).length
+                && Object.keys(f.properties).filter(i => i !== '__sys__').length
                 && !Object.values(this.config).map(i => i.sourceId).includes(f.layer?.source)
             )).map(f => {
                 f.geometry = this.getRawFeature(f).geometry
@@ -482,19 +493,8 @@ class InteractionsHandler {
                     return polygonFeatures.filter(f2 => turf.booleanIntersects(f1, f2))
                 }).reduce((a, b) => (b.length > a.length ? b : a))
                 
-                // if (features.length > 1) {
-                //     try {
-                //         const intersection = turf.intersect(turf.featureCollection(features))
-                //         lngLat = new maplibregl.LngLat(...turf.pointOnFeature(intersection).geometry.coordinates)
-                //     } catch (error) {console.log(error)}
-                // }
-
                 features = features.map(f => f.original_f ?? f)
             }
-
-            // if (features?.length === 1) {
-            //     lngLat = new maplibregl.LngLat(...turf.pointOnFeature(features[0]).geometry.coordinates)
-            // }
     
             popup.setLngLat(lngLat)
 
@@ -578,7 +578,7 @@ class InteractionsHandler {
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Previous</span>
                             </button>
-                            <button class="carousel-control-next w-auto h-auto me-2" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
+                            <button class="carousel-control-next w-auto h-auto me-3" type="button" data-bs-target="#${carousel.id}" data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Next</span>
                             </button>
@@ -589,13 +589,7 @@ class InteractionsHandler {
                 carouselContainer.appendChild(carousel)
             }
         }
-
-        this.createCoordinatesToggle({
-            parent: footer,
-            lngLat,
-        }).addEventListener('click', (e) => popup.setLngLat(lngLat))
         
-
         if (targets.includes('osm')) {
             this.createOSMPlaceToggle({
                 geom: turf.point(Object.values(lngLat)),

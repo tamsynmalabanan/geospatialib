@@ -5,18 +5,17 @@ const fetchSearchNominatim = async (params, {
     const q = params.q?.toLowerCase()
     if (!q) return
 
-    const url = pushURLParams('https://nominatim.openstreetmap.org/search?', {
-        q, format:'geojson', limit:params.limit ?? 1000
-    })
+    const url = 'https://nominatim.openstreetmap.org/search'
+    const getParams = {q, format: 'geojson', limit: params.limit ?? 1000}
 
-    const id = Array('nominatim', (await hashJSON({url}))).join('-')
+    const id = await hashJSON({url, ...getParams})
     const geojson = (await getFromGISDB(id))?.data
     
     if (geojson?.features?.length) {
         return geojson
     }
 
-    return await customFetch(url, {
+    return await customFetch(pushURLParams(url, getParams), {
         id,
         abortController,
         abortEvents,
@@ -79,7 +78,6 @@ const fetchWMSData = async (params, {
         
         QUERY_LAYERS: params.name,
         LAYERS: params.name,
-        STYLES: params.style,
         
         BBOX: normalizeBbox(map.getBounds().toArray().flatMap(i => i)),
         WIDTH: map.getCanvas().width,
@@ -87,47 +85,40 @@ const fetchWMSData = async (params, {
         X: Math.floor(point.x),
         Y: Math.floor(point.y),
     })
-    
+
     return await customFetch(url, {
         abortEvents,
         abortController,
         callback: async (response) => {
+            let data
+
             const contentType = response.headers.get('Content-Type')
             if (contentType.includes('json')) {
-                try {
-                    return parseJSONResponse(response)
-                } catch {
-                    throw new Error('Failed to parse JSON.')
-                }
+                data = await parseJSONResponse(response)
             } else if (contentType.includes('xml')) {
-                return response.text().then(xmlString => {
-                    const features = []
-
+                data = await response.text().then(xmlString => {
                     const [namespace, rootElement] = parseXML(xmlString)
                     if (namespace === 'http://www.esri.com/wms') {
                         const lngLat = map.unproject(point)
-                        
-                        rootElement.childNodes.forEach(child => {
-                            const tagName = child.tagName?.toLowerCase()
-                            if (tagName.toLowerCase() !== 'fields') return
+                        return turf.featureCollection(Array.from(rootElement.childNodes).map(child => {
+                            if (child.tagName?.toLowerCase() !== 'fields') return
                             
                             const attributes = Object.values(child.attributes)
                             if (attributes.length == 0) return
                             
-                            features.push(turf.point(
+                            return turf.point(
                                 Object.values(lngLat),
-                                Object.fromEntries(attributes.map(attr => {
-                                    return [attr.name, attr.value]
-                                }))
-                            ))
-                        })
+                                Object.fromEntries(attributes.map(attr => [attr.name, attr.value]))
+                            )
+                        }).filter(Boolean))
                     } else {
                         throw new Error('Content not supported.')
                     }
-                    
-                    return turf.featureCollection(features)
                 })
             }
+            
+            await normalizeGeoJSON(data)
+            return data
         }
     }).catch(error => {
         console.log(error)

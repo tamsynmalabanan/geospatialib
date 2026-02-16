@@ -194,6 +194,7 @@ const createFormControl = ({
     inputAttrs = {},
     invalidFeedbackContent,
     fs = 'fs-14',
+    events = {},
 }={}) => {
     const container = customCreateElement({
         parent,
@@ -224,6 +225,11 @@ const createFormControl = ({
 
     label.setAttribute('for', input.id)
 
+    Object.entries(events).forEach(([type, handler]) => {
+        input.addEventListener(type, handler)
+    })
+
+
     return container
 }
 
@@ -234,6 +240,7 @@ const createFormSelect = ({
     options = {},
     inputAttrs = {},
     fs = 'fs-14',
+    events = {},
 }={}) => {
     const container = customCreateElement({
         parent,
@@ -269,6 +276,10 @@ const createFormSelect = ({
     })
 
     label.setAttribute('for', select.id)
+
+    Object.entries(events).forEach(([type, handler]) => {
+        select.addEventListener(type, handler)
+    })
 
     return container
 }

@@ -43,7 +43,6 @@ class SourcesHandler {
             map.addSource(sourceId, {
                 data,
                 type: "geojson",
-                promoteId: '__id__',
                 ...params,
             })
             source = map.getSource(sourceId)
@@ -69,6 +68,19 @@ class SourcesHandler {
 
         return layerIds.find(id => id.startsWith(beforeId) || systemOverlays.find(i => id.startsWith(i)))
     }
+
+    moveLayer(layerName, {
+        beforeId,
+    }={}) {
+        const layers = this.map.getStyle().layers
+        beforeId = this.getBeforeId(layerName, beforeId)
+
+        layers.forEach(l => {
+            if (!l.id.startsWith(layerName)) return
+            this.map.moveLayer(l.id, beforeId)
+        })
+    }
+
 
     getGeoJSONLayerParams({
         filter,
@@ -689,6 +701,11 @@ class SourcesHandler {
         let source = map.getSource(sourceId)
         
         if (!source) {
+            params.get = Object.fromEntries(
+                Object.entries(params.get)
+                .map(([k,v]) => [k.toUpperCase(), v])
+            )
+
             const url = pushURLParams(params.url, {
                 ...params.get,
                 SERVICE: 'WMS',
@@ -701,11 +718,7 @@ class SourcesHandler {
                 SRS: "EPSG:3857",
                 FORMAT: "image/png",
                 TRANSPARENT: true,
-                ...(
-                   params.style 
-                   ? {STYLES: params.style} 
-                   : {}
-                )
+                STYLES: params.style,
             })
 
             map.addSource(sourceId, {
@@ -744,7 +757,7 @@ class SourcesHandler {
 
         if (!params.attribution && params.url) {
             const domain = (new URL(params.url)).host.split('.').slice(-2).join('.')
-            params.attribution = `Data from <a class='text-decoration-none text-reset text-muted' href="https://www.${domain}/" target="_blank">${domain}</a>`
+            params.attribution = `<span class='text-muted fw-lighter'>Data from <a class='text-decoration-none text-reset' href="https://www.${domain}/" target="_blank">${domain}</a></span>`
         }
         
         return params

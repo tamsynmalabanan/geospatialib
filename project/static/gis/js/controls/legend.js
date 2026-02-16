@@ -5,20 +5,20 @@ class LegendControl {
     createLegendContainer() {
         const container = this.legendCollapse =  customCreateElement({
             parent: this._container,
-            className: 'py-2 px-3',
+            className: 'p-0',
             style: {
-                maxWidth: `85vw`
+                maxWidth: `85vw`,
             }
         })
 
         const content = customCreateElement({
             parent:container,
-            className: 'd-flex flex-column gap-3'
+            className: 'd-flex flex-column'
         })
 
         const header = customCreateElement({
             parent: content,
-            className: 'd-flex justify-content-between align-items-center'
+            className: 'd-flex justify-content-between align-items-center px-3 py-2'
         })
 
         const title = customCreateElement({
@@ -65,21 +65,23 @@ class LegendControl {
 
         const menuContainer = customCreateElement({
             parent: content,
+            className: 'px-3 pb-2'
         })
-
+        
         const menu = customCreateElement({
             parent:menuContainer,
             className: 'd-flex flex-wrap',
             innerText: 'menu'
         })
-
+        
         const layerLegendContainer = customCreateElement({
             parent: content,
         })
 
         this.legendContainer = customCreateElement({
             parent: layerLegendContainer,
-            className: 'd-flex flex-column gap-3'
+            className: 'd-flex flex-column gap-3 overflow-y-auto px-3 pb-2',
+            style: { maxHeight: `65vh` }
         })
 
         return container

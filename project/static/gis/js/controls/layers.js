@@ -2,7 +2,6 @@ class LayersControl {
     constructor(options={}) {
     }
 
-
     onAdd(map) {
         this.map = map
         this._container = customCreateElement({

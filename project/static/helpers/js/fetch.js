@@ -14,6 +14,9 @@ const customFetch = async (url, {
     abortEvents = [],
     callback=(response) => response,
 } = {}) => {
+    params.headers = params.headers ?? {}
+    params.headers['User-Agent'] = 'Geospatialib/1.0 (admin@geospatialib.com)'
+
     const clean_url = url.replaceAll('http:', 'https:')
     const mapKey = await hashJSON({clean_url, params})
     
@@ -22,7 +25,7 @@ const customFetch = async (url, {
         return callback(response)
     }
     
-    const abortFetch = () => abortController.abort()
+    const abortFetch = () => abortController.abort('Ran fetch timeout.')
     const timeoutId = setTimeout(abortFetch, timeout)
     abortEvents.forEach(([element, types]) => {
         types.forEach(type => {
@@ -30,12 +33,10 @@ const customFetch = async (url, {
         })
     })
 
-    const headers = params.headers = params.headers ?? {}
-    headers['User-Agent'] = 'Geospatialib/1.0 (admin@geospatialib.com)'
-
     const fetchPromise = fetch(clean_url, {
         ...params, 
-        signal: abortController.signal
+        signal: abortController.signal,
+        cache: 'no-store',
     }).then(async response => {
         clearTimeout(timeoutId)
         if (!response.ok) {
@@ -104,4 +105,21 @@ const parseJSONResponse = async (response, {
         parseJSONResponseMap.set(id, parsePromise)
     }
     return parsePromise
+}
+
+const parseXML = (xmlString) => {
+    const parser = new DOMParser()
+    const xmlDoc = parser.parseFromString(xmlString, 'text/xml')
+    const rootElement = xmlDoc.documentElement
+    
+    let namespace
+    const namespaces = rootElement.attributes;
+    for (let i = 0; i < namespaces.length; i++) {
+        const name = namespaces.item(i).name
+        if (name.startsWith('xmlns')) {
+            namespace = namespaces.item(i).value
+        }
+    }
+
+    return [namespace, rootElement]
 }

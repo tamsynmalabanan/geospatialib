@@ -4,10 +4,10 @@
 {% var request.resolver_match.app_name as app_name %}
 {% var request.resolver_match.url_name as url_name %}
 
-{% var request.COOKIES.theme as theme %}
-{% if not theme %}
+{% var request.COOKIES.theme 'light' as theme %}
+{% comment %} {% if not theme %}
     {% var 'light' as theme %}
-{% endif %}
+{% endif %} {% endcomment %}
 
 {% block variables %}{% endblock variables %}
 
@@ -29,19 +29,18 @@
             {% include "helpers/partials/sidebar.html" %}
         {% endblock body %}
 
-
-        {% block modals %}
-            {% include "helpers/modals/user_terms.html" %}
-            {% include "helpers/modals/privacy_policy.html" %}
-            {% include "helpers/modals/cookies_policy.html" %}
-            {% include "helpers/modals/clear_stored_data.html" %}
-            {% include "helpers/modals/add_layers_form.html" %}
-            {% if user.is_authenticated %}
-                {% include "helpers/modals/user_settings.html" %}
-                {% if not user.is_superuser and not user.is_staff %}
-                    {% include "helpers/modals/delete_account.html" %}
-                {% endif %}
+        {% include "helpers/modals/user_terms.html" %}
+        {% include "helpers/modals/privacy_policy.html" %}
+        {% include "helpers/modals/cookies_policy.html" %}
+        {% include "helpers/modals/clear_stored_data.html" %}
+        {% include "helpers/modals/add_layers_form.html" %}
+        {% if user.is_authenticated %}
+            {% include "helpers/modals/user_settings.html" %}
+            {% if not user.is_superuser and not user.is_staff %}
+                {% include "helpers/modals/delete_account.html" %}
             {% endif %}
+        {% endif %}
+        {% block modals %}
         {% endblock modals %}
 
         {% include "helpers/resources/scripts.html" %}
