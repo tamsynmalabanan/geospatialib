@@ -180,15 +180,45 @@ class LegendControl {
                 tag: 'ul',
             })
 
-            const remove = customCreateElement({
-                parent: menu,
-                tag: 'li',
-                className: 'dropdown-item fs-12',
-                innerText: 'Remove',
-                events: {
-                    click: (e) => {
-                        map.removeLayer(layer.id)
-                    }
+            const layerMenu = {
+                section1: {
+                    zoom: {
+                        innerText: 'Zoom to layer',
+                        events: {
+                            click: (e) => {
+                                this.map.fitBounds(layer.metadata.params.bbox)
+                            }
+                        }
+                    },
+                },
+                section2: {
+                    remove: {
+                        innerText: 'Remove layer',
+                        events: {
+                            click: (e) => {
+                                map.removeLayer(layer.id)
+                            }
+                        }
+                    },
+                }
+            }
+
+            Object.entries(layerMenu).forEach(([section, items]) => {
+                Object.entries(items).forEach(([name, params]) => {
+                    const item = customCreateElement({
+                        parent: menu,
+                        tag: 'li',
+                        className: 'dropdown-item fs-12',
+                        ...params,
+                    })
+                })
+
+                if (Object.keys(items).length && Object.keys(layerMenu).pop() !== section) {
+                    const divider = customCreateElement({
+                        parent: menu,
+                        tag: 'li',
+                        innerHTML: '<hr class="dropdown-divider">'
+                    })
                 }
             })
 

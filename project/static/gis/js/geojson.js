@@ -7,7 +7,7 @@ const featuresAreSimilar = (f1, f2) => {
 }
 
 const normalizeGeoJSON = async (geojson) => {
-    if (!geojson) return
+    if (!geojson?.features?.length) return
     
     geojson.features = geojson.features.filter(f => f.geometry)
     if (geojson.crs) {
