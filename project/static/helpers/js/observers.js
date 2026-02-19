@@ -49,3 +49,28 @@ const elementResizeObserver = (element, callback, {
 
     return observer
 }
+
+
+const elementIntersectionObserver = (element, callback, {
+    once = false,
+} = {}) => {
+    let intersectTimeout
+    
+    const observer = new IntersectionObserver(entries => {
+        for (const entry of entries) {
+            if (entry.isIntersecting) {
+                clearTimeout(intersectTimeout);
+                intersectTimeout = setTimeout(() => {
+                    if (once) observer.unobserve(element)
+                    callback(element)
+                }, 100)
+            }
+        }
+    }, {rool: null, threshold: 0.1})
+
+    observer.observe(element)
+
+    return observer
+}
+
+

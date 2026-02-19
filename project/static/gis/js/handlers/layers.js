@@ -62,6 +62,73 @@ class LayersHandler {
         })
     }
     
+    createLayerThumbnail(layer, container) {
+        if (Array('xyz').includes(layer.format)) {
+            return customCreateElement({
+                parent: container,
+                tag: 'img',
+                attrs: {
+                    src: layer.styles?.[layer.style]?.thumbnail,
+                    width: 180,
+                    height: 90,
+                    alt: 'Image not found.'
+                }
+            })
+        }
+
+        if (!container?.id) return
+
+        const leafletMap = L.map(container.id, {
+            zoomControl: false,
+            dragging: false,
+            touchZoom: false,
+            scrollWheelZoom: false,
+            doubleClickZoom: false,
+            boxZoom: false,
+            keyboard: false, 
+            renderer: L.canvas(),
+        })
+        leafletMap._handlers.forEach(handler => handler.disable())
+        leafletMap.addLayer(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }))
+        const attr = container.querySelector(`.leaflet-control-attribution.leaflet-control`)
+        attr.style.backgroundColor = 'transparent'
+        attr.style.fontSize = 'xx-small'
+        attr.style.textAlign = 'end'
+
+        const bbox = layer.bbox || [-180, -90, 180, 90]
+        const boundsLayer = L.geoJSON(turf.bboxPolygon(bbox), {
+            style: {
+                color: 'red',
+                weight: 0,
+                fillColor: 'red',
+                fillOpacity: 0.25,
+            }
+        })
+
+        let leafletLayer = boundsLayer
+
+        if (Array('wms').includes(layer.format)) {
+            leafletLayer = L.tileLayer.wms(pushURLParams(layer.url, Object.fromEntries(
+                Object.entries(layer.get).filter(([k,v]) => {
+                    return !Array('service', 'request').includes(k.toLowerCase())
+                })
+            )), {
+                layers: layer.name,
+                format: 'image/png',
+                transparent: true,
+                ...(Object.keys(layer.styles).length > 1 ? {styles: layer.style} : {})
+            })
+        }
+
+        if (leafletLayer) {
+            leafletMap.fitBounds(boundsLayer.getBounds())
+            leafletMap.addLayer(leafletLayer)
+        }
+    }
+
     getResultsContent(layers) {
         const filterField = this.form.elements.filter
         
@@ -71,36 +138,41 @@ class LayersHandler {
 
         console.log(layers)
 
-        layers.forEach(layer => {
+        for (const layer of layers) {
+
             const card = customCreateElement({
                 parent: container,
                 className: 'd-flex flex-nowrap flex-grow-1 gap-3 rounded p-2 d-none',
             })
         
-            const img = customCreateElement({
-                tag: 'img',
+
+            const thumbnail = customCreateElement({
                 parent: card,
-                className: 'img-thumbnail',
-                attrs: {
-                    src: layer.styles?.[layer.style]?.thumbnail,
-                    alt: 'Image not found.',
-                },
                 style: {
-                    width: '100px', 
-                    height: '100px', 
+                    minHeight: '90px',
+                    minWidth: '180px',
+                    maxHeight: '90px',
+                    maxWidth: '180px',
+                },
+                handlers: {
+                    content: (el) => {
+                        elementIntersectionObserver(el, () => {
+                            this.createLayerThumbnail(layer, el)
+                        }, {once: true})
+                    }
                 }
             })
-
+    
             const body = customCreateElement({
                 parent:card,
                 className: 'd-flex gap-5 flex-grow-1'
             })
-
+    
             const info = customCreateElement({
                 parent: body,
                 className: 'd-flex flex-column flex-grow-1'
             })
-
+    
             if(layer.title) {
                 const title = customCreateElement({
                     tag: 'span',
@@ -109,7 +181,7 @@ class LayersHandler {
                     innerText: layer.title,
                 })
             }
-
+    
             if (layer.name !== layer.title) {
                 const name = customCreateElement({
                     tag: 'span',
@@ -118,7 +190,7 @@ class LayersHandler {
                     innerText: layer.name,
                 })
             }
-
+    
             if (Object.keys(layer.styles).length > 1) {
                 const styles = createFormSelect({
                     parent: info,
@@ -130,16 +202,18 @@ class LayersHandler {
                     events: {
                         change: (e) => {
                             layer.style = e.target.value
-                            img.setAttribute('src', layer.styles[layer.style].thumbnail)
+                            thumbnail.innerHTML = ''
+                            thumbnail._leaflet_id = null;
+                            this.createLayerThumbnail(layer, thumbnail)
                         }
                     }
                 })
             }
-
+    
             const footer = customCreateElement({
                 parent: body,
             })
-
+    
             const addBtn = customCreateElement({
                 tag: 'button',
                 parent: footer,
@@ -154,9 +228,9 @@ class LayersHandler {
                     }
                 }
             })
-
+    
             card.classList.toggle('d-none', filterField.value.split(' ').some(i => !card.innerHTML.toLowerCase().includes(i)))
-        })
+        }
 
         return container
     }
@@ -361,18 +435,36 @@ class LayersHandler {
     getWMSThumbnailURL(url, name, style, bbox) {
         return pushURLParams(url, {
             "service": "WMS",
-            "request": "GetMap",
             "version": "1.3.0",
+            "request": "GetMap",
             "layers": name,
             "styles": style,
             "crs": "EPSG:4326",
-            "bbox": bbox.join(','),
-            // "bbox": '-180,-90,180,90',
+            "bbox": '-180,-90,180,90',
             "width": "100",
             "height": "100",
             "format": "image/png",
             "transparent": "true"
         })
+    }
+
+    getWFSBbox(layer) {
+        let bbox = [-180, -90, 180, 90]
+        
+        const geoBBox = layer.querySelector("WGS84BoundingBox")
+        if (geoBBox) {
+            bbox = Array(
+                'LowerCorner', 
+                'UpperCorner'
+            ).map(i => {
+                return (
+                    geoBBox.querySelector(i)?.textContent
+                    ?.split(' ').map(i => parseFloat(i))
+                )
+            }).flatMap(i => i)
+        }
+
+        return normalizeBbox(bbox)
     }
 
     getWMSBbox(layer) {
@@ -451,6 +543,61 @@ class LayersHandler {
         })
     }
 
+    async getWFSLayers(url) {
+        return await customFetch(pushURLParams(url, {
+            service: 'WFS',
+            request: 'GetCapabilities',
+        }), {
+            abortController: this.abortControllers.url,
+            callback: async (response) => {
+                const text = await response.text()
+                const parser = new DOMParser()
+                const xmlDoc = parser.parseFromString(text, "application/xml")
+                
+                const layers = []
+                
+                Array.from(xmlDoc.querySelectorAll("FeatureType")).forEach(layer => {
+                    const name = layer.querySelector("Name")?.textContent || null
+                    const title = layer.querySelector("Title")?.textContent || name
+                    const crs = (() => {
+                        const srid = parseInt(
+                            layer.querySelector("DefaultCRS")?.textContent
+                            ?.toLowerCase().replaceAll('::', ':').split('epsg:', 2).pop()
+                        )
+                        return !isNaN(srid) ? `EPSG:${srid}` : null
+                    })()
+                    const bbox = this.getWFSBbox(layer)
+                    const styles = Object.fromEntries(Array.from(layer.querySelectorAll("Style")).map(style => {
+                        const styleName = style.querySelector("Name")?.textContent || null
+                        if (!styleName) return
+                        return [styleName, {
+                            title: style.querySelector("Name")?.textContent || styleName,
+                            legendURL: style.querySelector("LegendURL OnlineResource")?.getAttribute('xlink:href') || null,
+                            thumbnail: this.getWMSThumbnailURL(url, name, styleName, bbox),
+                        }]
+                    }).filter(Boolean))
+                    const style = Object.keys(styles)[0]
+            
+                    const params = {
+                        name,
+                        title,
+                        crs,
+                        styles,
+                        style,
+                        bbox,
+                    }
+                    console.log(params)
+                    layers.push(params)
+                })
+
+                return layers
+            }
+        }).catch(error => {
+            console.log(error)
+            return []
+        })
+    }
+
     async getLayersFromURL(url, format) {
         const {get, header} = this.getURLFetchParams()
 
@@ -472,7 +619,14 @@ class LayersHandler {
         }
         
         if (Array('wms').includes(format)) {
-            layers = await this.getWMSLayers(url, )
+            layers = await this.getWMSLayers(url)
+            layers = layers.map(layer => {
+                return {...baseLayer, ...layer}
+            })
+        }
+        
+        if (Array('wfs').includes(format)) {
+            layers = await this.getWFSLayers(url)
             layers = layers.map(layer => {
                 return {...baseLayer, ...layer}
             })
@@ -609,7 +763,8 @@ class LayersHandler {
 
         if(abortController === this.abortControllers.url && !abortController.signal.aborted) {
             if (layers.length) {
-                this.resultsContainers.url.appendChild(this.getResultsContent(layers))
+                const content = this.getResultsContent(layers)
+                this.resultsContainers.url.appendChild(content)
             } else {
                 formatField.classList.add('is-invalid')
                 formatField.parentElement.querySelector(`.invalid-feedback ul`)

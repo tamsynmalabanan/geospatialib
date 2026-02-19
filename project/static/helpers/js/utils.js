@@ -413,3 +413,14 @@ const slugify = (str) => {
     .replace(/\s+/g, '-') // replace spaces with hyphens
     .replace(/-+/g, '-') // collapse multiple hyphens
 }
+
+const isValidImg = (url, callback) => {
+    if (!url) return callback(null, false)
+    
+    const img = new Image()
+    img.onload = () => callback(img, true)
+    img.onerror = () => callback(img, false)
+    img.src = url
+
+    return img
+}

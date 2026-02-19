@@ -78,7 +78,7 @@ const fetchWMSData = async (params, {
         
         QUERY_LAYERS: params.name,
         LAYERS: params.name,
-        
+
         BBOX: normalizeBbox(map.getBounds().toArray().flatMap(i => i)),
         WIDTH: map.getCanvas().width,
         HEIGHT: map.getCanvas().height,
@@ -86,40 +86,49 @@ const fetchWMSData = async (params, {
         Y: Math.floor(point.y),
     })
 
-    return await customFetch(url, {
-        abortEvents,
-        abortController,
-        callback: async (response) => {
-            let data
+    const callback = async (response) => {
+        let data
 
-            const contentType = response.headers.get('Content-Type')
-            if (contentType.includes('json')) {
-                data = await parseJSONResponse(response)
-            } else if (contentType.includes('xml')) {
-                data = await response.text().then(xmlString => {
-                    const [namespace, rootElement] = parseXML(xmlString)
-                    if (namespace === 'http://www.esri.com/wms') {
-                        const lngLat = map.unproject(point)
-                        return turf.featureCollection(Array.from(rootElement.childNodes).map(child => {
-                            if (child.tagName?.toLowerCase() !== 'fields') return
-                            
-                            const attributes = Object.values(child.attributes)
-                            if (attributes.length == 0) return
-                            
-                            return turf.point(
-                                Object.values(lngLat),
-                                Object.fromEntries(attributes.map(attr => [attr.name, attr.value]))
-                            )
-                        }).filter(Boolean))
-                    } else {
-                        throw new Error('Content not supported.')
-                    }
+        const contentType = response.headers.get('Content-Type')
+        if (contentType.includes('json')) {
+            data = await parseJSONResponse(response)
+        } else if (contentType.includes('xml')) {
+            data = await response.text().then(async xmlString => {
+                const [namespace, rootElement] = parseXML(xmlString)
+                
+                if ((
+                    rootElement.querySelector('ServiceException')
+                    ?.textContent?.toLowerCase()
+                    .includes('styles parameter is mandatory')
+                )) return await customFetch(pushURLParams(url, {STYLES: params.style}), {
+                    abortEvents, abortController, callback
                 })
-            }
-            
-            await normalizeGeoJSON(data)
-            return data
+
+                if (namespace === 'http://www.esri.com/wms') {
+                    const lngLat = map.unproject(point)
+                    return turf.featureCollection(Array.from(rootElement.childNodes).map(child => {
+                        if (child.tagName?.toLowerCase() !== 'fields') return
+                        
+                        const attributes = Object.values(child.attributes)
+                        if (attributes.length == 0) return
+                        
+                        return turf.point(
+                            Object.values(lngLat),
+                            Object.fromEntries(attributes.map(attr => [attr.name, attr.value]))
+                        )
+                    }).filter(Boolean))
+                } else {
+                    throw new Error('Content not supported.')
+                }
+            })
         }
+        
+        await normalizeGeoJSON(data)
+        return data
+    }
+
+    return await customFetch(url, {
+        abortEvents, abortController, callback,
     }).catch(error => {
         console.log(error)
     })
