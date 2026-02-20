@@ -70,7 +70,7 @@ class LayersHandler {
                 attrs: {
                     src: layer.styles?.[layer.style]?.thumbnail,
                     width: 180,
-                    height: 90,
+                    height: 120,
                     alt: 'Image not found.'
                 }
             })
@@ -144,14 +144,13 @@ class LayersHandler {
                 parent: container,
                 className: 'd-flex flex-nowrap flex-grow-1 gap-3 rounded p-2 d-none',
             })
-        
 
             const thumbnail = customCreateElement({
                 parent: card,
                 style: {
-                    minHeight: '90px',
+                    minHeight: '120px',
                     minWidth: '180px',
-                    maxHeight: '90px',
+                    maxHeight: '120px',
                     maxWidth: '180px',
                 },
                 handlers: {
@@ -165,7 +164,7 @@ class LayersHandler {
     
             const body = customCreateElement({
                 parent:card,
-                className: 'd-flex gap-5 flex-grow-1'
+                className: 'd-flex gap-3 gap-sm-5 flex-grow-1 flex-wrap flex-sm-nowrap'
             })
     
             const info = customCreateElement({
@@ -203,7 +202,7 @@ class LayersHandler {
                         change: (e) => {
                             layer.style = e.target.value
                             thumbnail.innerHTML = ''
-                            thumbnail._leaflet_id = null;
+                            thumbnail._leaflet_id = null
                             this.createLayerThumbnail(layer, thumbnail)
                         }
                     }
@@ -212,6 +211,7 @@ class LayersHandler {
     
             const footer = customCreateElement({
                 parent: body,
+                className: 'mt-auto mt-sm-0 ms-auto',
             })
     
             const addBtn = customCreateElement({
@@ -462,12 +462,16 @@ class LayersHandler {
                     ?.split(' ').map(i => parseFloat(i))
                 )
             }).flatMap(i => i)
+        } else {
+            console.log('wfs has no bbox', layer)
         }
 
         return normalizeBbox(bbox)
     }
 
-    getWMSBbox(layer) {
+
+
+    async getWMSBbox(layer) {
         let bbox = [-180, -90, 180, 90]
         
         const geoBBox = layer.querySelector("EX_GeographicBoundingBox")
@@ -488,8 +492,14 @@ class LayersHandler {
             const bboxWGS84 = bboxes?.find(i => i.crs === "EPSG:4326")
             if (bboxWGS84) {
                 bbox = bboxWGS84.bbox
-            } else {
-                console.log('No wgs 84 bbox, convert coordinates', bboxes)
+            } else if (bboxes.length) {
+                const bboxOther = bboxes[0]
+                const bboxPolygon = await transformCoordinates(
+                    turf.bboxPolygon(bboxOther.bbox), 
+                    parseInt(bboxOther.crs.toLowerCase().split('epsg:').pop()),
+                    4326
+                )
+                bbox = turf.bbox(bboxPolygon)
             }
         }
 
@@ -509,11 +519,11 @@ class LayersHandler {
         
                 const layers = []
         
-                Array.from(xmlDoc.querySelectorAll("Layer")).slice(1).forEach(layer => {
+                for (const layer of Array.from(xmlDoc.querySelectorAll("Layer")).slice(1)) {
                     const name = layer.querySelector("Name")?.textContent || null
                     const title = layer.querySelector("Title")?.textContent || name
                     const crs = layer.querySelector("CRS")?.textContent || null
-                    const bbox = this.getWMSBbox(layer)
+                    const bbox = await this.getWMSBbox(layer)
                     const styles = Object.fromEntries(Array.from(layer.querySelectorAll("Style")).map(style => {
                         const styleName = style.querySelector("Name")?.textContent || null
                         if (!styleName) return
@@ -533,7 +543,7 @@ class LayersHandler {
                         style,
                         bbox,
                     })
-                })
+                }
 
                 return layers
             }
@@ -567,27 +577,19 @@ class LayersHandler {
                         return !isNaN(srid) ? `EPSG:${srid}` : null
                     })()
                     const bbox = this.getWFSBbox(layer)
-                    const styles = Object.fromEntries(Array.from(layer.querySelectorAll("Style")).map(style => {
-                        const styleName = style.querySelector("Name")?.textContent || null
-                        if (!styleName) return
-                        return [styleName, {
-                            title: style.querySelector("Name")?.textContent || styleName,
-                            legendURL: style.querySelector("LegendURL OnlineResource")?.getAttribute('xlink:href') || null,
-                            thumbnail: this.getWMSThumbnailURL(url, name, styleName, bbox),
-                        }]
-                    }).filter(Boolean))
+                    const styles = {
+                        default: {}
+                    }
                     const style = Object.keys(styles)[0]
             
-                    const params = {
+                    layers.push({
                         name,
                         title,
                         crs,
                         styles,
                         style,
                         bbox,
-                    }
-                    console.log(params)
-                    layers.push(params)
+                    })
                 })
 
                 return layers
@@ -743,6 +745,11 @@ class LayersHandler {
         }))
     }
 
+    isValidAbortController(controller) {
+        if (controller.signal.aborted) return false
+        return Object.values(this.abortControllers).find(i => i === controller)
+    }
+
     async updateURLResults() {
         const abortController = this.abortControllers.url = new AbortController()
 
@@ -761,7 +768,7 @@ class LayersHandler {
 
         const layers = await this.getLayersFromURL(url, format)
 
-        if(abortController === this.abortControllers.url && !abortController.signal.aborted) {
+        if(this.isValidAbortController(abortController)) {
             if (layers.length) {
                 const content = this.getResultsContent(layers)
                 this.resultsContainers.url.appendChild(content)

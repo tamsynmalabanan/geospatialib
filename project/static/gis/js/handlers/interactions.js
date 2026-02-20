@@ -61,9 +61,10 @@ class InteractionsHandler {
             config.popup = null
         }
 
-        if (config.sourceId) {
-            this.map.sourcesHandler.removeSourceLayers(config.sourceId)
-            this.map.sourcesHandler.setGeoJSONData(config.sourceId)
+        const sourceId = config.sourceId
+        if (sourceId) {
+            this.map.sourcesHandler.removeSourceLayers(sourceId)
+            this.map.sourcesHandler.setGeoJSONData(sourceId)
         }
     }
 
@@ -234,9 +235,8 @@ class InteractionsHandler {
 
         if (!label) return
 
-        map.sourcesHandler.setGeoJSONData(tooltip.sourceId, {
-            data: turf.featureCollection([turf.feature(feature.geometry)]), 
-        })
+        const data = turf.featureCollection([turf.feature(feature.geometry)])
+        map.sourcesHandler.setGeoJSONData(tooltip.sourceId, {data})
 
         map.sourcesHandler.addGeoJSONLayers(tooltip.sourceId, {
             groups: this.defaultLayerGroups()
@@ -260,13 +260,14 @@ class InteractionsHandler {
 
     async configInfoLayer({feature, toggle}={}) {
         const info = this.config.info
+        const sourceId = info.sourceId
 
         if (toggle?.classList.contains('text-bg-info')) {
             toggle.classList.remove('text-bg-info')
             toggle.classList.add('text-bg-secondary')
 
-            this.map.sourcesHandler.removeSourceLayers(info.sourceId)
-            this.map.sourcesHandler.setGeoJSONData(info.sourceId)
+            this.map.sourcesHandler.removeSourceLayers(sourceId)
+            this.map.sourcesHandler.setGeoJSONData(sourceId)
         } else {
             const previousToggle = toggle.closest('.maplibregl-popup-content').querySelector('.text-bg-info')
             if (previousToggle) {
@@ -276,12 +277,12 @@ class InteractionsHandler {
 
             toggle.classList.add('text-bg-info')
             this.map.fitBounds(feature.bbox ?? turf.bbox(feature), {padding:100, maxZoom:Math.max(11, this.map.getZoom())})
-            this.map.sourcesHandler.setGeoJSONData(info.sourceId, {
-                data: turf.featureCollection([turf.feature(feature.geometry, feature.properties)])
-            })
+
+            const data = turf.featureCollection([turf.feature(feature.geometry, feature.properties)])
+            this.map.sourcesHandler.setGeoJSONData(sourceId, {data})
 
             if (!previousToggle) {
-                this.map.sourcesHandler.addGeoJSONLayers(info.sourceId, {
+                this.map.sourcesHandler.addGeoJSONLayers(sourceId, {
                     groups: this.defaultLayerGroups()
                 })
             }
@@ -402,7 +403,7 @@ class InteractionsHandler {
     }
 
     getFeatureId(f) {
-        return f.properties?.__sys__?.id ?? JSON.parse(f.properties.__sys__ ?? '{}').id
+        return f.properties?.__sys__?.id ?? JSON.parse(f.properties?.__sys__ ?? '{}').id
     }
 
     getRawFeature(f) {

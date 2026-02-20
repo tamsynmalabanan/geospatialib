@@ -37,17 +37,21 @@ class SourcesHandler {
         const map = this.map
 
         let source = map.getSource(sourceId)
+
         if (source) {
             source.setData(data)
         } else {
             map.addSource(sourceId, {
                 data,
                 type: "geojson",
-                ...params,
             })
             source = map.getSource(sourceId)
         }
 
+        if (params) {
+            source.metadata = {params}
+        }
+        
         return source
     }
 
@@ -80,7 +84,6 @@ class SourcesHandler {
             this.map.moveLayer(l.id, beforeId)
         })
     }
-
 
     getGeoJSONLayerParams({
         filter,
@@ -669,6 +672,10 @@ class SourcesHandler {
             if (type === 'wms') {
                 return this.getWMSSource(id, params)
             }
+
+            if (tyle === 'wfs') {
+
+            }
         }
 
         return this.map.getSource(id)
@@ -749,6 +756,10 @@ class SourcesHandler {
         
         if (!params.title) {
             params.title = params.name
+        }
+
+        if (!params.styles) {
+            params.styles = {}
         }
 
         if (!params.style || !(params.style in params.styles)) {

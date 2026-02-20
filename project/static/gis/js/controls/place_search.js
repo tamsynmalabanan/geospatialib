@@ -50,9 +50,7 @@ class PlaceSearchControl {
         }
 
         if (data?.features?.length) {
-            map.sourcesHandler.setGeoJSONData(sourceId, {
-                data, 
-            })
+            map.sourcesHandler.setGeoJSONData(sourceId, {data})
 
             const color = `hsl(0, 100%, 50%)`
             map.sourcesHandler.addGeoJSONLayers(sourceId, {

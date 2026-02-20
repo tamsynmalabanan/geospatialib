@@ -81,7 +81,7 @@ class LegendControl {
         this.legendContainer = customCreateElement({
             parent: layerLegendContainer,
             className: 'd-flex flex-column gap-3 overflow-y-auto px-3 pb-2',
-            style: { maxHeight: `65vh` }
+            style: { maxHeight: `45vh` }
         })
 
         return container
@@ -243,13 +243,14 @@ class LegendControl {
 
     getLayerLegend(layer) {
         const params = layer.metadata.params
+        const style = params.styles[params.style]
 
-        if (params.type === 'xyz') {
-            return `<img class="" src="${params.styles[params.style].thumbnail}" alt="Image not found." height="100">`
+        if (params.type === 'xyz' && style.thumbnail) {
+            return `<img class="" src="${style.thumbnail}" alt="Image not found." height="100">`
         }
 
-        if (params.type === 'wms') {
-            return `<img class="" src="${params.styles[params.style].legendURL}" alt="Image not found.">`
+        if (params.type === 'wms' && style?.legendURL) {
+            return `<img class="" src="${style?.legendURL}" alt="Image not found.">`
         }
     }
 
