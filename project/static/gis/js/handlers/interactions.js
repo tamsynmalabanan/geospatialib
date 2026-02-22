@@ -236,7 +236,7 @@ class InteractionsHandler {
         if (!label) return
 
         const data = turf.featureCollection([turf.feature(feature.geometry)])
-        map.sourcesHandler.getGeoJSONSource(tooltip.sourceId, {data})
+        map.sourcesHandler.getGeoJSONSource(tooltip.sourceId).setData(data)
 
         map.sourcesHandler.addGeoJSONLayers(tooltip.sourceId, {
             properties: {
@@ -283,7 +283,7 @@ class InteractionsHandler {
             this.map.fitBounds(feature.bbox ?? turf.bbox(feature), {padding:100, maxZoom:Math.max(11, this.map.getZoom())})
 
             const data = turf.featureCollection([turf.feature(feature.geometry, feature.properties)])
-            this.map.sourcesHandler.getGeoJSONSource(sourceId, {data})
+            this.map.sourcesHandler.getGeoJSONSource(sourceId)?.setData(data)
 
             if (!previousToggle) {
                 this.map.sourcesHandler.addGeoJSONLayers(sourceId, {

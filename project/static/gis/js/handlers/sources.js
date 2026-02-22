@@ -16,6 +16,18 @@ class SourcesHandler {
             ],
         }
     }
+
+    isSystemLayer({layer, id}={}) {
+        if (!id && layer) {
+            id = layer.id
+        }
+
+        return this.getSystemLayers().find(i => id.startsWith(i)) 
+    }
+
+    getSystemLayers() {
+        return Array('systemOverlays', 'baseLayers').flatMap(i => this.config[i])
+    }
     
     removeSourceLayers(sourceId) {
         const source = this.map.getSource(sourceId)
@@ -31,7 +43,7 @@ class SourcesHandler {
         return this.map.getStyle().layers.filter(l => l.id.startsWith(layerName))
     }
 
-    getGeoJSONSource(sourceId, {data, properties={}}={}) {
+    getGeoJSONSource(sourceId, {properties={}}={}) {
         const map = this.map
 
         let source = map.getSource(sourceId)
@@ -39,12 +51,18 @@ class SourcesHandler {
         if (!source) {
             map.addSource(sourceId, {
                 type: "geojson",
-                data: data || turf.featureCollection([])
+                data: turf.featureCollection([])
             })
             source = map.getSource(sourceId)
+            
+            if (properties.metadata?.params?.type === 'wfs') {
+                properties.metadata.params.get = Object.fromEntries(
+                    Object.entries(properties.metadata?.params?.get ?? {})
+                    .map(([k,v]) => [k.toLowerCase(), v])
+                )
+            }
+
             Object.entries(properties).forEach(([k,v]) => source[k] = v)
-        } else if (data) {
-            source.setData(data)
         }
         
         return source

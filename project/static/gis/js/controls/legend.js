@@ -88,38 +88,45 @@ class LegendControl {
     }
 
     getLegendLayers() {
-        const excludedPrefix = (
-            Array('systemOverlays', 'baseLayers')
-            .flatMap(i => this.map.sourcesHandler.config[i])
-        )
-        
-        return this.map.getStyle().layers.filter(l => {
-            return !excludedPrefix.find(prefix => l.id.startsWith(prefix))
+        return this.map.getStyle().layers.filter(layer => {
+            return !this.map.sourcesHandler.isSystemLayer({layer})
         })
     }
 
-    updateSettings() {
-        const map = this.map
-        const settings = map._settings
+    handleSettingsUpdate() {
+        let timeout
 
-        const legendSources = {}
-        const legendLayers = {}
+        Array('layeradded', 'layerupdated', 'layerremoved').forEach(i => {
+            this.map.on(i, (e) => {
+                const id = e.layerId ?? e.layer.id
+                if (this.map.sourcesHandler.isSystemLayer({id})) return
 
-        this.getLegendLayers().forEach(layer => {
-            const source = map.getSource(layer.source)
-            legendSources[layer.source] = {
-                metadata: source.metadata
-            }
+                clearTimeout(timeout)
+                timeout = setTimeout(() => {
+                    const map = this.map
+                    const settings = map._settings
             
-            legendLayers[`${layer.source}-${layer.metadata.name}`] = {
-                metadata: layer.metadata
-            }
+                    const legendSources = {}
+                    const legendLayers = {}
+            
+                    this.getLegendLayers().forEach(layer => {
+                        const source = map.getSource(layer.source)
+                        legendSources[layer.source] = {
+                            metadata: source.metadata
+                        }
+                        
+                        legendLayers[`${layer.source}-${layer.metadata.name}`] = {
+                            metadata: layer.metadata
+                        }
+                    })
+            
+                    settings.legend.sources = legendSources
+                    settings.legend.layers = legendLayers
+            
+                    map.controlsHandler.controls?.settings?.updateSettings()
+                }, 1000)
+            })
         })
-
-        settings.legend.sources = legendSources
-        settings.legend.layers = legendLayers
-
-        map.controlsHandler.controls?.settings?.updateSettings()
     }
 
     handleAddLayer() {
@@ -134,10 +141,6 @@ class LegendControl {
             const layerName = Array(layer.source, layer.metadata.name).join('-')
             let container = this.legendContainer.querySelector(`[data-layer-name="${layerName}"]`)
             if (container) return
-
-            const withinBounds = map.bboxToGeoJSON().features.find(f => {
-                return turf.booleanIntersects(turf.bboxPolygon(params.bbox), f)
-            })
 
             container = customCreateElement({
                 parent: this.legendContainer,
@@ -181,14 +184,13 @@ class LegendControl {
             const outsideBoundsIndicator = customCreateElement({
                 tag: 'i',
                 parent: options,
-                className: `bi bi-slash-square text-secondary ${withinBounds ? 'd-none' : ''}`,
+                className: `bi bi-slash-square text-secondary d-none`,
                 attrs: {title: 'Layer out of bounds.'}
             })
 
             const menuContainer = customCreateElement({
                 parent: options,
             })
-
 
             const menuToggle = customCreateElement({
                 tag: 'i',
@@ -260,7 +262,7 @@ class LegendControl {
 
             const legend = customCreateElement({
                 parent: body,
-                className: withinBounds ? '' : 'd-none',
+                className: 'd-none',
                 innerHTML: this.getLayerLegend(layer),
                 handlers: {
                     setId: (el) => {
@@ -274,7 +276,8 @@ class LegendControl {
                 innerHTML: layer.metadata.params.attribution,
             })
 
-            this.updateSettings()
+            this.toggleLegendVisibility(container)
+            this.updateGeoJSONData(map.getSource(layer.source))
         })
     }
 
@@ -292,66 +295,52 @@ class LegendControl {
     }
 
     handleRemoveLayer() {
-        let timeout
-        
         this.map.on('layerremoved', (e) => {
             Array.from(this.legendContainer.querySelectorAll(`[data-layer-name]`))
             .find(el => e.layerId.startsWith(el.dataset.layerName))?.remove()
-            
-            clearTimeout(timeout)
-            timeout = setTimeout(() => {
-                this.updateSettings()
-            }, 100)
         })
     }
 
-    toggleLegendVisibility({layer}={}) {
-        const map = this.map
+    toggleLegendVisibility = (container) => {
+        const layer = this.map.sourcesHandler.getLayersByName(container.dataset.layerName).pop()
+        const layerLegend = document.querySelector(`#${container.dataset.layerLegend}`)
         
-        const handler = (layer) => {
-            const layerName = Array(layer.source, layer.metadata.name).join('-')
-            const container = this.legendContainer.querySelector(`[data-layer-name="${layerName}"]`)
-            const layerLegend = document.querySelector(`#${container.dataset.layerLegend}`)
-            
-            const withinBounds = map.bboxToGeoJSON().features.find(f => {
-                return turf.booleanIntersects(turf.bboxPolygon(layer.metadata.params.bbox), f)
-            })
-        
-            layerLegend.classList.toggle('d-none', (
-                !withinBounds
-            ))
+        const withinBounds = this.map.bboxToGeoJSON().features.find(f => {
+            return turf.booleanIntersects(turf.bboxPolygon(layer.metadata.params.bbox), f)
+        }) ?? false
+    
+        layerLegend.classList.toggle('d-none', !withinBounds)
 
-            container.querySelector(`.bi-slash-square`).classList.toggle('d-none', withinBounds)
-        }
-
-        if (layer) {
-            handler(layer)
-        } else {
-            Array.from(this.legendContainer.querySelectorAll(`[data-layer-name]`)).forEach(c => {
-                handler(map.sourcesHandler.getLayersByName(c.dataset.layerName).pop())
-            })
-        }
+        container.querySelector(`.bi-slash-square`).classList.toggle('d-none', withinBounds)
     }
 
-    setSourceData(layer) {
-        const type = layer.metadata.params.type
-        if (type === 'wfs') {
-
-        }
-    }
-
-    handleEvents() {
+    handleMoveend() {
         this.map.on('moveend', (e) => {
-            this.toggleLegendVisibility()
+            Array.from(this.legendContainer.querySelectorAll(`[data-layer-name]`)).forEach(container => {
+                this.toggleLegendVisibility(container)
+            })
+            
+            Array.from(new Set(this.getLegendLayers().map(l => this.map.getSource(l.source))))
+            .filter(s => s.type === 'geojson').forEach(s => {
+                this.updateGeoJSONData(s)
+            })
         })
+    }
 
-        this.map.on('layeradded', (e) => {
-        
-        })
+    async updateGeoJSONData(source) {
+        const map = this.map
+        const params = source.metadata.params
+        const type = params.type
 
-        this.map.on('layerupdated', (e) => {
-        
-        })
+        let data
+
+        if (type === 'wfs') {
+            data = await fetchWFSData(params, {map})
+        }
+
+        if (data) {
+            source.setData(data)
+        }
     }
 
     onAdd(map) {
@@ -380,7 +369,8 @@ class LegendControl {
         this.createLegendContainer()
         this.handleAddLayer()
         this.handleRemoveLayer()
-        this.handleEvents()
+        this.handleSettingsUpdate()
+        this.handleMoveend()
 
         return this._container
     }
