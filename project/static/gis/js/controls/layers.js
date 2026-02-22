@@ -32,7 +32,7 @@ class LayersControl {
         })
 
         this.map.getContainer().addEventListener('addLayer', (e) => {
-            this.map.sourcesHandler.addLayer(e.detail.layer)
+            this.map.sourcesHandler.addLayer({metadata: {params: e.detail.layer}})
         })
 
         return this._container

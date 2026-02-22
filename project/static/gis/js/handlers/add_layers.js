@@ -1,4 +1,4 @@
-class LayersHandler {
+class AddLayersHandler {
     constructor() {
         this.abortControllers = {
             url: null,

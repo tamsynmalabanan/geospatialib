@@ -118,76 +118,132 @@ const MAP_DEFAULT_SETTINGS = {
     },
 }
 
-const createNewMap = (el) => {
-    let settings = el.dataset.mapSettings || localStorage.getItem('mapSettings')
-    settings = settings ? JSON.parse(settings) : structuredClone(MAP_DEFAULT_SETTINGS)
+class MapLibreMap extends maplibregl.Map {
+    constructor(el) {
+        const settings = (() => {
+            const mapId = el.dataset.mapId
+            if (mapId) {
+                console.log('fetch map settings')
+            } else {
+                const storedSettings = localStorage.getItem('mapSettings')
+                if (storedSettings) {
+                    return JSON.parse(storedSettings)
+                }
+            }
+    
+            return structuredClone(MAP_DEFAULT_SETTINGS)
+        })()
 
-    const basemapTheme = settings.basemap.paints[(
-        settings.basemap.theme === 'light' || (
-            settings.basemap.theme === 'auto' 
-            && getPreferredTheme() !== 'dark'
-        )
-    ) ? 'light' : 'dark']
+        const basemapTheme = settings.basemap.paints[(
+            settings.basemap.theme === 'light' || (
+                settings.basemap.theme === 'auto' 
+                && getPreferredTheme?.() !== 'dark'
+            )
+        ) ? 'light' : 'dark']
 
-    const map = new maplibregl.Map({
-        container: el.id,
+        const options = {
+            container: el.id,
 
-        pitch: settings.bookmark.pitch,
-        bearing: settings.bookmark.bearing,
-        ...(settings.bookmark.method === 'centroid' ? {
-            zoom: settings.bookmark.centroid.zoom,
-            center: Array('lng', 'lat').map(i => settings.bookmark.centroid[i]),
-        } : {}),
-        
-        hash: false,
-        style: {
-            version: 8,
-            sources: {
-                basemap: {
-                    type: 'raster',
-                    tileSize: settings.basemap.tileSize,
-                    maxzoom: settings.basemap.maxzoom,
-                    tiles: settings.basemap.tiles,
-                    attribution: settings.basemap.attribution,
+            pitch: settings.bookmark.pitch,
+            bearing: settings.bookmark.bearing,
+            ...(settings.bookmark.method === 'centroid' ? {
+                zoom: settings.bookmark.centroid.zoom,
+                center: Array('lng', 'lat').map(i => settings.bookmark.centroid[i]),
+            } : {}),
+            
+            hash: false,
+            style: {
+                version: 8,
+                sources: {
+                    basemap: {
+                        type: 'raster',
+                        tileSize: settings.basemap.tileSize,
+                        maxzoom: settings.basemap.maxzoom,
+                        tiles: settings.basemap.tiles,
+                        attribution: settings.basemap.attribution,
+                    },
+                    terrain: {
+                        type: 'raster-dem',
+                        tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+                        tileSize: 256,
+                        attribution: 'Terrain Tiles © Mapzen, <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank">Registry of Open Data on AWS</a>',
+                        encoding: 'terrarium' 
+                    },
                 },
-                terrain: {
-                    type: 'raster-dem',
-                    tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
-                    tileSize: 256,
-                    attribution: 'Terrain Tiles © Mapzen, <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank">Registry of Open Data on AWS</a>',
-                    encoding: 'terrarium' 
-                },
+                layers: [
+                    ...(settings.basemap.render ? [{
+                        id: 'basemap',
+                        type: 'raster',
+                        source: 'basemap',
+                        paint: basemapTheme.basemap
+                    }] : []),         
+                ],
+                ...(settings.basemap.render ? {
+                    sky: basemapTheme.sky
+                }: {})
             },
-            layers: [
-                ...(settings.basemap.render ? [{
-                    id: 'basemap',
-                    type: 'raster',
-                    source: 'basemap',
-                    paint: basemapTheme.basemap
-                }] : []),         
-            ],
-            ...(settings.basemap.render ? {
-                sky: basemapTheme.sky
-            }: {})
-        },
-        maxZoom: 22,
-        maxPitch: 75,
+            maxZoom: 22,
+            maxPitch: 75,
 
-        interactive: !settings.locked
-    })
+            interactive: !settings.locked
+        }
+        
+        super(options)
+        this.on('load', () => {
+            new SourcesHandler(this)
+            new ControlsHandler(this)
+            new InteractionsHandler(this)
+        }) 
+        
+        this._settings = settings
+        this.configAddLayer()
+        this.configRemoveLayer()
+    }
 
-    map.on('load', () => {
-        map._settings = settings
+    getBbox() {
+        return this.getBounds().toArray().flatMap(i => i)
+    }
+
+    bboxToGeoJSON() {
+        const bbox = this.getBbox()
+        const normalBbox = normalizeBbox(bbox)
+        const [w,s,e,n] = normalBbox
         
-        new SourcesHandler(map)
-        new ControlsHandler(map)
-        new InteractionsHandler(map)
-        
-        window.map = map
-        console.log(map)
-    })   
+        return turf.featureCollection([
+            turf.bboxPolygon(normalBbox), 
+            ...Object.keys(bbox).map(i => {
+                const diff = bbox[i] - normalBbox[i]
+
+                if (diff != 0) {
+                    if (i == 0) {
+                        return turf.bboxPolygon([180+diff, s, 180, n])
+                    }
+                    
+                    if (i == 2) {
+                        return turf.bboxPolygon([-180, s, -180+diff, n])
+                    }
+                }
+            }).filter(Boolean)
+        ])
+    }
+
+    configAddLayer() {
+        const originalAddLayer = this.addLayer.bind(this)
+
+        this.addLayer = (layer, beforeId) => {
+            const result = originalAddLayer(layer, beforeId)
+            this.fire('layeradded', { layer })
+            return result
+        }
+    }
+
+    configRemoveLayer() {
+        const originalRemoveLayer = this.removeLayer.bind(this)
+
+        this.removeLayer = (layerId) => {
+            const result = originalRemoveLayer(layerId)
+            this.fire('layerremoved', { layerId })
+            return result
+        }
+    }
 }
-
-document.addEventListener('DOMContentLoaded', (e) => {
-    new LayersHandler()
-})

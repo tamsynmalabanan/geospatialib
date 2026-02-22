@@ -245,12 +245,12 @@ class SettingsControl {
             this.lockMapView()
         }
 
-        Object.entries(settings.legend.sources).forEach(([id, metadata]) => {
-            this.map.sourcesHandler.getSource(id, {params: metadata.params})
+        Object.entries(settings.legend.sources).forEach(([id, properties]) => {
+            this.map.sourcesHandler.getSource(id, {properties})
         })
 
-        Object.entries(settings.legend.layers).forEach(([id, metadata]) => {
-            this.map.sourcesHandler.addLayer(metadata.params, {sourceId: id.split('-')[0]})
+        Object.entries(settings.legend.layers).forEach(([id, properties]) => {
+            this.map.sourcesHandler.addLayer(properties, {sourceId: id.split('-')[0]})
         })
     }
 
@@ -1509,7 +1509,7 @@ class SettingsControl {
     getView() {
         const settings =  this.map._settings
 
-        const bounds = this.map.getBounds().toArray().flatMap(i => i)
+        const [w,s,e,n] = this.map.getBbox()
         const precision = settings.precision
 
         return {
@@ -1525,10 +1525,7 @@ class SettingsControl {
             },
 
             bbox: {
-                w: bounds[0],
-                s: bounds[1],
-                e: bounds[2],
-                n: bounds[3],
+                w,s,e,n,
                 padding: 0,
                 maxZoom: 22,
             }

@@ -65,6 +65,8 @@ const fetchWMSData = async (params, {
     abortEvents, 
     abortController, 
 } = {}) => {
+    const lngLat = map.unproject(point)
+
     const url = pushURLParams(params.url, {
         SERVICE: 'WMS',
         VERSION: '1.1.1',
@@ -79,12 +81,14 @@ const fetchWMSData = async (params, {
         QUERY_LAYERS: params.name,
         LAYERS: params.name,
 
-        BBOX: normalizeBbox(map.getBounds().toArray().flatMap(i => i)),
+        BBOX: map.getBbox(),
         WIDTH: map.getCanvas().width,
         HEIGHT: map.getCanvas().height,
         X: Math.floor(point.x),
         Y: Math.floor(point.y),
     })
+
+    console.log(url)
 
     const callback = async (response) => {
         let data
@@ -105,7 +109,6 @@ const fetchWMSData = async (params, {
                 })
 
                 if (namespace === 'http://www.esri.com/wms') {
-                    const lngLat = map.unproject(point)
                     return turf.featureCollection(Array.from(rootElement.childNodes).map(child => {
                         if (child.tagName?.toLowerCase() !== 'fields') return
                         

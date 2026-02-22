@@ -86,6 +86,10 @@ const hashJSON = async (jsonObj) => {
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
+const getRandomColor = () => {
+    return `hsla(${Math.floor(Math.random() * 361)}, 100%, 50%, 1)`
+}
+
 const hslaColor = (color='hsl(0, 0%, 100%)') => {
     if (!color || !color.startsWith('hsl')) return
     

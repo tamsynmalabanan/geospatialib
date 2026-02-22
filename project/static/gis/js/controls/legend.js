@@ -87,24 +87,33 @@ class LegendControl {
         return container
     }
 
+    getLegendLayers() {
+        const excludedPrefix = (
+            Array('systemOverlays', 'baseLayers')
+            .flatMap(i => this.map.sourcesHandler.config[i])
+        )
+        
+        return this.map.getStyle().layers.filter(l => {
+            return !excludedPrefix.find(prefix => l.id.startsWith(prefix))
+        })
+    }
+
     updateSettings() {
         const map = this.map
         const settings = map._settings
-        const layers = map.getStyle().layers
-        const sourcesHandler = map.sourcesHandler
-        const excludedPrefix = [
-            ...sourcesHandler.config.systemOverlays,
-            ...sourcesHandler.config.baseLayers,
-        ]
 
         const legendSources = {}
         const legendLayers = {}
 
-        layers.forEach(layer => {
-            if (excludedPrefix.find(prefix => layer.id.startsWith(prefix))) return
+        this.getLegendLayers().forEach(layer => {
             const source = map.getSource(layer.source)
-            legendSources[layer.source] = source.metadata
-            legendLayers[`${layer.source}-${layer.metadata.name}`] = layer.metadata
+            legendSources[layer.source] = {
+                metadata: source.metadata
+            }
+            
+            legendLayers[`${layer.source}-${layer.metadata.name}`] = {
+                metadata: layer.metadata
+            }
         })
 
         settings.legend.sources = legendSources
@@ -122,11 +131,19 @@ class LegendControl {
             
             console.log(e)
 
-            const container = customCreateElement({
+            const layerName = Array(layer.source, layer.metadata.name).join('-')
+            let container = this.legendContainer.querySelector(`[data-layer-name="${layerName}"]`)
+            if (container) return
+
+            const withinBounds = map.bboxToGeoJSON().features.find(f => {
+                return turf.booleanIntersects(turf.bboxPolygon(params.bbox), f)
+            })
+
+            container = customCreateElement({
                 parent: this.legendContainer,
                 className: 'd-flex flex-column gap-2',
                 attrs: {
-                    'data-layer-id': Array(layer.source, layer.metadata.name).join('-')
+                    'data-layer-name': layerName
                 },
                 handlers: {
                     insertBefore: (el) => {
@@ -161,9 +178,17 @@ class LegendControl {
                 className: 'ms-5 d-flex flex-nowrap gap-2'
             })
 
+            const outsideBoundsIndicator = customCreateElement({
+                tag: 'i',
+                parent: options,
+                className: `bi bi-slash-square text-secondary ${withinBounds ? 'd-none' : ''}`,
+                attrs: {title: 'Layer out of bounds.'}
+            })
+
             const menuContainer = customCreateElement({
                 parent: options,
             })
+
 
             const menuToggle = customCreateElement({
                 tag: 'i',
@@ -186,7 +211,7 @@ class LegendControl {
                         innerText: 'Zoom to layer',
                         events: {
                             click: (e) => {
-                                this.map.fitBounds(layer.metadata.params.bbox)
+                                map.fitBounds(layer.metadata.params.bbox)
                             }
                         }
                     },
@@ -196,7 +221,13 @@ class LegendControl {
                         innerText: 'Remove layer',
                         events: {
                             click: (e) => {
-                                map.removeLayer(layer.id)
+                                const source = map.getSource(layer.source)
+                                if (Array('geojson').includes(source.type)) {
+                                    map.sourcesHandler.getLayersByName(layerName)
+                                    .forEach(l => map.removeLayer(l.id))
+                                } else {
+                                    map.removeLayer(layer.id)
+                                }
                             }
                         }
                     },
@@ -229,7 +260,13 @@ class LegendControl {
 
             const legend = customCreateElement({
                 parent: body,
-                innerHTML: this.getLayerLegend(layer)
+                className: withinBounds ? '' : 'd-none',
+                innerHTML: this.getLayerLegend(layer),
+                handlers: {
+                    setId: (el) => {
+                        container.setAttribute('data-layer-legend', el.id)
+                    }
+                }
             })
 
             const attr = customCreateElement({
@@ -246,7 +283,7 @@ class LegendControl {
         const style = params.styles[params.style]
 
         if (params.type === 'xyz' && style.thumbnail) {
-            return `<img class="" src="${style.thumbnail}" alt="Image not found." height="100">`
+            return `<img class="" src="${style.thumbnail}" alt="Image not found." height="21" width="30">`
         }
 
         if (params.type === 'wms' && style?.legendURL) {
@@ -255,21 +292,72 @@ class LegendControl {
     }
 
     handleRemoveLayer() {
-        const map = this.map
-        map.on('layerremoved', (e) => {
-            const container = Array.from(this.legendContainer.querySelectorAll(`[data-layer-id]`))
-            .find(el => e.layerId.startsWith(el.dataset.layerId))
-            if (container) {
-                container.remove()
+        let timeout
+        
+        this.map.on('layerremoved', (e) => {
+            Array.from(this.legendContainer.querySelectorAll(`[data-layer-name]`))
+            .find(el => e.layerId.startsWith(el.dataset.layerName))?.remove()
+            
+            clearTimeout(timeout)
+            timeout = setTimeout(() => {
                 this.updateSettings()
-            }
+            }, 100)
+        })
+    }
+
+    toggleLegendVisibility({layer}={}) {
+        const map = this.map
+        
+        const handler = (layer) => {
+            const layerName = Array(layer.source, layer.metadata.name).join('-')
+            const container = this.legendContainer.querySelector(`[data-layer-name="${layerName}"]`)
+            const layerLegend = document.querySelector(`#${container.dataset.layerLegend}`)
+            
+            const withinBounds = map.bboxToGeoJSON().features.find(f => {
+                return turf.booleanIntersects(turf.bboxPolygon(layer.metadata.params.bbox), f)
+            })
+        
+            layerLegend.classList.toggle('d-none', (
+                !withinBounds
+            ))
+
+            container.querySelector(`.bi-slash-square`).classList.toggle('d-none', withinBounds)
+        }
+
+        if (layer) {
+            handler(layer)
+        } else {
+            Array.from(this.legendContainer.querySelectorAll(`[data-layer-name]`)).forEach(c => {
+                handler(map.sourcesHandler.getLayersByName(c.dataset.layerName).pop())
+            })
+        }
+    }
+
+    setSourceData(layer) {
+        const type = layer.metadata.params.type
+        if (type === 'wfs') {
+
+        }
+    }
+
+    handleEvents() {
+        this.map.on('moveend', (e) => {
+            this.toggleLegendVisibility()
+        })
+
+        this.map.on('layeradded', (e) => {
+        
+        })
+
+        this.map.on('layerupdated', (e) => {
+        
         })
     }
 
     onAdd(map) {
         this.map = map
         this._container = customCreateElement({
-        className:'maplibregl-ctrl maplibregl-ctrl-group'
+            className:'maplibregl-ctrl maplibregl-ctrl-group'
         })
 
         const button = this.control = customCreateElement({
@@ -292,6 +380,7 @@ class LegendControl {
         this.createLegendContainer()
         this.handleAddLayer()
         this.handleRemoveLayer()
+        this.handleEvents()
 
         return this._container
     }

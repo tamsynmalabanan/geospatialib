@@ -15,9 +15,6 @@ class SourcesHandler {
                 'hillshade', 
             ],
         }
-
-        this.configAddLayer()
-        this.configRemoveLayer()
     }
     
     removeSourceLayers(sourceId) {
@@ -30,26 +27,24 @@ class SourcesHandler {
         })
     }
 
-    setGeoJSONData(sourceId, {
-        data=turf.featureCollection([]),
-        params,
-    }={}) {
+    getLayersByName(layerName) {
+        return this.map.getStyle().layers.filter(l => l.id.startsWith(layerName))
+    }
+
+    getGeoJSONSource(sourceId, {data, properties={}}={}) {
         const map = this.map
 
         let source = map.getSource(sourceId)
 
-        if (source) {
-            source.setData(data)
-        } else {
+        if (!source) {
             map.addSource(sourceId, {
-                data,
                 type: "geojson",
+                data: data || turf.featureCollection([])
             })
             source = map.getSource(sourceId)
-        }
-
-        if (params) {
-            source.metadata = {params}
+            Object.entries(properties).forEach(([k,v]) => source[k] = v)
+        } else if (data) {
+            source.setData(data)
         }
         
         return source
@@ -87,7 +82,7 @@ class SourcesHandler {
 
     getGeoJSONLayerParams({
         filter,
-        color=generateRandomColor(),
+        color=getRandomColor(),
         minzoom=0,
         maxzoom=24,
         visibility='visible',
@@ -589,19 +584,16 @@ class SourcesHandler {
         return layer
     }
 
-    addGeoJSONLayers(sourceId, {
-        name=generateRandomString(),
-        groups,
-        beforeId,
-    }={}) {
+    addGeoJSONLayers(sourceId, {properties, beforeId}={}) {
         const map = this.map
         const source = map.getSource(sourceId)
         if (!source) return
         
+        const name = (properties.metadata ??= {}).name = properties.metadata?.name ?? generateRandomString()
         const layerName = `${sourceId}-${name}`
         beforeId = this.getBeforeId(layerName, beforeId)
 
-        groups = groups ?? {
+        const groups = (properties.metadata ??= {}).groups = properties.metadata?.groups ?? {
             default: this.getGeoJSONLayerParams()
         }
         
@@ -622,9 +614,9 @@ class SourcesHandler {
                         metadata: {
                             ...source.metadata,
                             ...typeLayers[role].params.metadata,
+                            name,
                             groups,
                             group: groupId,
-                            name,
                             role,
                         },
                     }
@@ -641,101 +633,87 @@ class SourcesHandler {
         return this.map.getStyle().layers.filter(l => l.id.startsWith(layerName))
     }
 
-    configAddLayer() {
-        const originalAddLayer = this.map.addLayer.bind(this.map)
-
-        this.map.addLayer = (layer, beforeId) => {
-            const result = originalAddLayer(layer, beforeId)
-            this.map.fire('layeradded', { layer })
-            return result
-        }
-    }
-
-    configRemoveLayer() {
-        const originalRemoveLayer = this.map.removeLayer.bind(this.map)
-
-        this.map.removeLayer = (layerId) => {
-            const result = originalRemoveLayer(layerId)
-            this.map.fire('layerremoved', { layerId })
-            return result
-        }
-    }
-
-    getSource(id, {params}={}) {
-        if (params) {
-            const type = params.type
+    getSource(id, {properties}={}) {
+        if (properties) {
+            const type = properties.metadata.params.type
     
             if (type === 'xyz') {
-                return this.getXYZSource(id, params)
+                return this.getXYZSource(id, {properties})
             }
     
             if (type === 'wms') {
-                return this.getWMSSource(id, params)
+                return this.getWMSSource(id, {properties})
             }
 
-            if (tyle === 'wfs') {
-
+            if (Array('wfs').includes(type)) {
+                return this.getGeoJSONSource(id, {properties})
             }
         }
 
         return this.map.getSource(id)
     }
 
-    getXYZSource(sourceId, params) {
+    getXYZSource(sourceId, {properties}={}) {
         const map = this.map
         
         let source = map.getSource(sourceId)
   
-        if (!source) {
-            const url = pushURLParams(params.url, params.get ?? {})
-
-            map.addSource(sourceId, {
-                tileSize: 256,
-                type: "raster",
-                tiles: [url],
-            })
-
-            source = map.getSource(sourceId)
-            source.metadata = {params}
+        if (!source && properties) {
+            const params = properties.metadata?.params
+            if (params) {
+                const url = pushURLParams(params.url, params.get ?? {})
+    
+                map.addSource(sourceId, {
+                    tileSize: 256,
+                    type: "raster",
+                    tiles: [url],
+                })
+    
+                source = map.getSource(sourceId)
+                Object.entries(properties).forEach(([k,v]) => source[k] = v)
+            }
         }
 
         return source
     }
 
-    getWMSSource(sourceId, params) {
+    getWMSSource(sourceId, {properties}={}) {
         const map = this.map
 
         let source = map.getSource(sourceId)
         
-        if (!source) {
-            params.get = Object.fromEntries(
-                Object.entries(params.get)
-                .map(([k,v]) => [k.toUpperCase(), v])
-            )
-
-            const url = pushURLParams(params.url, {
-                ...params.get,
-                SERVICE: 'WMS',
-                VERSION: '1.1.1',
-                REQUEST: 'GetMap',
-                LAYERS: params.name,
-                BBOX: "{bbox-epsg-3857}",
-                WIDTH: 256,
-                HEIGHT: 256,
-                SRS: "EPSG:3857",
-                FORMAT: "image/png",
-                TRANSPARENT: true,
-                STYLES: params.style,
-            })
-
-            map.addSource(sourceId, {
-                type: "raster",
-                tiles: [url],
-                tileSize: 256,
-            })
-
-            source = map.getSource(sourceId)
-            source.metadata = {params}
+        if (!source && properties) {
+            const params = properties.metadata?.params
+            if (params) {
+                params.get = Object.fromEntries(
+                    Object.entries(params.get)
+                    .map(([k,v]) => [k.toUpperCase(), v])
+                )
+    
+                const url = pushURLParams(params.url, {
+                    ...params.get,
+                    SERVICE: 'WMS',
+                    VERSION: '1.1.1',
+                    REQUEST: 'GetMap',
+                    LAYERS: params.name,
+                    BBOX: "{bbox-epsg-3857}",
+                    WIDTH: 256,
+                    HEIGHT: 256,
+                    SRS: "EPSG:3857",
+                    FORMAT: "image/png",
+                    TRANSPARENT: true,
+                    STYLES: params.style,
+                })
+    
+                map.addSource(sourceId, {
+                    type: "raster",
+                    tiles: [url],
+                    tileSize: 256,
+                })
+    
+                source = map.getSource(sourceId)
+                Object.entries(properties).forEach(([k,v]) => source[k] = v)
+            }
         }
 
         return source
@@ -774,10 +752,12 @@ class SourcesHandler {
         return params
     }
 
-    addRasterLayer (source, params) {
+    addRasterLayer (source, properties) {
         const map = this.map
         
-        const name = generateRandomString()
+        const metadata = properties.metadata
+        const params = metadata?.params
+        const name = metadata?.name ?? generateRandomString()
         const id = `${source.id}-${name}`
         const beforeId = this.getBeforeId(id)
 
@@ -794,24 +774,31 @@ class SourcesHandler {
                 name,
                 popup: {
                     active: params.type === 'wms' ? true : false,
-                }
-            }
+                },
+                ...metadata,
+            },
         }, beforeId)   
 
-        return map.getLayer(id)
+        const layer = map.getLayer(id)
+
+        return layer
     }
 
-    async addLayer(params, {sourceId}={}) {
-        params = this.normalizeLayerParams(params)
+    async addLayer(properties, {sourceId}={}) {
+        const params = (properties.metadata ??= {}).params = this.normalizeLayerParams(properties.metadata?.params)
         
         if (!sourceId) {
             sourceId = await hashJSON(params) 
         }
         
-        const source = this.getSource(sourceId, {params})
+        const source = this.getSource(sourceId, {properties})
 
         if (Array('xyz', 'wms').includes(params.type)) {
-            this.addRasterLayer(source, params)
+            this.addRasterLayer(source, properties)
+        }
+        
+        if (Array('wfs').includes(params.type)) {
+            this.addGeoJSONLayers(sourceId, {properties})
         }
     }
 }

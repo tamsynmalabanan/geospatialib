@@ -7,7 +7,7 @@ const isLngLatString = (value) => {
 }
 
 const normalizeBbox = (bbox) => {
-  if (!Array.isArray(bbox) || bbox.length !== 4) {
+  if (!Array.isArray(bbox) || bbox.length < 4) {
     throw new Error("bbox must be an array of [west, south, east, north]")
   }
 
@@ -20,4 +20,22 @@ const normalizeBbox = (bbox) => {
   n = Math.max(-90, Math.min(90, n));
 
   return [w, s, e, n]
+}
+
+const unwrapBBox = (bbox) => {
+  const normalizeLng = (lng) => {
+    return ((lng + 180) % 360 + 360) % 360 - 180
+  }
+
+  const [minX, minY, maxX, maxY] = bbox
+  const normMinX = normalizeLng(minX)
+  const normMaxX = normalizeLng(maxX)
+
+  let fixedMinX = normMinX
+  let fixedMaxX = normMaxX
+  if (fixedMinX > fixedMaxX) {
+    [fixedMinX, fixedMaxX] = [fixedMaxX, fixedMinX]
+  }
+
+  return [fixedMinX, minY, fixedMaxX, maxY]
 }

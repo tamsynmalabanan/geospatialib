@@ -1,6 +1,13 @@
 {% load helper_tags %}
 
-<div class="modal fade" id="addLayersModal" tabindex="-1" aria-labelledby="addLayersModalLabel" aria-hidden="true">
+<div 
+    id="addLayersModal" 
+    class="modal fade" 
+    tabindex="-1" 
+    aria-labelledby="addLayersModalLabel" 
+    aria-hidden="true"
+    x-data x-init="new AddLayersHandler()"
+>
     <div class="modal-fullscreen-sm-down modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <form id='addLayersForm' class="modal-content">
             <div class="modal-header d-flex flex-column gap-3 border-0">
