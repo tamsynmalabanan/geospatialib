@@ -54,14 +54,6 @@ class SourcesHandler {
                 data: turf.featureCollection([])
             })
             source = map.getSource(sourceId)
-            
-            if (properties.metadata?.params?.type === 'wfs') {
-                properties.metadata.params.get = Object.fromEntries(
-                    Object.entries(properties.metadata?.params?.get ?? {})
-                    .map(([k,v]) => [k.toLowerCase(), v])
-                )
-            }
-
             Object.entries(properties).forEach(([k,v]) => source[k] = v)
         }
         
@@ -99,6 +91,7 @@ class SourcesHandler {
     }
 
     getGeoJSONLayerParams({
+        title='',
         filter,
         color=getRandomColor(),
         minzoom=0,
@@ -123,13 +116,11 @@ class SourcesHandler {
             },
         }
 
+        const baseParams = {minzoom, maxzoom, layout: {visibility}}
+
         const defaultParams = {
             'background': {
-                minzoom,
-                maxzoom,
-                layout: {
-                    visibility,
-                },
+                ...baseParams,
                 paint: {
                     'background-color': getPreferredTheme() === 'light'? 'white' : 'black',
                     'background-opacity': 0.25,
@@ -138,13 +129,12 @@ class SourcesHandler {
                 metadata,
             },
             'fill': {
-                minzoom,
-                maxzoom,
-                filter: filters.Polygon,
+                ...baseParams,
                 layout: {
+                    ...baseParams.layout,
                     'fill-sort-key': 0,
-                    visibility,
                 },
+                filter: filters.Polygon,
                 paint: {
                     'fill-antialias': true,
                     'fill-opacity': 0.5,
@@ -157,17 +147,16 @@ class SourcesHandler {
                 metadata,
             },
             'line': {
-                minzoom,
-                maxzoom,
-                filter: filters.LineString,
+                ...baseParams,
                 layout: {
+                    ...baseParams.layout,
                     'line-cap': 'butt',
                     'line-join': 'miter',
                     'line-miter-limit': 2,
                     'line-round-limit': 1.05,
                     'line-sort-key': 0,
-                    visibility,
                 },
+                filter: filters.LineString,
                 paint: {
                     'line-opacity': 1,
                     'line-color': color,
@@ -184,13 +173,12 @@ class SourcesHandler {
                 metadata,
             },
             'circle': {
-                minzoom,
-                maxzoom,
-                filter: filters.Point,
+                ...baseParams,
                 layout: {
+                    ...baseParams.layout,
                     'circle-sort-key': 0,
-                    visibility,
                 },
+                filter: filters.Point,
                 paint: {
                     "circle-radius": 6, 
                     "circle-color": color,
@@ -207,12 +195,8 @@ class SourcesHandler {
                 metadata,
             },
             'heatmap': {
-                minzoom,
-                maxzoom,
+                ...baseParams,
                 filter: filters.Point,
-                layout: {
-                    visibility,
-                },
                 paint: {
                     'heatmap-radius': 30,
                     'heatmap-weight': 1,
@@ -233,12 +217,8 @@ class SourcesHandler {
                 metadata,
             },
             'fill-extrusion': {
-                minzoom,
-                maxzoom,
+                ...baseParams,
                 filter: filters.Polygon,
-                layout: {
-                    visibility,
-                },
                 paint: {
                     'fill-extrusion-opacity': 1,
                     'fill-extrusion-color': color,
@@ -252,10 +232,9 @@ class SourcesHandler {
                 metadata,
             },
             'symbol': {
-                minzoom,
-                maxzoom,
-                filter: filters.Point,
+                ...baseParams,
                 layout: {
+                    ...baseParams.layout,
                     'symbol-placement': 'point',
                     'symbol-spacing': 250,
                     'symbol-avoid-edges': false,
@@ -300,8 +279,8 @@ class SourcesHandler {
                     // 'text-overlap': 'cooperative',
                     // 'text-ignore-placement': false,
                     // 'text-optional': false,
-                    visibility,
                 },
+                filter: filters.Point,
                 paint: {
                     // 'icon-opacity': 0,
                     'icon-color': color,
@@ -567,7 +546,16 @@ class SourcesHandler {
             })
         }
 
-        return params
+        return {
+            params,
+            filter,
+            filters,
+            color,
+            title,
+            maxzoom,
+            minzoom,
+            visibility,
+        }
     }
 
     updateLayerParams(id, params) {
@@ -614,31 +602,30 @@ class SourcesHandler {
         const groups = (properties.metadata ??= {}).groups = properties.metadata?.groups ?? {
             default: this.getGeoJSONLayerParams()
         }
-        
-        Object.keys(groups).forEach(groupId => {
-            const group = groups[groupId]
-            Object.keys(group).forEach(type => {
-                const typeLayers = group[type]
-                Object.keys(typeLayers).forEach(role => {
-                    if (!typeLayers[role].render) return
 
+        Object.entries(groups).forEach(([groupId, group]) => {
+            const params = group.params
+            Object.entries(params).forEach(([type, typeLayers]) => {
+                Object.entries(typeLayers).forEach(([role, roleParams]) => {
+                    if (!roleParams.render) return
+    
                     const id = Array(layerName, groupId, type, role).join('-')
                     
                     const layerParams = {
-                        ...typeLayers[role].params,
+                        ...roleParams.params,
                         id,
                         type,
                         source: sourceId,
                         metadata: {
                             ...source.metadata,
-                            ...typeLayers[role].params.metadata,
+                            ...roleParams.params.metadata,
                             name,
                             groups,
                             group: groupId,
                             role,
                         },
                     }
-
+    
                     if (this.map.getLayer(id)) {
                         this.updateLayerParams(id, layerParams)
                     } else {
@@ -703,11 +690,6 @@ class SourcesHandler {
         if (!source && properties) {
             const params = properties.metadata?.params
             if (params) {
-                params.get = Object.fromEntries(
-                    Object.entries(params.get)
-                    .map(([k,v]) => [k.toUpperCase(), v])
-                )
-    
                 const url = pushURLParams(params.url, {
                     ...params.get,
                     SERVICE: 'WMS',
@@ -765,6 +747,20 @@ class SourcesHandler {
         if (!params.attribution && params.url) {
             const domain = (new URL(params.url)).host.split('.').slice(-2).join('.')
             params.attribution = `<span class='text-muted fw-lighter'>Data from <a class='text-decoration-none text-reset' href="https://www.${domain}/" target="_blank">${domain}</a></span>`
+        }
+
+        if (params.type === 'wfs') {
+            params.get = Object.fromEntries(
+                Object.entries(params.get ?? {})
+                .map(([k,v]) => [k.toLowerCase(), v])
+            )
+        }
+
+        if (params.type === 'wms') {
+            params.get = Object.fromEntries(
+                Object.entries(params.get ?? {})
+                .map(([k,v]) => [k.toUpperCase(), v])
+            )
         }
         
         return params

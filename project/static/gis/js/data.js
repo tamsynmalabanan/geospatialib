@@ -27,9 +27,7 @@ const fetchSearchNominatim = async (params, {
             }
             return data
         }
-    }).catch(error => {
-        console.log(error)
-    })
+    }).catch(error => {})
 }
 
 const fetchReverseNominatim = async ({
@@ -55,7 +53,7 @@ const fetchReverseNominatim = async ({
         abortController,
         callback: parseJSONResponse
     }).catch(error => {
-        console.log(error)
+        // console.log(error)
     })
 }
 
@@ -148,14 +146,20 @@ const fetchWMSData = async (params, {
     })
 }
 
-const fetchWFSData = async (params, {map, point, abortEvents, abortController} = {}) => {
-    // checked indexeddb
-    
-    const lngLat = point ? map.unproject(point) : null
-    const srsname = `urn:ogc:def:crs:EPSG::4326`
-    const extent = lngLat ? turf.envelope(turf.buffer(
+const fetchWFSData = async (params, {map, point, id, abortEvents, abortController} = {}) => {
+    const lngLat = point ? map?.unproject(point) : null
+    const extent = turf.envelope(lngLat ? turf.buffer(
         turf.point(lngLat), map.controlsHandler.getScaleInMeters()/1000, {units: 'meters'}
-    )) : map.bboxToGeoJSON()
+    ) : map?.bboxToGeoJSON() ?? turf.bboxPolygon([-180, -90, 180, 90]))
+
+    if (!id) id = await hashJSON(params)
+    
+    const geojson = (await getFromGISDB(id, {filter:extent}))?.data
+    if (geojson?.features?.length) {
+        return geojson
+    }
+    
+    const srsname = `urn:ogc:def:crs:EPSG::4326`
     const [w,s,e,n] = turf.bbox(extent)
 
     const url = pushURLParams(params.url, {
@@ -177,12 +181,16 @@ const fetchWFSData = async (params, {map, point, abortEvents, abortController} =
 
             const contentType = response.headers.get('Content-Type')
             if (contentType.includes('json')) {
-                data = await parseJSONResponse(response)
+                data = await parseJSONResponse(response, {id})
             } else if (contentType.includes('xml')) {
                 data = await parseXMLResponse(response, {lngLat})
             }
             
-            await normalizeGeoJSON(data)
+            if (data?.features?.length) {
+                await normalizeGeoJSON(data)
+                updateGISDB(id, {data, params, extent})
+            }
+            
             return data
         }
     }).catch(error => {

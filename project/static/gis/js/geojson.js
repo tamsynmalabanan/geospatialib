@@ -1,7 +1,14 @@
 const featuresAreSimilar = (f1, f2) => {
     if (f1.geometry.type !== f2.geometry.type) return false
-    if (!turf.booleanIntersects(f1, f2)) return false
-    if (!turf.booleanEqual(f1.geometry, f2.geometry)) return false
+    
+    try {
+        if (!turf.booleanIntersects(f1, f2)) return false
+    } catch {}
+
+    try {
+        if (!turf.booleanEqual(f1.geometry, f2.geometry)) return false
+    } catch {}
+    
     if (!_.isEqual(f1.properties, f2.properties)) return false
     return true
 }
@@ -10,6 +17,7 @@ const normalizeGeoJSON = async (geojson) => {
     if (!geojson?.features?.length) return
     
     geojson.features = geojson.features.filter(f => f.geometry)
+
     if (geojson.crs) {
         const srid = parseInt(
             geojson.crs?.properties?.name

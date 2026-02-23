@@ -12,18 +12,7 @@ class InteractionsHandler {
             },
         }
         
-        this.configFitBounds()
         this.configInteractions()
-    }
-
-    configFitBounds() {
-        const original = this.map.fitBounds.bind(this.map)
-
-        this.map.fitBounds = (bounds, options) => {
-            if (this.map._settings.locked) return
-            const result = original(bounds, options)
-            return result
-        }
     }
 
     configCursor() {
@@ -76,13 +65,17 @@ class InteractionsHandler {
         bbox, point,
         layers, filter,
         rasters=false,
-    }) {
+    }={}) {
         const map = this.map
+
+        if (!point && !bbox) {
+            bbox = [[0,0], [map.getCanvas().width, map.getCanvas().height]]
+        }
 
         let features = map.queryRenderedFeatures(bbox ?? point, {layers, filter})
 
         if (rasters && point) {
-            const sources = map.getStyle().layers.map(l => {
+            const sources = new Set(map.getStyle().layers.map(l => {
                 if (layers?.length && !layers.includes(l.id)) return
 
                 const source = map.getSource(l.source)
@@ -90,7 +83,7 @@ class InteractionsHandler {
                 if (Array('xyz').includes(source.metadata?.params.type)) return
                 
                 return source
-            }).filter(Boolean)
+            }).filter(Boolean))
 
             const lngLat = map.unproject(point)
             const feature = turf.point(Object.values(lngLat))
@@ -123,21 +116,18 @@ class InteractionsHandler {
             }
         }
 
-        if (features.length > 1) {
-            const uniqueFeatures = []
-            features.forEach(f1 => {
-                if (!uniqueFeatures.find(f2 => {
-                    if (f1.source !== f2.source) return false
-                    if (f1.layer?.id !== f2.layer?.id) return false
-                    if (f1.layer?.metadata?.group !== f2.layer?.metadata?.group) return false
-                    if (!featuresAreSimilar(f1, f2)) return false
-                    return true
-                })) uniqueFeatures.push(f1)
-            })
-            features = uniqueFeatures
-        }
+        const uniqueFeatures = []
 
-        return features
+        features.forEach(f1 => {
+            f1.geometry = this.getRawFeature(f1).geometry
+            if (!uniqueFeatures.find(f2 => {
+                if (f1.source !== f2.source) return false
+                if (!featuresAreSimilar(f1, f2)) return false
+                return true
+            })) uniqueFeatures.push(f1)
+        })
+        
+        return uniqueFeatures
     }
 
     getLayerTitle(layer) {
@@ -191,8 +181,8 @@ class InteractionsHandler {
                         }
                     },
                 }
-            }
-        )}
+            })
+        }
     }
 
     async createTooltipPopup(e) {
@@ -220,6 +210,7 @@ class InteractionsHandler {
             point: e.point, 
             layers: validVectorLayers.map(l => l.id)
         })
+
         if (!features?.length) return
 
         let feature
@@ -228,7 +219,7 @@ class InteractionsHandler {
         for (const f of features) {
             label = this.getFeatureLabel(f)
             if (label) {
-                feature = this.getRawFeature(f)
+                feature = f
                 break
             }
         }
@@ -342,7 +333,7 @@ class InteractionsHandler {
             const value = customCreateElement({
                 tag: 'td',
                 parent: tr,
-                className: 'text-wrap text-break',
+                className: 'text-wrap text-break pe-3',
                 style: {maxWidth: `${window.innerWidth * 0.4}px`},
                 innerHTML: data   
             })
@@ -481,10 +472,7 @@ class InteractionsHandler {
                 f.geometry 
                 && Object.keys(f.properties).filter(i => i !== '__sys__').length
                 && !Object.values(this.config).map(i => i.sourceId).includes(f.layer?.source)
-            )).map(f => {
-                f.geometry = this.getRawFeature(f).geometry
-                return f
-            })
+            ))
 
             if (features?.length > 1) {
                 const buffer = map.controlsHandler.getScaleInMeters()/1000

@@ -18,6 +18,7 @@ self.onmessage = (e) => {
                 turf.feature(storedExtent),
                 turf.feature(extent),
             ])
+
             workingExtent = turf.union(extents).geometry
     
             let fewerData
@@ -32,13 +33,20 @@ self.onmessage = (e) => {
                 const intersection = turf.intersect(extents)
                 if (intersection) {
                     const intersectedFeatures = workingData.features.filter(f => turf.booleanIntersects(f, intersection))
-                    filteredFeatures = fewerData.features.filter(feature1 => {
-                        if (!turf.booleanIntersects(feature1, intersection)) return true
-                        return !intersectedFeatures.find(feature2 => {
-                            if (feature1.geometry.type !== feature2.geometry.type) return false
-                            if (!turf.booleanIntersects(feature1, feature2)) return false
-                            if (!turf.booleanEqual(feature1.geometry, feature2.geometry)) return false
-                            if (!_.isEqual(feature1.properties, feature2.properties)) return false
+                    filteredFeatures = fewerData.features.filter(f1 => {
+                        if (!turf.booleanIntersects(f1, intersection)) return true
+                        return !intersectedFeatures.find(f2 => {
+                            if (f1.geometry.type !== f2.geometry.type) return false
+    
+                            try {
+                                if (!turf.booleanIntersects(f1, f2)) return false
+                            } catch {}
+
+                            try {
+                                if (!turf.booleanEqual(f1.geometry, f2.geometry)) return false
+                            } catch {}
+                            
+                            if (!_.isEqual(f1.properties, f2.properties)) return false
                             return true
                         })
                     })

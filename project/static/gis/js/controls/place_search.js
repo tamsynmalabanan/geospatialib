@@ -82,8 +82,8 @@ class PlaceSearchControl {
                                         }
                                     },
                                 }
-                            }
-                        )}
+                            }),
+                        }
                     }
                 }
             })

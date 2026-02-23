@@ -198,6 +198,7 @@ class MapLibreMap extends maplibregl.Map {
         this._settings = settings
         this.configAddLayer()
         this.configRemoveLayer()
+        this.configFitBounds()
     }
 
     getBbox() {
@@ -244,6 +245,20 @@ class MapLibreMap extends maplibregl.Map {
             const result = originalRemoveLayer(layerId)
             this.fire('layerremoved', { layerId })
             return result
+        }
+    }
+
+    configFitBounds() {
+        const original = this.fitBounds.bind(this)
+
+        this.fitBounds = (bounds, options) => {
+            if (this._settings.locked) {
+                console.log('map view locked.')
+                return
+            } else {
+                const result = original(bounds, options)
+                return result
+            }
         }
     }
 }

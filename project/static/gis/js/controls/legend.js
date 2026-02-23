@@ -1,14 +1,17 @@
 class LegendControl {
     constructor(options={}) {
+        this.config = {
+            updateGeoJSONDataMap: new Map(),
+        }
     }
 
     createLegendContainer() {
         const container = this.legendCollapse =  customCreateElement({
             parent: this._container,
             className: 'p-0',
-            style: {
-                maxWidth: `85vw`,
-            }
+            // style: {
+            //     maxWidth: `85vw`,
+            // }
         })
 
         const content = customCreateElement({
@@ -80,8 +83,8 @@ class LegendControl {
 
         this.legendContainer = customCreateElement({
             parent: layerLegendContainer,
-            className: 'd-flex flex-column gap-3 overflow-y-auto px-3 pb-2',
-            style: { maxHeight: `45vh` }
+            className: 'd-flex flex-column flex-nowrap flex-sm-wrap column-gap-4 row-gap-3 overflow-y-auto px-3 pb-2',
+            style: { maxHeight: `65vh`, maxWidth: `85vw` }
         })
 
         return container
@@ -91,6 +94,10 @@ class LegendControl {
         return this.map.getStyle().layers.filter(layer => {
             return !this.map.sourcesHandler.isSystemLayer({layer})
         })
+    }
+
+    getLegendContainers() {
+        return Array.from(this.legendContainer.querySelectorAll(`[data-layer-name]`))
     }
 
     handleSettingsUpdate() {
@@ -131,15 +138,13 @@ class LegendControl {
 
     handleAddLayer() {
         const map = this.map
-        map.on('layeradded', (e) => {
+        map.on('layeradded', async (e) => {
             const layer = e.layer
             const params = layer.metadata?.params
             if (!params) return
-            
-            console.log(e)
 
             const layerName = Array(layer.source, layer.metadata.name).join('-')
-            let container = this.legendContainer.querySelector(`[data-layer-name="${layerName}"]`)
+            let container = this.getLegendContainers().find(c => c.dataset.layerName === layerName) 
             if (container) return
 
             container = customCreateElement({
@@ -263,7 +268,7 @@ class LegendControl {
             const legend = customCreateElement({
                 parent: body,
                 className: 'd-none',
-                innerHTML: this.getLayerLegend(layer),
+                innerHTML: await this.getLayerLegend(layer),
                 handlers: {
                     setId: (el) => {
                         container.setAttribute('data-layer-legend', el.id)
@@ -277,13 +282,14 @@ class LegendControl {
             })
 
             this.toggleLegendVisibility(container)
-            this.updateGeoJSONData(map.getSource(layer.source))
+            this.updateGeoJSONData(layer.source)
         })
     }
 
-    getLayerLegend(layer) {
+    async getLayerLegend(layer) {
         const params = layer.metadata.params
         const style = params.styles[params.style]
+        const layerName = Array(layer.source, layer.metadata.name).join('-')
 
         if (params.type === 'xyz' && style.thumbnail) {
             return `<img class="" src="${style.thumbnail}" alt="Image not found." height="21" width="30">`
@@ -292,12 +298,52 @@ class LegendControl {
         if (params.type === 'wms' && style?.legendURL) {
             return `<img class="" src="${style?.legendURL}" alt="Image not found.">`
         }
+
+        const source = this.map.getStyle().sources[layer.source]
+        if (source.type === 'geojson') {
+            const container = customCreateElement({
+                className: 'd-flex flex-column gap-2'
+            })
+
+            for (const [name, group] of Object.entries(layer.metadata.groups)) {
+                console.log(group)
+
+                const groupContainer = customCreateElement({
+                    parent: container,
+                    className: 'd-flex gap-2'
+                })
+
+                const symbolContainer = customCreateElement({
+                    parent: groupContainer,
+                    className: 'd-flex gap-2'
+                })
+
+                const groupTitle = customCreateElement({
+                    parent: groupContainer,
+                    innerText: group.title ?? name
+                })
+
+                const groupCount = customCreateElement({
+                    parent: groupContainer,
+                })
+
+                const features = await this.map.interactionsHandler?.getCanvasData({
+                    layers: this.map.sourcesHandler.getLayersByName(layerName).map(l => l.id),
+                    filter: group.filter
+                })
+            
+                groupCount.innerText = `(${features?.length ?? 0})`
+            }
+            
+            return container.outerHTML
+        }
+
+        return ''
     }
 
     handleRemoveLayer() {
         this.map.on('layerremoved', (e) => {
-            Array.from(this.legendContainer.querySelectorAll(`[data-layer-name]`))
-            .find(el => e.layerId.startsWith(el.dataset.layerName))?.remove()
+            this.getLegendContainers().find(el => e.layerId.startsWith(el.dataset.layerName))?.remove()
         })
     }
 
@@ -315,32 +361,54 @@ class LegendControl {
     }
 
     handleMoveend() {
-        this.map.on('moveend', (e) => {
-            Array.from(this.legendContainer.querySelectorAll(`[data-layer-name]`)).forEach(container => {
+        const map = this.map
+        map.on('moveend', (e) => {
+            this.getLegendContainers().forEach(container => {
                 this.toggleLegendVisibility(container)
             })
             
-            Array.from(new Set(this.getLegendLayers().map(l => this.map.getSource(l.source))))
+            Array.from(new Set(this.getLegendLayers().map(l => map.getSource(l.source))))
             .filter(s => s.type === 'geojson').forEach(s => {
-                this.updateGeoJSONData(s)
+                this.updateGeoJSONData(s.id)
             })
         })
     }
 
-    async updateGeoJSONData(source) {
+    async updateGeoJSONData(id) {
         const map = this.map
+        const source = map.getSource(id)
+
+        if (source.type !== 'geojson') return
+        
+        if (this.config.updateGeoJSONDataMap.has(id)) {
+            return
+        } else {
+            this.config.updateGeoJSONDataMap.set(id, null)
+        }
+
         const params = source.metadata.params
         const type = params.type
 
-        let data
+        let data = turf.featureCollection([])
 
         if (type === 'wfs') {
-            data = await fetchWFSData(params, {map})
+            data = await fetchWFSData(params, {map, id})
         }
 
-        if (data) {
-            source.setData(data)
-        }
+        map.once('idle', async (e) => {
+            for (const container of this.getLegendContainers()) {
+                const layerName = container.dataset.layerName
+                if (!layerName.startsWith(id)) continue
+    
+                const layer = map.sourcesHandler.getLayersByName(layerName).pop()
+                const layerLegend = container.querySelector(`#${container.dataset.layerLegend}`)
+                layerLegend.innerHTML = await this.getLayerLegend(layer)
+            }
+        })
+
+        source.setData(data)
+
+        this.config.updateGeoJSONDataMap.delete(id)
     }
 
     onAdd(map) {

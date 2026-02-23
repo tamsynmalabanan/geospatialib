@@ -47,7 +47,7 @@ const saveToGISDB = async (data, {
     return id
 }
 
-const getFromGISDB = async (id) => {
+const getFromGISDB = async (id, {filter}={}) => {
     return new Promise((resolve, reject) => {
         const request = requestGISDB()
   
@@ -62,7 +62,18 @@ const getFromGISDB = async (id) => {
                 if (!result) return resolve(null)
                 
                 const {data, extent, params} = result
-                resolve({data:structuredClone(data), extent, params})
+                const clonedData = structuredClone(data)
+
+                if (filter) {
+                    const extentParts = turf.flatten(extent).features
+                    if (extentParts.find(f => turf.booleanContains(f, filter))) {
+                        clonedData.features = clonedData.features.filter(f => turf.booleanIntersects(f, filter))
+                    } else {
+                        reject('Current extent does not contain filter.')
+                    }
+                }
+                
+                resolve({data:clonedData, extent, params})
             }
     
             dataRequest.onerror = (e) => {
@@ -73,7 +84,7 @@ const getFromGISDB = async (id) => {
         request.onerror = (e) => {
             reject(e.target.errorCode)
         }
-    })
+    }).catch(error => console.log(error))
 }
 
 const deleteFromGISDB = (id) => {

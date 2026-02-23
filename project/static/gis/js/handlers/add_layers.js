@@ -1,11 +1,11 @@
 class AddLayersHandler {
-    constructor() {
+    constructor(modal) {
         this.abortControllers = {
             url: null,
             files: null,
         }
 
-        const modal = this.modal = document.querySelector(`#addLayersModal`)
+        this.modal = modal
 
         this.fieldContainers = Object.fromEntries(
             Array.from(modal.querySelector('#addLayersFields').firstElementChild.children)
