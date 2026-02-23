@@ -301,15 +301,41 @@ class LegendControl {
 
         const source = this.map.getStyle().sources[layer.source]
         if (source.type === 'geojson') {
+            const geojson = source.data
+
             const container = customCreateElement({
                 className: 'd-flex flex-column gap-2'
             })
 
-            for (const [name, group] of Object.entries(layer.metadata.groups)) {
+            const groups = Object.entries(layer.metadata.groups)
+
+            if (groups.length > 1) {
+                const header = customCreateElement({
+                    parent: container,
+                    className: 'd-flex gap-2'
+                })
+    
+                const headerTitle = customCreateElement({
+                    parent: header,
+                    innerText: ''
+                })
+    
+                const headerCount = customCreateElement({
+                    parent: header,
+                    innerText: `(${geojson.features.length})`
+                })
+            }
+
+            const groupsContainer = customCreateElement({
+                parent: container,
+                className: 'd-flex flex-column gap-2'
+            })
+
+            for (const [name, group] of groups) {
                 console.log(group)
 
                 const groupContainer = customCreateElement({
-                    parent: container,
+                    parent: groupsContainer,
                     className: 'd-flex gap-2'
                 })
 
@@ -327,11 +353,10 @@ class LegendControl {
                     parent: groupContainer,
                 })
 
-                const features = await this.map.interactionsHandler?.getCanvasData({
-                    layers: this.map.sourcesHandler.getLayersByName(layerName).map(l => l.id),
-                    filter: group.filter
-                })
+                const features = group.filter ? geojson.features : geojson.features
             
+                console.log(features)
+
                 groupCount.innerText = `(${features?.length ?? 0})`
             }
             

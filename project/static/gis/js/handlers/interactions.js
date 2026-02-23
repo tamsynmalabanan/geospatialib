@@ -119,14 +119,13 @@ class InteractionsHandler {
         const uniqueFeatures = []
 
         features.forEach(f1 => {
-            f1.geometry = this.getRawFeature(f1).geometry
             if (!uniqueFeatures.find(f2 => {
                 if (f1.source !== f2.source) return false
                 if (!featuresAreSimilar(f1, f2)) return false
                 return true
             })) uniqueFeatures.push(f1)
         })
-        
+
         return uniqueFeatures
     }
 
@@ -210,7 +209,6 @@ class InteractionsHandler {
             point: e.point, 
             layers: validVectorLayers.map(l => l.id)
         })
-
         if (!features?.length) return
 
         let feature
@@ -219,7 +217,7 @@ class InteractionsHandler {
         for (const f of features) {
             label = this.getFeatureLabel(f)
             if (label) {
-                feature = f
+                feature = this.getRawFeature(f)
                 break
             }
         }
@@ -472,7 +470,10 @@ class InteractionsHandler {
                 f.geometry 
                 && Object.keys(f.properties).filter(i => i !== '__sys__').length
                 && !Object.values(this.config).map(i => i.sourceId).includes(f.layer?.source)
-            ))
+            )).map(f => {
+                f.geometry = this.getRawFeature(f).geometry
+                return f
+            })
 
             if (features?.length > 1) {
                 const buffer = map.controlsHandler.getScaleInMeters()/1000
