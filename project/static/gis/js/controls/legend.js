@@ -140,10 +140,9 @@ class LegendControl {
         const map = this.map
         map.on('layeradded', async (e) => {
             const layer = e.layer
-            const params = layer.metadata?.params
-            if (!params) return
+            if (map.sourcesHandler.isSystemLayer(layer)) return
 
-            const layerName = Array(layer.source, layer.metadata.name).join('-')
+            const layerName = layer.metadata.layerName
             let container = this.getLegendContainers().find(c => c.dataset.layerName === layerName) 
             if (container) return
 
@@ -289,7 +288,7 @@ class LegendControl {
     async getLayerLegend(layer) {
         const params = layer.metadata.params
         const style = params.styles[params.style]
-        const layerName = Array(layer.source, layer.metadata.name).join('-')
+        const layerName = layer.metadata.layerName
 
         if (params.type === 'xyz' && style.thumbnail) {
             return `<img class="" src="${style.thumbnail}" alt="Image not found." height="21" width="30">`
@@ -307,31 +306,29 @@ class LegendControl {
                 className: 'd-flex flex-column gap-2'
             })
 
-            const groups = Object.entries(layer.metadata.groups)
+            const header = customCreateElement({
+                parent: container,
+                className: 'd-flex gap-2'
+            })
 
-            if (groups.length > 1) {
-                const header = customCreateElement({
-                    parent: container,
-                    className: 'd-flex gap-2'
-                })
-    
-                const headerTitle = customCreateElement({
-                    parent: header,
-                    innerText: ''
-                })
-    
-                const headerCount = customCreateElement({
-                    parent: header,
-                    innerText: `(${geojson.features.length})`
-                })
-            }
+            const headerTitle = customCreateElement({
+                parent: header,
+                className: 'fw-medium',
+                innerText: params.subtitle ?? ''
+            })
+
+            const headerCount = customCreateElement({
+                parent: header,
+                className: 'fw-medium',
+                innerText: `(${geojson.features.length})`
+            })
 
             const groupsContainer = customCreateElement({
                 parent: container,
                 className: 'd-flex flex-column gap-2'
             })
 
-            for (const [name, group] of groups) {
+            for (const [name, group] of Object.entries(style)) {
                 console.log(group)
 
                 const groupContainer = customCreateElement({
@@ -353,7 +350,11 @@ class LegendControl {
                     parent: groupContainer,
                 })
 
-                const features = group.filter ? geojson.features : geojson.features
+                const features = (
+                    group.filter 
+                    ? geojson.features.filter(Boolean) 
+                    : geojson.features
+                )
             
                 console.log(features)
 
@@ -376,9 +377,10 @@ class LegendControl {
         const layer = this.map.sourcesHandler.getLayersByName(container.dataset.layerName).pop()
         const layerLegend = document.querySelector(`#${container.dataset.layerLegend}`)
         
-        const withinBounds = this.map.bboxToGeoJSON().features.find(f => {
-            return turf.booleanIntersects(turf.bboxPolygon(layer.metadata.params.bbox), f)
-        }) ?? false
+        const bbox = layer.metadata.params.bbox
+        const withinBounds = bbox ? this.map.bboxToGeoJSON().features.find(f => {
+            return turf.booleanIntersects(turf.bboxPolygon(bbox), f)
+        }) ?? false : false
     
         layerLegend.classList.toggle('d-none', !withinBounds)
 

@@ -57,32 +57,37 @@ class PlaceSearchControl {
                 properties: {
                     metadata: {
                         name: 'default',
-                        groups:  {
-                            default: map.sourcesHandler.getGeoJSONLayerParams({
-                                color,
-                                customParams: {
-                                    'fill' : {
-                                        'polygons': {
-                                            render: true,
-                                            params: {
-                                                paint: {
-                                                    "fill-color": hslaColor(color).toString({a:0})
+                        params: {
+                            style: 'default',
+                            styles: {
+                                default: {
+                                    default: map.sourcesHandler.getGeoJSONLayerParams({
+                                        color,
+                                        customParams: {
+                                            'fill' : {
+                                                'polygons': {
+                                                    render: true,
+                                                    params: {
+                                                        paint: {
+                                                            "fill-color": hslaColor(color).toString({a:0})
+                                                        }
+                                                    },
+                                                },
+                                            },
+                                            'line': {
+                                                'polygon-outlines': {
+                                                    render: true,
+                                                    params: {
+                                                        paint: {
+                                                            'line-color': color,
+                                                        },
+                                                    }
                                                 }
                                             },
-                                        },
-                                    },
-                                    'line': {
-                                        'polygon-outlines': {
-                                            render: true,
-                                            params: {
-                                                paint: {
-                                                    'line-color': color,
-                                                },
-                                            }
                                         }
-                                    },
+                                    }),
                                 }
-                            }),
+                            }
                         }
                     }
                 }

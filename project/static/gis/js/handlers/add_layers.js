@@ -190,7 +190,7 @@ class AddLayersHandler {
                 })
             }
     
-            if (Object.keys(layer.styles).length > 1) {
+            if (Object.keys(layer.styles ?? {}).length > 1) {
                 const styles = createFormSelect({
                     parent: info,
                     selected: layer.style,
@@ -577,17 +577,11 @@ class AddLayersHandler {
                         return !isNaN(srid) ? `EPSG:${srid}` : null
                     })()
                     const bbox = this.getWFSBbox(layer)
-                    const styles = {
-                        default: {}
-                    }
-                    const style = Object.keys(styles)[0]
             
                     layers.push({
                         name,
                         title,
                         crs,
-                        styles,
-                        style,
                         bbox,
                     })
                 })

@@ -14,10 +14,9 @@ self.onmessage = (e) => {
 
     try {
         if (turf.flatten(storedExtent).features.some(f => !turf.booleanContains(extent, f))) {
-            let extents = turf.featureCollection([
-                turf.feature(storedExtent),
-                turf.feature(extent),
-            ])
+            const extents = turf.featureCollection(Array(storedExtent, extent).map(ex => {
+                return ex.type === 'Feature' ? ex : turf.feature(ex)
+            }))
 
             workingExtent = turf.union(extents).geometry
     

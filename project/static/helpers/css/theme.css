@@ -1,7 +1,15 @@
-.bg-light-75 {
+.bg-light-50 {
     background-color: hsla(0, 0%, 100%, 0.5);
 }
 
-.bg-dark-75 {
+.bg-dark-50 {
     background-color: hsla(0, 0%, 0%, 0.5);
+}
+
+.bg-light-75 {
+    background-color: hsla(0, 0%, 100%, 0.75);
+}
+
+.bg-dark-75 {
+    background-color: hsla(0, 0%, 0%, 0.75);
 }

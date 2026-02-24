@@ -107,16 +107,23 @@ class SourcesHandler {
         const hsla = hslaColor(color)
         const outlineColor = hsla.toString({l:hsla.l*0.5})
 
-        const metadata = {
-            tooltip: {
-                active: true,
+        const baseParams = {
+            minzoom, 
+            maxzoom, 
+            layout: {
+                visibility
             },
-            popup: {
-                active: true,
-            },
+            metadata: {
+                params: {
+                    tooltip: {
+                        active: true,
+                    },
+                    popup: {
+                        active: true,
+                    },
+                }
+            }
         }
-
-        const baseParams = {minzoom, maxzoom, layout: {visibility}}
 
         const defaultParams = {
             'background': {
@@ -126,7 +133,6 @@ class SourcesHandler {
                     'background-opacity': 0.25,
                     // 'background-pattern': ''
                 },
-                metadata,
             },
             'fill': {
                 ...baseParams,
@@ -144,7 +150,6 @@ class SourcesHandler {
                     'fill-translate-anchor': 'map',
                     // 'fill-pattern': '',
                 },
-                metadata,
             },
             'line': {
                 ...baseParams,
@@ -170,7 +175,6 @@ class SourcesHandler {
                     // 'line-pattern': '',
                     // 'line-gradient': '',
                 },
-                metadata,
             },
             'circle': {
                 ...baseParams,
@@ -192,7 +196,6 @@ class SourcesHandler {
                     "circle-stroke-color": outlineColor,
                     "circle-stroke-opacity": 1,
                 },
-                metadata,
             },
             'heatmap': {
                 ...baseParams,
@@ -214,7 +217,6 @@ class SourcesHandler {
                     ],
                     'heatmap-opacity': 0.5,
                 },
-                metadata,
             },
             'fill-extrusion': {
                 ...baseParams,
@@ -229,7 +231,6 @@ class SourcesHandler {
                     'fill-extrusion-base': 0,
                     'fill-extrusion-vertical-gradient': true,
                 },
-                metadata,
             },
             'symbol': {
                 ...baseParams,
@@ -297,7 +298,6 @@ class SourcesHandler {
                     // 'text-translate': [0,0],
                     // 'text-translate-anchor': 'map',
                 },
-                metadata,
             }
         }
 
@@ -599,11 +599,12 @@ class SourcesHandler {
         const layerName = `${sourceId}-${name}`
         beforeId = this.getBeforeId(layerName, beforeId)
 
-        const groups = (properties.metadata ??= {}).groups = properties.metadata?.groups ?? {
-            default: this.getGeoJSONLayerParams()
-        }
+        const metadata = properties.metadata = properties.metadata ?? source.metadata ?? {}
+        const params = metadata.params = metadata.params ?? {}
+        const styles = params.styles = params.styles ?? {default: {default: this.getGeoJSONLayerParams()}}
+        const style = styles[params.style ?? Object.keys(styles)[0]]
 
-        Object.entries(groups).forEach(([groupId, group]) => {
+        Object.entries(style).forEach(([groupId, group]) => {
             const params = group.params
             Object.entries(params).forEach(([type, typeLayers]) => {
                 Object.entries(typeLayers).forEach(([role, roleParams]) => {
@@ -612,17 +613,24 @@ class SourcesHandler {
                     const id = Array(layerName, groupId, type, role).join('-')
                     
                     const layerParams = {
+                        ...properties,
                         ...roleParams.params,
                         id,
                         type,
                         source: sourceId,
                         metadata: {
                             ...source.metadata,
+                            ...properties.metadata,
                             ...roleParams.params.metadata,
-                            name,
-                            groups,
-                            group: groupId,
                             role,
+                            group: groupId,
+                            layerName,
+                            name,
+                            params: {
+                                ...source.metadata?.params,
+                                ...properties.metadata.params,
+                                ...roleParams.params.metadata.params,
+                            },
                         },
                     }
     
@@ -737,7 +745,13 @@ class SourcesHandler {
         }
 
         if (!params.styles) {
-            params.styles = {}
+            params.styles = {
+                default: (
+                    Array('wfs',).includes(params.type)
+                    ? {default: this.getGeoJSONLayerParams()}
+                    : {}
+                )
+            }
         }
 
         if (!params.style || !(params.style in params.styles)) {
@@ -769,9 +783,10 @@ class SourcesHandler {
     addRasterLayer (source, properties) {
         const map = this.map
         
-        const metadata = properties.metadata
-        const params = metadata?.params
-        const name = metadata?.name ?? generateRandomString()
+        const metadata = properties.metadata = properties.metadata ?? {}
+        const params = metadata.params = metadata.params ?? {}
+        const name = metadata.name = metadata.name ?? generateRandomString()
+        
         const id = `${source.id}-${name}`
         const beforeId = this.getBeforeId(id)
 
@@ -781,18 +796,18 @@ class SourcesHandler {
             source: source.id,
             metadata: {
                 ...source.metadata,
+                ...metadata,
                 params: {
                     ...source.metadata.params,
                     ...params,
+                    popup: {
+                        active: params.type === 'wms' ? true : false,
+                    },
                 },
-                name,
-                popup: {
-                    active: params.type === 'wms' ? true : false,
-                },
-                ...metadata,
+                layerName: id,
             },
         }, beforeId)   
-
+        
         const layer = map.getLayer(id)
 
         return layer

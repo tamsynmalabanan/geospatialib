@@ -198,7 +198,7 @@ class InteractionsHandler {
             const source = map.getStyle().sources[l.source]
             return (
                 Array('geojson', 'vector').includes(source?.type)
-                && l.metadata?.tooltip?.active
+                && l.metadata?.params?.tooltip?.active
                 && source?.data?.features?.length
                 && !Object.values(this.config).map(i => i.sourceId).includes(l.source)
             )
@@ -230,7 +230,12 @@ class InteractionsHandler {
         map.sourcesHandler.addGeoJSONLayers(tooltip.sourceId, {
             properties: {
                 metadata: {
-                    groups: this.defaultLayerGroups()
+                    params: {
+                        style: 'default',
+                        styles: {
+                            default: this.defaultLayerGroups()
+                        }
+                    }
                 }
             }
         })
@@ -278,7 +283,12 @@ class InteractionsHandler {
                 this.map.sourcesHandler.addGeoJSONLayers(sourceId, {
                     properties: {
                         metadata: {
-                            groups: this.defaultLayerGroups()
+                            params: {
+                                style: 'default',
+                                styles: {
+                                    default: this.defaultLayerGroups()
+                                }
+                            }
                         }
                     }
                 })
@@ -465,7 +475,7 @@ class InteractionsHandler {
 
             features = (await this.getCanvasData({
                 point:e.point, rasters:true, 
-                layers: this.map.getStyle().layers.filter(l => l.metadata?.popup?.active).map(l => l.id)
+                layers: this.map.getStyle().layers.filter(l => l.metadata?.params?.popup?.active).map(l => l.id)
             }))?.filter(f => (
                 f.geometry 
                 && Object.keys(f.properties).filter(i => i !== '__sys__').length
