@@ -153,34 +153,21 @@ class InteractionsHandler {
         ]
     }
 
-    defaultLayerGroups() {
-        const fillColor = `hsl(180, 100%, 50%)`
+    defaultLayerProperties() {
         return {
-            default: this.map.sourcesHandler.getVectorLayerParams({
-                // properties: {fillColor},
-                // customParams: {
-                //     'fill' : {
-                //         'polygons': {
-                //             render: true,
-                //             params: {
-                //                 paint: {
-                //                     "fill-color": hslaColor(fillColor).toString({a:0})
-                //                 }
-                //             },
-                //         },
-                //     },
-                //     'line': {
-                //         'polygon-outlines': {
-                //             render: true,
-                //             params: {
-                //                 paint: {
-                //                     'line-color': fillColor,
-                //                 },
-                //             }
-                //         }
-                //     },
-                // }
-            })
+            metadata: {
+                name: 'default',
+                params: {
+                    style: 'default',
+                    styles: {
+                        default: {
+                            default: this.map.sourcesHandler.getVectorLayerParams({
+                                color: `hsl(180, 100%, 50%)`
+                            }),
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -228,16 +215,7 @@ class InteractionsHandler {
         map.sourcesHandler.getGeoJSONSource(tooltip.sourceId).setData(data)
 
         map.sourcesHandler.addGeoJSONLayers(tooltip.sourceId, {
-            // properties: {
-            //     metadata: {
-            //         params: {
-            //             style: 'default',
-            //             styles: {
-            //                 default: this.defaultLayerGroups()
-            //             }
-            //         }
-            //     }
-            // }
+            properties: this.defaultLayerProperties()
         })
 
         const popup = tooltip.popup = new maplibregl.Popup({closeButton: false})
@@ -281,16 +259,7 @@ class InteractionsHandler {
 
             if (!previousToggle) {
                 this.map.sourcesHandler.addGeoJSONLayers(sourceId, {
-                    // properties: {
-                    //     metadata: {
-                    //         params: {
-                    //             style: 'default',
-                    //             styles: {
-                    //                 default: this.defaultLayerGroups()
-                    //             }
-                    //         }
-                    //     }
-                    // }
+                    properties: this.defaultLayerProperties()
                 })
             }
         }

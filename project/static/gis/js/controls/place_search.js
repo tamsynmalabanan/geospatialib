@@ -52,46 +52,22 @@ class PlaceSearchControl {
         if (data?.features?.length) {
             map.sourcesHandler.getGeoJSONSource(sourceId)?.setData(data)
 
-            const fillColor = `hsl(0, 100%, 50%)`
             map.sourcesHandler.addGeoJSONLayers(sourceId, {
-                // properties: {
-                //     metadata: {
-                //         name: 'default',
-                //         params: {
-                //             style: 'default',
-                //             styles: {
-                //                 default: {
-                //                     default: map.sourcesHandler.getVectorLayerParams({
-                //                         properties: {fillColor},
-                //                         fillColor,
-                //                         customParams: {
-                //                             'fill' : {
-                //                                 'polygons': {
-                //                                     render: true,
-                //                                     params: {
-                //                                         paint: {
-                //                                             "fill-color": hslaColor(fillColor).toString({a:0})
-                //                                         }
-                //                                     },
-                //                                 },
-                //                             },
-                //                             'line': {
-                //                                 'polygon-outlines': {
-                //                                     render: true,
-                //                                     params: {
-                //                                         paint: {
-                //                                             'line-color': fillColor,
-                //                                         },
-                //                                     }
-                //                                 }
-                //                             },
-                //                         }
-                //                     }),
-                //                 }
-                //             }
-                //         }
-                //     }
-                // }
+                properties: {
+                    metadata: {
+                        name: 'default',
+                        params: {
+                            style: 'default',
+                            styles: {
+                                default: {
+                                    default: map.sourcesHandler.getVectorLayerParams({
+                                        color: `hsl(0, 100%, 50%)`
+                                    }),
+                                }
+                            }
+                        }
+                    }
+                }
             })
         }
     }

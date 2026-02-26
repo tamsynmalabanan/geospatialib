@@ -180,3 +180,4 @@ backup
 !**/migrations/__init__.py
 
 /staticfiles/
+project/logs/info.log.1

@@ -406,6 +406,9 @@ class SourcesHandler {
                 name: 'polygon fill',
                 type: 'fill',
                 geoms: ['Polygon'],
+                paint: {
+                    'fill-color': `hsla(0, 0%, 0%, 0)`
+                },
             },
             {
                 name: 'polygon outline',
@@ -637,7 +640,7 @@ class SourcesHandler {
             group.params.forEach(i => {
                 const {type, paint, layout, minzoom, maxzoom, filter} = i.params
                 if (layout.visibility !== 'visible') return
-                
+
                 const roleId = i.roleId
                 const id = Array(layerName, groupId, type, roleId).join('-')
 
