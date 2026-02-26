@@ -79,8 +79,8 @@ class InteractionsHandler {
                 if (layers?.length && !layers.includes(l.id)) return
 
                 const source = map.getSource(l.source)
-                if (Array('vector', 'geojson').includes(source.type)) return
-                if (Array('xyz').includes(source.metadata?.params.type)) return
+                if (Array('vector', 'geojson').includes(source?.type)) return
+                if (Array('xyz').includes(source?.metadata?.params.type)) return
                 
                 return source
             }).filter(Boolean))
@@ -154,32 +154,32 @@ class InteractionsHandler {
     }
 
     defaultLayerGroups() {
-        const color = `hsl(180, 100%, 50%)`
+        const fillColor = `hsl(180, 100%, 50%)`
         return {
-            default: this.map.sourcesHandler.getGeoJSONLayerParams({
-                color,
-                customParams: {
-                    'fill' : {
-                        'polygons': {
-                            render: true,
-                            params: {
-                                paint: {
-                                    "fill-color": hslaColor(color).toString({a:0})
-                                }
-                            },
-                        },
-                    },
-                    'line': {
-                        'polygon-outlines': {
-                            render: true,
-                            params: {
-                                paint: {
-                                    'line-color': color,
-                                },
-                            }
-                        }
-                    },
-                }
+            default: this.map.sourcesHandler.getVectorLayerParams({
+                // properties: {fillColor},
+                // customParams: {
+                //     'fill' : {
+                //         'polygons': {
+                //             render: true,
+                //             params: {
+                //                 paint: {
+                //                     "fill-color": hslaColor(fillColor).toString({a:0})
+                //                 }
+                //             },
+                //         },
+                //     },
+                //     'line': {
+                //         'polygon-outlines': {
+                //             render: true,
+                //             params: {
+                //                 paint: {
+                //                     'line-color': fillColor,
+                //                 },
+                //             }
+                //         }
+                //     },
+                // }
             })
         }
     }
@@ -228,16 +228,16 @@ class InteractionsHandler {
         map.sourcesHandler.getGeoJSONSource(tooltip.sourceId).setData(data)
 
         map.sourcesHandler.addGeoJSONLayers(tooltip.sourceId, {
-            properties: {
-                metadata: {
-                    params: {
-                        style: 'default',
-                        styles: {
-                            default: this.defaultLayerGroups()
-                        }
-                    }
-                }
-            }
+            // properties: {
+            //     metadata: {
+            //         params: {
+            //             style: 'default',
+            //             styles: {
+            //                 default: this.defaultLayerGroups()
+            //             }
+            //         }
+            //     }
+            // }
         })
 
         const popup = tooltip.popup = new maplibregl.Popup({closeButton: false})
@@ -281,16 +281,16 @@ class InteractionsHandler {
 
             if (!previousToggle) {
                 this.map.sourcesHandler.addGeoJSONLayers(sourceId, {
-                    properties: {
-                        metadata: {
-                            params: {
-                                style: 'default',
-                                styles: {
-                                    default: this.defaultLayerGroups()
-                                }
-                            }
-                        }
-                    }
+                    // properties: {
+                    //     metadata: {
+                    //         params: {
+                    //             style: 'default',
+                    //             styles: {
+                    //                 default: this.defaultLayerGroups()
+                    //             }
+                    //         }
+                    //     }
+                    // }
                 })
             }
         }

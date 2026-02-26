@@ -288,13 +288,13 @@ class LegendControl {
     async getLayerLegend(layer) {
         const params = layer.metadata.params
         const style = params.styles[params.style]
-        const layerName = layer.metadata.layerName
+        if (!style) return ''
 
         if (params.type === 'xyz' && style.thumbnail) {
             return `<img class="" src="${style.thumbnail}" alt="Image not found." height="21" width="30">`
         }
 
-        if (params.type === 'wms' && style?.legendURL) {
+        if (params.type === 'wms' && style.legendURL) {
             return `<img class="" src="${style?.legendURL}" alt="Image not found.">`
         }
 
@@ -331,6 +331,16 @@ class LegendControl {
             for (const [name, group] of Object.entries(style)) {
                 console.log(group)
 
+                const features = (
+                    group.filter?.length 
+                    ? geojson.features.filter(f => {
+                        // group.filter.
+
+                        return f
+                    }) 
+                    : geojson.features
+                )
+
                 const groupContainer = customCreateElement({
                     parent: groupsContainer,
                     className: 'd-flex gap-2'
@@ -348,23 +358,12 @@ class LegendControl {
 
                 const groupCount = customCreateElement({
                     parent: groupContainer,
+                    innerText: `(${features?.length ?? 0})`,
                 })
-
-                const features = (
-                    group.filter 
-                    ? geojson.features.filter(Boolean) 
-                    : geojson.features
-                )
-            
-                console.log(features)
-
-                groupCount.innerText = `(${features?.length ?? 0})`
             }
             
             return container.outerHTML
         }
-
-        return ''
     }
 
     handleRemoveLayer() {
@@ -421,19 +420,17 @@ class LegendControl {
         if (type === 'wfs') {
             data = await fetchWFSData(params, {map, id})
         }
-
-        map.once('idle', async (e) => {
-            for (const container of this.getLegendContainers()) {
-                const layerName = container.dataset.layerName
-                if (!layerName.startsWith(id)) continue
-    
-                const layer = map.sourcesHandler.getLayersByName(layerName).pop()
-                const layerLegend = container.querySelector(`#${container.dataset.layerLegend}`)
-                layerLegend.innerHTML = await this.getLayerLegend(layer)
-            }
-        })
-
+        
         source.setData(data)
+
+        for (const container of this.getLegendContainers()) {
+            const layerName = container.dataset.layerName
+            if (!layerName.startsWith(id)) continue
+
+            const layer = map.sourcesHandler.getLayersByName(layerName).pop()
+            const layerLegend = container.querySelector(`#${container.dataset.layerLegend}`)
+            layerLegend.innerHTML = await this.getLayerLegend(layer)
+        }
 
         this.config.updateGeoJSONDataMap.delete(id)
     }

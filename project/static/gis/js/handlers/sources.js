@@ -90,116 +90,141 @@ class SourcesHandler {
         })
     }
 
-    getGeoJSONLayerParams({
-        title='',
-        filter,
-        color=getRandomColor(),
-        minzoom=0,
-        maxzoom=24,
-        visibility='visible',
-        customParams,
-    }={}) {
-        const validFilter = [filter].filter(i => i)
-        const filters = Object.fromEntries(Array(
-            'Polygon', 'LineString', 'Point'
-        ).map(i => [i, ["all", ["==", "$type", i], ...validFilter]]))
-        
-        const hsla = hslaColor(color)
-        const outlineColor = hsla.toString({l:hsla.l*0.5})
+    // "all", "any", "none"
+    // [
+    //     "all", 
+    //     ["==", "$type", "Polygon"],
+    //     [
+    //         "any",
+    //         ["==", "landuse", "park"],
+    //         [
+    //             "none",
+    //             [">", "population", 5000],
+    //             ["==", "region", "north"]
+    //         ]
+    //     ]
+    // ]
+    
+    // "==", "!=", ">", "<", ">=", "<=",
+    // ["==", "highway", "primary"] 
+    
+    // "has", "!has"
+    // ["has", "name"]
+    
+    // "in", "!in"
+    // ["in", "class", "park", "forest"]
 
-        const baseParams = {
-            minzoom, 
-            maxzoom, 
-            layout: {
-                visibility
-            },
-            metadata: {
-                params: {
-                    tooltip: {
-                        active: true,
-                    },
-                    popup: {
-                        active: true,
-                    },
-                }
-            }
+    // ["within", {"type": "Polygon", "coordinates": [...]}]
+    //  - this wont work in filter so create a temp property defining spatial relationship with geom
+
+
+    filterGeoJSON(geojson, filter) {
+        const combinators = {
+            all: null,
+            any: null,
+            none: null,
         }
 
-        const defaultParams = {
+        const operators = {
+            comparison: {
+                options: ["==", "!=", ">", ">=", "<", "<="],
+            },
+            existential: {
+                options: ['has', '!has'],
+            },
+            membership: {
+                options: ['in', '!in'],
+            },
+        }
+    }
+
+    getVectorTypeParams({color=getRandomColor()}={}) {
+        const hsla = hslaColor(color)
+        const opacity = hsla.a
+        const fillColor = hsla.toString({a:1})
+        const haloColor = hsla.toString({l:Math.max(100,hsla.l*2),a:opacity/2})
+        const outlineColor = hsla.toString({l:hsla.l*0.5, a:1})
+        const sortKey = 0
+        const antialias = true
+        const pattern = null
+        const translate = [0,0]
+        const translateAnchor = 'map'
+        const blur = 0
+        const width = 2
+        const visibility = 'visible'
+        const allowOverlap = false
+        const overlap = 'never' // never, always, cooperative
+        const ignorePlacement = false
+        const optional = false
+        const rotate = 0
+        const padding = 2 //[2]
+        const offset = [0,0]
+        const anchor = 'center' // center, left, right, top, bottom, top-left, top-right, bottom-left, bottom-right
+        const alignment = 'auto'
+        const minzoom = 0
+        const maxzoom = 24
+
+        return {
             'background': {
-                ...baseParams,
-                paint: {
-                    'background-color': getPreferredTheme() === 'light'? 'white' : 'black',
-                    'background-opacity': 0.25,
-                    // 'background-pattern': ''
+                type: 'background',
+                minzoom,
+                maxzoom,
+                layout: {
+                    visibility,
                 },
+                paint: {
+                    'background-color': getPreferredTheme() === 'light' ? 'white' : 'black',
+                    'background-pattern': pattern,
+                    'background-opacity': opacity/4,
+                }
             },
             'fill': {
-                ...baseParams,
+                type: 'fill',
+                minzoom,
+                maxzoom,
                 layout: {
-                    ...baseParams.layout,
-                    'fill-sort-key': 0,
+                    visibility,
+                    'fill-sort-key': sortKey,
                 },
-                filter: filters.Polygon,
                 paint: {
-                    'fill-antialias': true,
-                    'fill-opacity': 0.5,
-                    'fill-color': color,
+                    'fill-antialias': antialias,
+                    'fill-opacity': opacity,
+                    'fill-color': fillColor,
                     'fill-outline-color': outlineColor,
-                    'fill-translate': [0,0],
-                    'fill-translate-anchor': 'map',
-                    // 'fill-pattern': '',
-                },
-            },
-            'line': {
-                ...baseParams,
-                layout: {
-                    ...baseParams.layout,
-                    'line-cap': 'butt',
-                    'line-join': 'miter',
-                    'line-miter-limit': 2,
-                    'line-round-limit': 1.05,
-                    'line-sort-key': 0,
-                },
-                filter: filters.LineString,
-                paint: {
-                    'line-opacity': 1,
-                    'line-color': color,
-                    'line-translate': [0,0],
-                    'line-translate-anchor': 'map',
-                    'line-width': 3,
-                    'line-gap-width': 0,
-                    'line-offset': 0,
-                    'line-blur': 0,
-                    // 'line-dasharray': [],
-                    // 'line-pattern': '',
-                    // 'line-gradient': '',
-                },
+                    'fill-translate': translate,
+                    'fill-translate-anchor': translateAnchor,
+                    'fill-pattern': pattern,
+                }
             },
             'circle': {
-                ...baseParams,
+                type: 'circle',
+                minzoom,
+                maxzoom,
                 layout: {
-                    ...baseParams.layout,
-                    'circle-sort-key': 0,
+                    visibility,
+                    'circle-sort-key': sortKey,
                 },
-                filter: filters.Point,
                 paint: {
-                    "circle-radius": 6, 
-                    "circle-color": color,
-                    "circle-blur": 0,
-                    "circle-opacity": 1,
-                    "circle-translate": [0,0],
-                    "circle-translate-anchor": 'map',
-                    "circle-pitch-scale": 'map',
-                    "circle-pitch-alignment": 'viewport',
-                    "circle-stroke-width": 1,
-                    "circle-stroke-color": outlineColor,
-                    "circle-stroke-opacity": 1,
-                },
+                    'circle-radius': 6,
+                    'circle-color': fillColor,
+                    'circle-blur': blur,
+                    'circle-opacity': opacity,
+                    'circle-translate': translate,
+                    'circle-translate-anchor': translateAnchor,
+                    'circle-pitch-scale': 'map',
+                    'circle-pitch-alignment': 'viewport',
+                    'circle-stroke-width': width,
+                    'circle-stroke-color': outlineColor,
+                    'circle-stroke-opacity': opacity,
+                }
             },
             'heatmap': {
-                ...baseParams,
-                filter: filters.Point,
+                type: 'heatmap',
+                minzoom,
+                maxzoom,
+                layout: {
+                    visibility,
+                },
                 paint: {
                     'heatmap-radius': 30,
                     'heatmap-weight': 1,
@@ -208,354 +233,356 @@ class SourcesHandler {
                         "interpolate",
                         ["linear"],
                         ["heatmap-density"],
-                        0,"rgba(0, 0, 255, 0)",
-                        0.1,"royalblue",
-                        0.3,"cyan",
-                        0.5,"lime",
-                        0.7,"yellow",
-                        1,"red"
+                        0, hsla.toString({a:0}),
+                        1, fillColor
                     ],
-                    'heatmap-opacity': 0.5,
-                },
+                    'heatmap-opacity': opacity,
+                }
             },
             'fill-extrusion': {
-                ...baseParams,
-                filter: filters.Polygon,
+                type: 'fill-extrusion',
+                minzoom,
+                maxzoom,
+                layout: {
+                    visibility,
+                },
                 paint: {
-                    'fill-extrusion-opacity': 1,
-                    'fill-extrusion-color': color,
-                    'fill-extrusion-translate': [0,0],
-                    'fill-extrusion-translate-anchor': 'map',
-                    // 'fill-extrusion-pattern': '',
+                    'fill-extrusion-opacity': opacity,
+                    'fill-extrusion-color': fillColor,
+                    'fill-extrusion-translate': translate,
+                    'fill-extrusion-translate-anchor': translateAnchor,
+                    'fill-extrusion-pattern': pattern,
                     'fill-extrusion-height': 10,
                     'fill-extrusion-base': 0,
                     'fill-extrusion-vertical-gradient': true,
+                }
+            },
+            'line': {
+                type: 'line',
+                minzoom,
+                maxzoom,
+                layout: {
+                    visibility,
+                    'line-cap': 'butt',
+                    'line-join': 'miter',
+                    'line-miter-limit': 2,
+                    'line-round-limit': 1.05,
+                    'line-sort-key': sortKey,
                 },
+                paint: {
+                    'line-opacity': opacity,
+                    'line-color': fillColor,
+                    'line-translate': translate,
+                    'line-translate-anchor': translateAnchor,
+                    'line-width': width,
+                    'line-gap-width': 0,
+                    'line-offset': 0,
+                    'line-blur': blur,
+                    'line-dasharray': null,
+                    'line-pattern': pattern,
+                    'line-gradient': null,
+                }
             },
             'symbol': {
-                ...baseParams,
+                type: 'symbol',
+                minzoom,
+                maxzoom,
                 layout: {
-                    ...baseParams.layout,
+                    visibility,
                     'symbol-placement': 'point',
                     'symbol-spacing': 250,
                     'symbol-avoid-edges': false,
-                    'symbol-sort-key': 0,
+                    'symbol-sort-key': sortKey,
                     'symbol-z-order': 'auto',
-                    'icon-allow-overlap': false,
-                    // 'icon-overlap': 'cooperative',
-                    // 'icon-ignore-placement': false,
-                    // 'icon-optional': false,
-                    // 'icon-rotation-alignment': 'auto',
-                    // 'icon-size': 1,
-                    // 'icon-text-fit': 'width',
-                    // 'icon-text-fit-padding': [0,0,0,0],
-                    // 'icon-image': '',
-                    // 'icon-rotate': 0,
-                    // 'icon-padding': [2],
-                    // 'icon-keep-upright': false,
-                    // 'icon-offset': [0,0],
-                    // 'icon-anchor': 'center',
-                    // 'icon-pitch-alignment': 'auto',
-                    // 'text-pitch-alignment': 'auto',
-                    // 'text-rotation-alignment': 'auto',
-                    'text-field': 'test', 
+                    
+                    'icon-allow-overlap': allowOverlap,
+                    'icon-overlap': overlap,
+                    'icon-ignore-placement': ignorePlacement,
+                    'icon-optional': optional,
+                    'icon-rotation-alignment': alignment,
+                    'icon-size': 1,
+                    'icon-text-fit': 'none',
+                    'icon-text-fit-padding': [0,0,0,0],
+                    'icon-image': null,
+                    'icon-rotate': rotate,
+                    'icon-padding': padding,
+                    'icon-keep-upright': false,
+                    'icon-offset': offset,
+                    'icon-anchor': anchor,
+                    'icon-pitch-alignment': alignment,
+                    
+                    'text-pitch-alignment': alignment,
+                    'text-rotation-alignment': alignment,
+                    'text-field': null,
                     'text-font': ["Open Sans Regular","Arial Unicode MS Regular"],
-                    'text-size': 12,
-                    // 'text-max-width': 10,
-                    // 'text-line-height': 1.2,
-                    // 'text-letter-spacing': 0,
-                    // 'text-justify': 'center',
-                    // 'text-radial-offset': 0,
-                    // 'text-variable-anchor': [],
-                    // 'text-variable-anchor-offset': [],
-                    // 'text-anchor': 'center',
-                    // 'text-max-angle': 45,
-                    // 'text-writing-mode': [],
-                    // 'text-rotate': 0,
-                    // 'text-padding': 2,
-                    // 'text-keep-upright': true,
-                    // 'text-transform': 'none',
-                    // 'text-offset': [0,0],
-                    // 'text-allow-overlap': false,
-                    // 'text-overlap': 'cooperative',
-                    // 'text-ignore-placement': false,
-                    // 'text-optional': false,
+                    'text-size': 16,
+                    'text-max-width': 10,
+                    'text-line-height': 1.2,
+                    'text-letter-spacing': 0,
+                    'text-justify': 'auto', // auto, left, center, right,
+                    'text-radial-offset': 0,
+                    'text-variable-anchor': null,
+                    'text-variable-anchor-offset': null,
+                    'text-anchor': anchor,
+                    'text-max-angle': 45,
+                    'text-writing-mode': null,
+                    'text-rotate': rotate,
+                    'text-padding': padding,
+                    'text-keep-upright': true,
+                    'text-transform': 'none', // none, uppercase, lowercase
+                    'text-offset': offset,
+                    'text-allow-overlap': allowOverlap,
+                    'text-overlap': overlap,
+                    'text-ignore-placement': ignorePlacement,
+                    'text-optional': optional,
                 },
-                filter: filters.Point,
                 paint: {
-                    // 'icon-opacity': 0,
-                    'icon-color': color,
-                    // 'icon-halo-color': color,
-                    // 'icon-halo-width': 0,
-                    // 'icon-halo-blur': 0,
-                    // 'icon-translate': [0,0],
-                    // 'icon-translate-anchor': 'map',
-                    // 'text-opacity': 1,
-                    'text-color': color,
-                    // 'text-halo-color': color,
-                    // 'text-halo-width': 0,
-                    // 'text-halo-blur': 0,
-                    // 'text-translate': [0,0],
-                    // 'text-translate-anchor': 'map',
-                },
+                    'icon-opacity': opacity,
+                    'icon-color': fillColor,
+                    'icon-halo-color': haloColor,
+                    'icon-halo-width': width*3,
+                    'icon-halo-blur': blur,
+                    'icon-translate': translate,
+                    'icon-translate-anchor': translateAnchor,
+
+                    'text-opacity': opacity,
+                    'text-color': fillColor,
+                    'text-halo-color': haloColor,
+                    'text-halo-width': width*3,
+                    'text-halo-blur': blur,
+                    'text-translate': translate,
+                    'text-translate-anchor': translateAnchor,
+                }
+            },
+            'misc': {
+                shadowColor: 'black',
+                shadowTranslate: [-2.5, 2.5],
+                shadowOpacity: 0.5,
+                labelField: ["get", "name"],
+                labelSize: 12,
+                labelVariableAnchor: ["top", "bottom", "left", "right"],
+                labelRadialOffset: 0.5,
+                labelJustify: 'auto',
+                labelAllowOverlap: false,
             }
         }
+    }
 
-        const params = {
-            // background
-            'background': {
-                'background': { 
-                    render: false,
-                    params: defaultParams.background,
-                }, 
-            },
+    getVectorLayerParams({
+        color=getRandomColor(),
+        filter,
+        minzoom=0,
+        maxzoom=24,
+    }={}) {
+        const typeParams = this.getVectorTypeParams({color})
+        const misc = typeParams.misc
+        const filters = Object.fromEntries(Array(
+            'Polygon', 'LineString', 'Point'
+        ).map(i => [i, ["==", "$type", i]]))
 
-            // 2D polygons
-            'fill': {
-                'polygon-shadows': {
-                    render: false,
-                    params: {
-                        ...defaultParams.fill,
-                        paint: {
-                            ...defaultParams.fill.paint,
-                            'fill-color': 'black',
-                            'fill-translate': [-2.5,2.5],
-                        }
-                    },
-                },
-                'polygons': {
-                    render: true,
-                    params: defaultParams.fill,
-                },
-            },
-            
-            // lines
-            'line': {
-                'polygon-outlines': {
-                    render: true,
-                    params: {
-                        ...defaultParams.line,
-                        filter: filters.Polygon,
-                        paint: {
-                            ...defaultParams.line.paint,
-                            'line-opacity': 1,
-                            'line-color': outlineColor,
-                            'line-width': 2,
-                        }
-                    },
-                },
-                'line-shadows': {
-                    render: false,
-                    params: {
-                        ...defaultParams.line,
-                        paint: {
-                            ...defaultParams.line.paint,
-                            'line-opacity': 0.5,
-                            'line-color': 'black',
-                            'line-translate': [-2.5,2.5],
-                        }
-                    },
-                },
-                'lines': {
-                    render: true,
-                    params: defaultParams.line,
-                },
-            },
-            
-            // points
-            'circle': {
-                'point-shadows': {
-                    render: false,
-                    params: {
-                        ...defaultParams.circle,
-                        paint: {
-                            ...defaultParams.circle.paint,
-                            "circle-color": 'white',
-                            "circle-opacity": 0.5,
-                            "circle-translate": [-2.5,2.5],
-                        },
-                    },
-                },
-                'points-outline': {
-                    render: false,
-                    params: {
-                        ...defaultParams.circle,
-                        paint: {
-                            ...defaultParams.circle.paint,
-                            "circle-color": 'transparent',
-                            'circle-stroke-color': outlineColor,
-                            'circle-stroke-width': 2, 
-                            'circle-radius': 7, 
 
-                        },
-                    },
-                },
-                'points': {
-                    render: true,
-                    params: defaultParams.circle,
+        const params = Array(
+            {
+                name: 'layer background', 
+                type: 'background',
+                layout: {
+                    visibility: 'none'
                 },
             }, 
-            'heatmap': {
-                'points': {
-                    render: false,
-                    params: defaultParams.heatmap,
+            {
+                name: 'polygon shadow',
+                type: 'fill',
+                geoms: ['Polygon'],
+                layout: {
+                    visibility: 'none'
+                },
+                paint: {
+                    'fill-color': misc.shadowColor,
+                    'fill-opacity': misc.shadowOpacity,
+                    'fill-translate': misc.shadowTranslate,
+                }
+            },
+            {
+                name: 'polygon fill',
+                type: 'fill',
+                geoms: ['Polygon'],
+            },
+            {
+                name: 'polygon outline',
+                type: 'line',
+                geoms: ['Polygon'],
+                paint: {
+                    'line-opacity': 1,
+                    'line-color': typeParams.fill.paint['fill-color'],
+                    'line-width': 2,
+                }
+            },
+            {
+                name: 'polygon 3D shadow',
+                type: 'fill-extrusion',
+                geoms: ['Polygon'],
+                layout: {
+                    visibility: 'none'
+                },
+                paint: {
+                    'fill-extrusion-color': misc.shadowColor,
+                    'fill-extrusion-opacity': misc.shadowOpacity,
+                    'fill-extrusion-translate': misc.shadowTranslate,
+                }
+            },
+            {
+                name: 'polygon 3D fill',
+                type: 'fill-extrusion',
+                geoms: ['Polygon'],
+                layout: {
+                    visibility: 'none'
                 },
             },
-
-            // 3D polygons
-            'fill-extrusion': {
-                'polygon-shadows': {
-                    render: false,
-                    params: {
-                        ...defaultParams['fill-extrusion'],
-                        paint: {
-                            'fill-extrusion-color':'black',
-                            'fill-extrusion-translate': [-2.5,2.5],
-                        },
-                    },
+            {
+                name: 'line shadow',
+                type: 'line',
+                geoms: ['LineString'],
+                layout: {
+                    visibility: 'none'
                 },
-                'polygons': {
-                    render: false,
-                    params: defaultParams['fill-extrusion'],
+                paint: {
+                    'line-opacity': misc.shadowOpacity,
+                    'line-color': misc.shadowColor,
+                    'line-translate': misc.shadowTranslate,
+                }
+            },
+            {
+                name: 'line',
+                type: 'line',
+                geoms: ['LineString'],
+            },
+            {
+                name: 'line symbol shadow',
+                type: 'symbol',
+                geoms: ['LineString'],
+                layout: {
+                    visibility: 'none',
+                    'symbol-placement': 'line',
+                    'icon-offset': misc.shadowTranslate,
+                },
+                paint: {
+                    'icon-color': misc.shadowColor,
+                    'text-color': misc.shadowColor,
+                }
+            },
+            {
+                name: 'line symbol',
+                type: 'symbol',
+                geoms: ['LineString'],
+                layout: {
+                    visibility: 'none',
+                    'symbol-placement': 'line',
+                }
+            },
+            {
+                name: 'heatmap',
+                type: 'heatmap',
+                geoms: ['Point'],
+                layout: {
+                    visibility: 'none',
                 },
             },
+            {
+                name: 'point shadow',
+                type: 'circle',
+                geoms: ['Point'],
+                layout: {
+                    visibility: 'none',
+                },
+                paint: {
+                    "circle-color": misc.shadowColor,
+                    "circle-opacity": misc.shadowOpacity,
+                    "circle-translate": misc.shadowTranslate,
+                }
+            },
+            {
+                name: 'point',
+                type: 'circle',
+                geoms: ['Point'],
+            },
+            {
+                name: 'point symbol shadow',
+                type: 'symbol',
+                geoms: ['Point'],
+                layout: {
+                    visibility: 'none',
+                },
+                paint: {
+                    'icon-color': misc.shadowColor,
+                    'text-color': misc.shadowColor,
+                }
+            },
+            {
+                name: 'point symbol',
+                type: ['symbol'],
+                geoms: ['Point'],
+                layout: {
+                    visibility: 'none',
+                },
+            },
+            {
+                name: 'label',
+                type: 'symbol',
+                geoms: ['Polygon', 'LineString', 'Point'],
+                layout: {
+                    visibility: 'none',
+                    "text-field": misc.labelField,
+                    "text-size": misc.labelSize,
+                    "text-variable-anchor": misc.labelVariableAnchor,
+                    "text-radial-offset": misc.labelRadialOffset,
+                    "text-justify": misc.labelJustify,
+                    "text-allow-overlap": misc.labelAllowOverlap,
+                }
+            },
+        ).map(l => {
+            const params = structuredClone(typeParams[l.type])
             
-            // points and lines
-            'symbol': {
-                'line-shadows': {
-                    render: false,
-                    params: {
-                        ...defaultParams.symbol,
-                        filter: filters.LineString,
-                        layout: {
-                            ...defaultParams.symbol.layout,
-                            'symbol-placement': 'line',
-                        },
-                        paint: {
-                            ...defaultParams.symbol.paint,
-                            'icon-color': 'black',
-                            'text-color': 'black',
-                        }
-                    },
-                },
-                'lines': {
-                    render: false,
-                    params: {
-                        ...defaultParams.symbol,
-                        filter: filters.LineString,
-                        layout: {
-                            ...defaultParams.symbol.layout,
-                            'symbol-placement': 'line',
-                        },
-                    },
-                },
-                'point-shadows': {
-                    render: false,
-                    params: {
-                        ...defaultParams.symbol,
-                        layout: {
-                            ...defaultParams.symbol.layout,
-                        },
-                        paint: {
-                            ...defaultParams.symbol.paint,
-                            'icon-color': 'black',
-                            'text-color': 'black',
-                        }
-                    },
-                },
-                'points': {
-                    render: false,
-                    params: defaultParams.symbol,
-                },
-                'labels': {
-                    render: false,
-                    params: {
-                        ...defaultParams.symbol,
-                        filter: ["any", filters.Point, filters.LineString, filters.Polygon],
-                        layout: {
-                            ...defaultParams.symbol.layout,
-                            "text-field": ["get", "name"],
-                            "text-size": 12,
-                            "text-variable-anchor": ["top", "bottom", "left", "right"],
-                            "text-radial-offset": 0.5,
-                            "text-justify": "auto",
-                            "text-allow-overlap": false
-                        }
-                    },
-                },
-            },
-        }
+            if ((l.geoms ??= []).length) {
+                params.filter = [
+                    "all",
+                    ["any", ...(l.geoms.map(i => filters[i]))],
+                    ...(l.filter?.length ? [l.filter]: []),
+                    ...(filter?.length ? [filter]: [])
+                ]
+            }
 
-        if (customParams) {
-            Object.entries(customParams).forEach(([a, b]) => {
-                const type = params[a]
-                Object.entries(b).forEach(([c, d]) => {
-                    const isNewLayer = !(c in type)
-                    if (isNewLayer) type[c] = {}
-
-                    const layer = type[c]
-                    
-                    const render = d.render
-                    layer.render = (
-                        typeof render === 'boolean' 
-                        ? render 
-                        : isNewLayer 
-                        ? true : 
-                        layer.render
-                    )
-
-                    const updates = d.params
-                    if (updates) {
-                        if (isNewLayer) {
-                            layer.params = {
-                                ...defaultParams[a],
-                                ...updates,
-                                layout: {
-                                    ...defaultParams[a].layout,
-                                    ...updates.layout ?? {}
-                                },
-                                paint: {
-                                    ...defaultParams[a].paint,
-                                    ...updates.paint ?? {}
-                                },
-                                metadata: {
-                                    ...defaultParams[a].metadata,
-                                    ...updates.metadata ?? {}
-                                },
-                            }
-                        } else {
-                            layer.params = {
-                                ...layer.params,
-                                ...updates,
-                                layout: {
-                                    ...layer.params.layout,
-                                    ...updates.layout ?? {}
-                                },
-                                paint: {
-                                    ...layer.params.paint,
-                                    ...updates.paint ?? {}
-                                },
-                                metadata: {
-                                    ...layer.params.metadata,
-                                    ...updates.metadata ?? {}
-                                },
-                            }
-                        }
-                    }
-                })
+            Array('paint', 'layout').forEach(i => {
+                params[i] = {
+                    ...Object.fromEntries(
+                        Object.entries(params[i])
+                        .filter(([k,v]) => v !== null)
+                    ), ...l[i]
+                }
             })
-        }
+
+            params.minzoom = Math.max(l.minzoom ??= 0, minzoom)
+            params.maxzoom = Math.min(l.maxzoom ??= 0, maxzoom)
+
+            return {
+                roleId: generateRandomString(),
+                name: l.name,
+                geoms: l.geoms,
+                filter: l.filter,
+                minzoom: l.minzoom,
+                maxzoom: l.maxzoom,
+                params,
+            } // group layer definition
+        })
 
         return {
-            params,
+            title: '',
+            active: true,
             filter,
-            filters,
             color,
-            title,
-            maxzoom,
+            params,
             minzoom,
-            visibility,
-        }
+            maxzoom,
+        } // group definition
     }
 
     updateLayerParams(id, params) {
@@ -583,63 +610,76 @@ class SourcesHandler {
             )
         }
 
-        Object.entries(params.metadata ?? {}).forEach(([prop, val]) => {
-            layer.metadata[prop] = val
+        Object.entries((params.metadata ??= {}).params ?? {}).forEach(([prop, val]) => {
+            (layer.metadata.params ??= {})[prop] = val
         })
 
-        return layer
+        return map.getLayer(layer)
     }
 
-    addGeoJSONLayers(sourceId, {properties, beforeId}={}) {
+    addGeoJSONLayers(sourceId, {properties={}, beforeId}={}) {
         const map = this.map
         const source = map.getSource(sourceId)
         if (!source) return
         
-        const name = (properties.metadata ??= {}).name = properties.metadata?.name ?? generateRandomString()
-        const layerName = `${sourceId}-${name}`
+        const metadata = properties.metadata ??= {}
+        const name = metadata.name ??= generateRandomString()
+        const layerName = metadata.layerName ??= `${sourceId}-${name}`
         beforeId = this.getBeforeId(layerName, beforeId)
 
-        const metadata = properties.metadata = properties.metadata ?? source.metadata ?? {}
-        const params = metadata.params = metadata.params ?? {}
-        const styles = params.styles = params.styles ?? {default: {default: this.getGeoJSONLayerParams()}}
-        const style = styles[params.style ?? Object.keys(styles)[0]]
+        const params = metadata.params ??= {}
+        const styles = params.styles ??= {default: {default: this.getVectorLayerParams()}}
+        const styleName = params.style = params.style in styles ? params.style : Object.keys(styles)[0]
+        const style = styles[styleName]
 
         Object.entries(style).forEach(([groupId, group]) => {
-            const params = group.params
-            Object.entries(params).forEach(([type, typeLayers]) => {
-                Object.entries(typeLayers).forEach(([role, roleParams]) => {
-                    if (!roleParams.render) return
-    
-                    const id = Array(layerName, groupId, type, role).join('-')
-                    
-                    const layerParams = {
-                        ...properties,
-                        ...roleParams.params,
-                        id,
-                        type,
-                        source: sourceId,
-                        metadata: {
-                            ...source.metadata,
-                            ...properties.metadata,
-                            ...roleParams.params.metadata,
-                            role,
-                            group: groupId,
-                            layerName,
-                            name,
-                            params: {
-                                ...source.metadata?.params,
-                                ...properties.metadata.params,
-                                ...roleParams.params.metadata.params,
+            if (!group.active) return
+            group.params.forEach(i => {
+                const {type, paint, layout, minzoom, maxzoom, filter} = i.params
+                if (layout.visibility !== 'visible') return
+                
+                const roleId = i.roleId
+                const id = Array(layerName, groupId, type, roleId).join('-')
+
+                const layerParams = {
+                    source: sourceId,
+                    id,
+                    type,
+                    paint,
+                    layout,
+                    minzoom: Math.max(...[minzoom, properties.minzoom, group.minzoom].map(v => v ?? 0)),
+                    maxzoom: Math.min(...[maxzoom, properties.maxzoom, group.maxzoom].map(v => v ?? 24)),
+                    filter: [
+                        "all", 
+                        ...(filter?.length ? [filter]: []),
+                        ...(group.filter?.length ? group.filter : []),
+                        ...(properties.filter?.length ? [properties.filter] : []),
+                    ],
+                    metadata: {
+                        ...source.metadata,
+                        ...properties.metadata,
+                        name,
+                        layerName,
+                        groupId,
+                        roleId,
+                        params: {
+                            tooltip: {
+                                active: true,
                             },
+                            popup: {
+                                active: true,
+                            },
+                            ...source.metadata?.params,
+                            ...properties.metadata.params,
                         },
-                    }
-    
-                    if (this.map.getLayer(id)) {
-                        this.updateLayerParams(id, layerParams)
-                    } else {
-                        this.map.addLayer(layerParams, beforeId)
-                    }
-                })
+                    },
+                }
+
+                if (this.map.getLayer(id)) {
+                    this.updateLayerParams(id, layerParams)
+                } else {
+                    this.map.addLayer(layerParams, beforeId)
+                }
             })
         })
 
@@ -744,18 +784,10 @@ class SourcesHandler {
             params.title = params.name
         }
 
-        if (!params.styles) {
-            params.styles = {
-                default: (
-                    Array('wfs',).includes(params.type)
-                    ? {default: this.getGeoJSONLayerParams()}
-                    : {}
-                )
+        if (params.styles) {
+            if (!params.style || !(params.style in params.styles)) {
+                params.style = Object.keys(params.styles)[0]
             }
-        }
-
-        if (!params.style || !(params.style in params.styles)) {
-            params.style = Object.keys(params.styles)[0]
         }
 
         if (!params.attribution && params.url) {
@@ -827,7 +859,7 @@ class SourcesHandler {
         }
         
         if (Array('wfs').includes(params.type)) {
-            this.addGeoJSONLayers(sourceId, {properties})
+            this.addGeoJSONLayers(sourceId, {properties: structuredClone(properties)})
         }
     }
 }
