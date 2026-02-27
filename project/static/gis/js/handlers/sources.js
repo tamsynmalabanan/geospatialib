@@ -188,7 +188,7 @@ class SourcesHandler {
                 },
                 paint: {
                     'fill-antialias': antialias,
-                    'fill-opacity': opacity,
+                    'fill-opacity': 0.5,
                     'fill-color': fillColor,
                     'fill-outline-color': outlineColor,
                     'fill-translate': translate,
@@ -368,11 +368,13 @@ class SourcesHandler {
         }
     }
 
-    getVectorLayerParams({
+    getVectorGroupParams({
+        title='',
+        active=true,
         color=getRandomColor(),
-        filter,
         minzoom=0,
         maxzoom=24,
+        filter,
     }={}) {
         const typeParams = this.getVectorTypeParams({color})
         const misc = typeParams.misc
@@ -381,7 +383,7 @@ class SourcesHandler {
         ).map(i => [i, ["==", "$type", i]]))
 
 
-        const params = Array(
+        const layers = Array(
             {
                 name: 'layer background', 
                 type: 'background',
@@ -406,9 +408,6 @@ class SourcesHandler {
                 name: 'polygon fill',
                 type: 'fill',
                 geoms: ['Polygon'],
-                paint: {
-                    'fill-color': `hsla(0, 0%, 0%, 0)`
-                },
             },
             {
                 name: 'polygon outline',
@@ -563,11 +562,11 @@ class SourcesHandler {
                 }
             })
 
-            params.minzoom = Math.max(l.minzoom ??= 0, minzoom)
-            params.maxzoom = Math.min(l.maxzoom ??= 0, maxzoom)
+            params.minzoom = Math.max(...([l.minzoom, minzoom].map(i => i ?? 0)))
+            params.maxzoom = Math.min(...([l.maxzoom, maxzoom].map(i => i ?? 24)))
 
             return {
-                roleId: generateRandomString(),
+                typeId: generateRandomString(),
                 name: l.name,
                 geoms: l.geoms,
                 filter: l.filter,
@@ -578,14 +577,85 @@ class SourcesHandler {
         })
 
         return {
-            title: '',
-            active: true,
-            filter,
+            groupId: generateRandomString(),
+            title,
+            active,
             color,
-            params,
             minzoom,
             maxzoom,
+            filter,
+            layers,
         } // group definition
+    }
+
+    addGeoJSONLayers(sourceId, {properties={}, beforeId}={}) {
+        const map = this.map
+        const source = map.getSource(sourceId)
+        if (!source) return
+        
+        const metadata = properties.metadata ??= {}
+        const name = metadata.name ??= generateRandomString()
+        const layerName = metadata.layerName ??= `${sourceId}-${name}`
+        beforeId = this.getBeforeId(layerName, beforeId)
+
+        const params = metadata.params ??= {}
+        const styles = params.styles ??= {default: [this.getVectorGroupParams()]}
+        const styleName = params.style = params.style in styles ? params.style : Object.keys(styles)[0]
+        const style = styles[styleName]
+
+        style.forEach(group => {
+            const groupId = group.groupId
+            if (!group.active) return
+            group.layers.forEach(layer => {
+                const {type, paint, layout, minzoom, maxzoom, filter} = layer.params
+                if (layout.visibility === 'none') return
+
+                const typeId = layer.typeId
+                const id = Array(layerName, groupId, type, typeId).join('-')
+
+                const layerParams = {
+                    source: sourceId,
+                    id,
+                    type,
+                    paint,
+                    layout,
+                    minzoom: Math.max(...[minzoom, properties.minzoom, group.minzoom].map(v => v ?? 0)),
+                    maxzoom: Math.min(...[maxzoom, properties.maxzoom, group.maxzoom].map(v => v ?? 24)),
+                    filter: [
+                        "all", 
+                        ...(filter?.length ? [filter]: []),
+                        ...(group.filter?.length ? group.filter : []),
+                        ...(properties.filter?.length ? [properties.filter] : []),
+                    ],
+                    metadata: {
+                        ...source.metadata,
+                        ...properties.metadata,
+                        name,
+                        layerName,
+                        groupId,
+                        typeId,
+                        params: {
+                            tooltip: {
+                                active: true,
+                            },
+                            popup: {
+                                active: true,
+                            },
+                            ...source.metadata?.params,
+                            ...properties.metadata.params,
+                        },
+                    },
+                }
+
+                if (this.map.getLayer(id)) {
+                    this.updateLayerParams(id, layerParams)
+                } else {
+                    this.map.addLayer(layerParams, beforeId)
+                }
+            })
+        })
+
+        return this.map.getStyle().layers.filter(l => l.id.startsWith(layerName))
     }
 
     updateLayerParams(id, params) {
@@ -618,75 +688,6 @@ class SourcesHandler {
         })
 
         return map.getLayer(layer)
-    }
-
-    addGeoJSONLayers(sourceId, {properties={}, beforeId}={}) {
-        const map = this.map
-        const source = map.getSource(sourceId)
-        if (!source) return
-        
-        const metadata = properties.metadata ??= {}
-        const name = metadata.name ??= generateRandomString()
-        const layerName = metadata.layerName ??= `${sourceId}-${name}`
-        beforeId = this.getBeforeId(layerName, beforeId)
-
-        const params = metadata.params ??= {}
-        const styles = params.styles ??= {default: {default: this.getVectorLayerParams()}}
-        const styleName = params.style = params.style in styles ? params.style : Object.keys(styles)[0]
-        const style = styles[styleName]
-
-        Object.entries(style).forEach(([groupId, group]) => {
-            if (!group.active) return
-            group.params.forEach(i => {
-                const {type, paint, layout, minzoom, maxzoom, filter} = i.params
-                if (layout.visibility !== 'visible') return
-
-                const roleId = i.roleId
-                const id = Array(layerName, groupId, type, roleId).join('-')
-
-                const layerParams = {
-                    source: sourceId,
-                    id,
-                    type,
-                    paint,
-                    layout,
-                    minzoom: Math.max(...[minzoom, properties.minzoom, group.minzoom].map(v => v ?? 0)),
-                    maxzoom: Math.min(...[maxzoom, properties.maxzoom, group.maxzoom].map(v => v ?? 24)),
-                    filter: [
-                        "all", 
-                        ...(filter?.length ? [filter]: []),
-                        ...(group.filter?.length ? group.filter : []),
-                        ...(properties.filter?.length ? [properties.filter] : []),
-                    ],
-                    metadata: {
-                        ...source.metadata,
-                        ...properties.metadata,
-                        name,
-                        layerName,
-                        groupId,
-                        roleId,
-                        params: {
-                            tooltip: {
-                                active: true,
-                            },
-                            popup: {
-                                active: true,
-                            },
-                            ...source.metadata?.params,
-                            ...properties.metadata.params,
-                        },
-                    },
-                }
-
-                if (this.map.getLayer(id)) {
-                    this.updateLayerParams(id, layerParams)
-                } else {
-                    this.map.addLayer(layerParams, beforeId)
-                }
-            })
-        })
-
-        return this.map.getStyle().layers.filter(l => l.id.startsWith(layerName))
     }
 
     getSource(id, {properties}={}) {

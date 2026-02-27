@@ -154,17 +154,20 @@ class InteractionsHandler {
     }
 
     defaultLayerProperties() {
+        const groupParams = this.map.sourcesHandler.getVectorGroupParams({
+            color: `hsl(180, 100%, 50%)`
+        })
+
+        groupParams.layers.find(l => l.name === "polygon fill").params.paint['fill-opacity'] = 0
+        groupParams.layers.find(l => l.name === "polygon outline").params.paint['line-width'] = 3
+
         return {
             metadata: {
                 name: 'default',
                 params: {
                     style: 'default',
                     styles: {
-                        default: {
-                            default: this.map.sourcesHandler.getVectorLayerParams({
-                                color: `hsl(180, 100%, 50%)`
-                            }),
-                        }
+                        default: [groupParams]
                     }
                 }
             }

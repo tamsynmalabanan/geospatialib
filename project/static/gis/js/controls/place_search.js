@@ -59,11 +59,11 @@ class PlaceSearchControl {
                         params: {
                             style: 'default',
                             styles: {
-                                default: {
-                                    default: map.sourcesHandler.getVectorLayerParams({
+                                default: [
+                                    map.sourcesHandler.getVectorGroupParams({
                                         color: `hsl(0, 100%, 50%)`
                                     }),
-                                }
+                                ]
                             }
                         }
                     }
