@@ -188,7 +188,7 @@ class SourcesHandler {
                 },
                 paint: {
                     'fill-antialias': antialias,
-                    'fill-opacity': 0.5,
+                    'fill-opacity': opacity/2,
                     'fill-color': fillColor,
                     'fill-outline-color': outlineColor,
                     'fill-translate': translate,
@@ -374,7 +374,9 @@ class SourcesHandler {
         color=getRandomColor(),
         minzoom=0,
         maxzoom=24,
-        filter,
+        geometryFilters,
+        propertyFilters,
+        spatialFilters,
     }={}) {
         const typeParams = this.getVectorTypeParams({color})
         const misc = typeParams.misc
@@ -394,7 +396,7 @@ class SourcesHandler {
             {
                 name: 'polygon shadow',
                 type: 'fill',
-                geoms: ['Polygon'],
+                geometryFilters: ['Polygon'],
                 layout: {
                     visibility: 'none'
                 },
@@ -407,12 +409,12 @@ class SourcesHandler {
             {
                 name: 'polygon fill',
                 type: 'fill',
-                geoms: ['Polygon'],
+                geometryFilters: ['Polygon'],
             },
             {
                 name: 'polygon outline',
                 type: 'line',
-                geoms: ['Polygon'],
+                geometryFilters: ['Polygon'],
                 paint: {
                     'line-opacity': 1,
                     'line-color': typeParams.fill.paint['fill-color'],
@@ -422,7 +424,7 @@ class SourcesHandler {
             {
                 name: 'polygon 3D shadow',
                 type: 'fill-extrusion',
-                geoms: ['Polygon'],
+                geometryFilters: ['Polygon'],
                 layout: {
                     visibility: 'none'
                 },
@@ -435,7 +437,7 @@ class SourcesHandler {
             {
                 name: 'polygon 3D fill',
                 type: 'fill-extrusion',
-                geoms: ['Polygon'],
+                geometryFilters: ['Polygon'],
                 layout: {
                     visibility: 'none'
                 },
@@ -443,7 +445,7 @@ class SourcesHandler {
             {
                 name: 'line shadow',
                 type: 'line',
-                geoms: ['LineString'],
+                geometryFilters: ['LineString'],
                 layout: {
                     visibility: 'none'
                 },
@@ -456,12 +458,12 @@ class SourcesHandler {
             {
                 name: 'line',
                 type: 'line',
-                geoms: ['LineString'],
+                geometryFilters: ['LineString'],
             },
             {
                 name: 'line symbol shadow',
                 type: 'symbol',
-                geoms: ['LineString'],
+                geometryFilters: ['LineString'],
                 layout: {
                     visibility: 'none',
                     'symbol-placement': 'line',
@@ -475,7 +477,7 @@ class SourcesHandler {
             {
                 name: 'line symbol',
                 type: 'symbol',
-                geoms: ['LineString'],
+                geometryFilters: ['LineString'],
                 layout: {
                     visibility: 'none',
                     'symbol-placement': 'line',
@@ -484,7 +486,7 @@ class SourcesHandler {
             {
                 name: 'heatmap',
                 type: 'heatmap',
-                geoms: ['Point'],
+                geometryFilters: ['Point'],
                 layout: {
                     visibility: 'none',
                 },
@@ -492,7 +494,7 @@ class SourcesHandler {
             {
                 name: 'point shadow',
                 type: 'circle',
-                geoms: ['Point'],
+                geometryFilters: ['Point'],
                 layout: {
                     visibility: 'none',
                 },
@@ -505,12 +507,12 @@ class SourcesHandler {
             {
                 name: 'point',
                 type: 'circle',
-                geoms: ['Point'],
+                geometryFilters: ['Point'],
             },
             {
                 name: 'point symbol shadow',
                 type: 'symbol',
-                geoms: ['Point'],
+                geometryFilters: ['Point'],
                 layout: {
                     visibility: 'none',
                 },
@@ -522,7 +524,7 @@ class SourcesHandler {
             {
                 name: 'point symbol',
                 type: ['symbol'],
-                geoms: ['Point'],
+                geometryFilters: ['Point'],
                 layout: {
                     visibility: 'none',
                 },
@@ -530,7 +532,7 @@ class SourcesHandler {
             {
                 name: 'label',
                 type: 'symbol',
-                geoms: ['Polygon', 'LineString', 'Point'],
+                geometryFilters: ['Polygon', 'LineString', 'Point'],
                 layout: {
                     visibility: 'none',
                     "text-field": misc.labelField,
@@ -544,10 +546,10 @@ class SourcesHandler {
         ).map(l => {
             const params = structuredClone(typeParams[l.type])
             
-            if ((l.geoms ??= []).length) {
+            if ((l.geometryFilters ??= []).length) {
                 params.filter = [
                     "all",
-                    ["any", ...(l.geoms.map(i => filters[i]))],
+                    ["any", ...(l.geometryFilters.map(i => filters[i]))],
                     ...(l.filter?.length ? [l.filter]: []),
                     ...(filter?.length ? [filter]: [])
                 ]
@@ -568,7 +570,7 @@ class SourcesHandler {
             return {
                 typeId: generateRandomString(),
                 name: l.name,
-                geoms: l.geoms,
+                geometryFilters: l.geometryFilters,
                 filter: l.filter,
                 minzoom: l.minzoom,
                 maxzoom: l.maxzoom,

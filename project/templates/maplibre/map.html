@@ -5,5 +5,5 @@
     id="{% random_string %}"
     class='w-100 h-100'
     data-map-id="{{map_id}}"
-    x-data x-init="new MapLibreMap($el)"
+    x-data x-init="MapLibreMap.create($el)"
 ></div>

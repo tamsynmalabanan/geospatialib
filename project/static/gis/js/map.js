@@ -119,21 +119,7 @@ const MAP_DEFAULT_SETTINGS = {
 }
 
 class MapLibreMap extends maplibregl.Map {
-    constructor(el) {
-        const settings = (() => {
-            const mapId = el.dataset.mapId
-            if (mapId) {
-                console.log('fetch map settings')
-            } else {
-                const storedSettings = localStorage.getItem('mapSettings')
-                if (storedSettings) {
-                    return JSON.parse(storedSettings)
-                }
-            }
-    
-            return structuredClone(MAP_DEFAULT_SETTINGS)
-        })()
-
+    constructor(el, settings) {
         const basemapTheme = settings.basemap.paints[(
             settings.basemap.theme === 'light' || (
                 settings.basemap.theme === 'auto' 
@@ -200,6 +186,25 @@ class MapLibreMap extends maplibregl.Map {
         this.configRemoveLayer()
         this.configFitBounds()
     }
+
+    static async create(el) {
+        const settings = await (async () => {
+            const mapId = el.dataset.mapId
+            if (mapId) {
+                console.log('fetch map settings')
+            } else {
+                const storedConfig = await getGISDBConfig()
+                if (storedConfig) {
+                    return storedConfig
+                }
+            }
+    
+            return structuredClone(MAP_DEFAULT_SETTINGS)
+        })()
+
+        return new MapLibreMap(el, settings)
+    }
+
 
     getBbox() {
         return this.getBounds().toArray().flatMap(i => i)

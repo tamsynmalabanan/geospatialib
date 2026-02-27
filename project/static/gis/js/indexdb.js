@@ -3,21 +3,26 @@ const requestGISDB = () => {
 
     request.onupgradeneeded = (e) => {
         const db = e.target.result
-        if (!db.objectStoreNames.contains('gis')) {
-            db.createObjectStore('gis', { keyPath: 'id' })
+        
+        if (!db.objectStoreNames.contains('data')) {
+            db.createObjectStore('data', { keyPath: 'id' })
+        }
+        
+        if (!db.objectStoreNames.contains('config')) {
+            db.createObjectStore('config', { keyPath: 'id' })
         }
     }
     
     return request
 }
 
-const getAllGISDBKeys = async () => {
+const getGISDBDataKeys = async () => {
     return new Promise(async (resolve, reject) => {
         const request = requestGISDB()
         request.onsuccess = (e) => {
             const db = e.target.result
-            const transaction = db.transaction(['gis'], 'readonly')
-            const objectStore = transaction.objectStore('gis')
+            const transaction = db.transaction(['data'], 'readonly')
+            const objectStore = transaction.objectStore('data')
             
             const keysRequest = objectStore.getAllKeys()
             keysRequest.onsuccess = () => resolve(keysRequest.result)
@@ -27,7 +32,7 @@ const getAllGISDBKeys = async () => {
     })
 }
 
-const saveToGISDB = async (data, {
+const saveGISDBData = async (data, {
     id = `local-${generateRandomString(64)}`,
     params = {},
     extent,
@@ -39,22 +44,22 @@ const saveToGISDB = async (data, {
     const request = requestGISDB()
     request.onsuccess = async (e) => {
         const db = e.target.result
-        const transaction = db.transaction(['gis'], 'readwrite')
-        const objectStore = transaction.objectStore('gis')
+        const transaction = db.transaction(['data'], 'readwrite')
+        const objectStore = transaction.objectStore('data')
         objectStore.put({id, data:structuredClone(data), extent, params})
     }
 
     return id
 }
 
-const getFromGISDB = async (id, {filter}={}) => {
+const getGISDBData = async (id, {filter}={}) => {
     return new Promise((resolve, reject) => {
         const request = requestGISDB()
   
         request.onsuccess = (e) => {
             const db = e.target.result
-            const transaction = db.transaction(['gis'], 'readonly')
-            const objectStore = transaction.objectStore('gis')
+            const transaction = db.transaction(['data'], 'readonly')
+            const objectStore = transaction.objectStore('data')
             const dataRequest = objectStore.get(id)
     
             dataRequest.onsuccess = async (e) => {
@@ -87,13 +92,13 @@ const getFromGISDB = async (id, {filter}={}) => {
     }).catch(error => console.log(error))
 }
 
-const deleteFromGISDB = (id) => {
+const deleteGISDBData = (id) => {
     const request = requestGISDB()
     
     request.onsuccess = (e) => {
         const db = e.target.result
-        const transaction = db.transaction(['gis'], 'readwrite')
-        const objectStore = transaction.objectStore('gis')
+        const transaction = db.transaction(['data'], 'readwrite')
+        const objectStore = transaction.objectStore('data')
         const deleteRequest = objectStore.delete(id)
     
         deleteRequest.onsuccess = () => {
@@ -107,13 +112,13 @@ const deleteFromGISDB = (id) => {
     }
 }
 
-const clearGISDB = () => {
+const clearGISDBData = () => {
     const request = requestGISDB()
     
     request.onsuccess = (e) => {
         const db = e.target.result
-        const transaction = db.transaction(['gis'], 'readwrite')
-        const objectStore = transaction.objectStore('gis')
+        const transaction = db.transaction(['data'], 'readwrite')
+        const objectStore = transaction.objectStore('data')
         
         const clearRequest = objectStore.clear();
 
@@ -128,37 +133,7 @@ const clearGISDB = () => {
     }
 }
 
-const getGISDBData = async ({keys=[]}={}) => {
-    return new Promise((resolve, reject) => {
-        const request = requestGISDB()
-  
-        request.onsuccess = (e) => {
-            const db = e.target.result
-            const transaction = db.transaction(['gis'], 'readonly')
-            const objectStore = transaction.objectStore('gis')
-            const dataRequest = objectStore.getAll()
-    
-            dataRequest.onsuccess = async (e) => {
-                const result = (
-                    keys.length 
-                    ? dataRequest.result.filter(i => keys.includes(i.id)) 
-                    : dataRequest.result
-                )
-                resolve(result)
-            }
-    
-            dataRequest.onerror = (e) => {
-                reject(e.target.errorCode)
-            }
-        }
-  
-        request.onerror = (e) => {
-            reject(e.target.errorCode)
-        }
-    })
-}
-
-const updateGISDB = async (id, {
+const updateGISDBData = async (id, {
     data,
     extent,
     params,
@@ -168,7 +143,7 @@ const updateGISDB = async (id, {
             extent = turf.envelope(data).geometry
         }
         
-        const storedContent = await getFromGISDB(id)
+        const storedContent = await getGISDBData(id)
         
         if (storedContent) {
             params = {
@@ -191,7 +166,7 @@ const updateGISDB = async (id, {
             
                     worker.onmessage = async (e) => {
                         const content = e.data
-                        await saveToGISDB(content.data, {
+                        await saveGISDBData(content.data, {
                             id, 
                             extent: content.extent, 
                             params,
@@ -208,7 +183,7 @@ const updateGISDB = async (id, {
             }
         }
         
-        await saveToGISDB(data, {
+        await saveGISDBData(data, {
             id, 
             extent, 
             params,
@@ -216,4 +191,41 @@ const updateGISDB = async (id, {
 
         resolve(id)
     })
+}
+
+const getGISDBConfig = async (id='main') => {
+    return new Promise((resolve, reject) => {
+        const request = requestGISDB()
+  
+        request.onsuccess = (e) => {
+            const db = e.target.result
+            const transaction = db.transaction(['config'], 'readonly')
+            const objectStore = transaction.objectStore('config')
+            const dataRequest = objectStore.get(id)
+    
+            dataRequest.onsuccess = async (e) => {
+                resolve(e.target.result?.config)
+            }
+    
+            dataRequest.onerror = (e) => {
+                reject(e.target.errorCode)
+            }
+        }
+  
+        request.onerror = (e) => {
+            reject(e.target.errorCode)
+        }
+    }).catch(error => console.log(error))
+}
+
+const saveGISDBConfig = async (config, {id='main'}={}) => {
+    const request = requestGISDB()
+    request.onsuccess = async (e) => {
+        const db = e.target.result
+        const transaction = db.transaction(['config'], 'readwrite')
+        const objectStore = transaction.objectStore('config')
+        objectStore.put({id, config})
+    }
+
+    return id
 }

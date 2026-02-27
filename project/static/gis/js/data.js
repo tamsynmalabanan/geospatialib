@@ -9,7 +9,7 @@ const fetchSearchNominatim = async (params, {
     const getParams = {q, format: 'geojson', limit: params.limit ?? 1000}
 
     const id = await hashJSON({url, ...getParams})
-    const geojson = (await getFromGISDB(id))?.data
+    const geojson = (await getGISDBData(id))?.data
     
     if (geojson?.features?.length) {
         return geojson
@@ -23,7 +23,7 @@ const fetchSearchNominatim = async (params, {
             const data = await parseJSONResponse(response, {id})
             if (data?.features?.length) {
                 await normalizeGeoJSON(data)
-                updateGISDB(id, {data})
+                updateGISDBData(id, {data})
             }
             return data
         }
@@ -154,7 +154,7 @@ const fetchWFSData = async (params, {map, point, id, abortEvents, abortControlle
 
     if (!id) id = await hashJSON(params)
     
-    const geojson = (await getFromGISDB(id, {filter:extent}))?.data
+    const geojson = (await getGISDBData(id, {filter:extent}))?.data
     if (geojson?.features?.length) {
         return geojson
     }
@@ -188,7 +188,7 @@ const fetchWFSData = async (params, {map, point, id, abortEvents, abortControlle
             
             if (data?.features?.length) {
                 await normalizeGeoJSON(data)
-                updateGISDB(id, {data, params, extent})
+                updateGISDBData(id, {data, params, extent})
             }
             
             return data

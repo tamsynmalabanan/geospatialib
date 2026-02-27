@@ -215,7 +215,7 @@ class SettingsControl {
         if (this.map.getContainer().dataset.mapId) {
             console.log('update map in server')
         } else {
-            localStorage.setItem('mapSettings', JSON.stringify(settings))
+            saveGISDBConfig(settings)
         }
     }
     
