@@ -14,6 +14,20 @@ class SourcesHandler {
                 'basemap',
                 'hillshade', 
             ],
+            geometryFilters: Object.fromEntries(Array(
+                'Polygon', 'LineString', 'Point'
+            ).map(i => [i, ["==", "$type", i]])),
+            propertyFilter: {
+                combinator: 'all', // 'all', 'any', 'none'
+                properties: [
+                    {
+                        operator: '==', // "==", "!=", ">", "<", ">=", "<=", "has", "!has", "in", "!in"
+                        property: null,
+                        values: [],
+                    }
+                ]
+            },
+            filterOperators: ["==", "!=", ">", ">=", "<", "<=", 'has', '!has', 'in', '!in']
         }
     }
 
@@ -90,22 +104,7 @@ class SourcesHandler {
         })
     }
 
-    // "all", "any", "none"
-    // [
-    //     "all", 
-    //     ["==", "$type", "Polygon"],
-    //     [
-    //         "any",
-    //         ["==", "landuse", "park"],
-    //         [
-    //             "none",
-    //             [">", "population", 5000],
-    //             ["==", "region", "north"]
-    //         ]
-    //     ]
-    // ]
-    
-    // "==", "!=", ">", "<", ">=", "<=",
+    // "==", "!=", ">", "<", ">=", "<=", "has", "!has", "in", "!in"
     // ["==", "highway", "primary"] 
     
     // "has", "!has"
@@ -118,24 +117,64 @@ class SourcesHandler {
     //  - this wont work in filter so create a temp property defining spatial relationship with geom
 
 
-    filterGeoJSON(geojson, filter) {
-        const combinators = {
-            all: null,
-            any: null,
-            none: null,
-        }
+    filterFeatures(features, filters) {
+        const {geometryFilters, propertyFilters, spatialFilters} = filters
+        
+        return features.filter(f => {
+            if (!geometryFilters.find(i => f.geometry.type.endsWith(i))) return false
+            if (propertyFilters.length) {
+                if (!propertyFilters.every(({combinator, properties}) => {
+                    return properties[combinator === 'any' ? 'some' : 'every'](({operator, property, values}) => {
+                        const value = f.properties[property]
+                        let isTrue = true
 
-        const operators = {
-            comparison: {
-                options: ["==", "!=", ">", ">=", "<", "<="],
-            },
-            existential: {
-                options: ['has', '!has'],
-            },
-            membership: {
-                options: ['in', '!in'],
-            },
-        }
+                        if (operator === '==') {
+                            isTrue = value == values[0]
+                        }
+
+                        if (operator === '!=') {
+                            isTrue = value != values[0]
+                        }
+
+                        if (operator === '>') {
+                            isTrue = value > values[0]
+                        }
+
+                        if (operator === '>=') {
+                            isTrue = value >= values[0]
+                        }
+
+                        if (operator === '<') {
+                            isTrue = value < values[0]
+                        }
+
+                        if (operator === '<=') {
+                            isTrue = value <= values[0]
+                        }
+
+                        if (operator === 'has') {
+                            isTrue = value != undefined
+                        }
+
+                        if (operator === '!has') {
+                            isTrue = value == undefined
+                        }
+
+                        if (operator === 'in') {
+                            isTrue = values.includes(value)
+                        }
+
+                        if (operator === '!in') {
+                            isTrue = !values.includes(value)
+                        }
+
+                        return combinator === 'none' ? !isTrue : isTrue
+                    })
+                })) return false
+            } 
+
+            return true
+        })
     }
 
     getVectorTypeParams({color=getRandomColor()}={}) {
@@ -370,20 +409,18 @@ class SourcesHandler {
 
     getVectorGroupParams({
         title='',
-        active=true,
         color=getRandomColor(),
+
+        visibility='visible',
         minzoom=0,
         maxzoom=24,
-        geometryFilters,
-        propertyFilters,
-        spatialFilters,
+        
+        geometryFilters=Object.keys(this.config.geometryFilters),
+        propertyFilters=[],
+        spatialFilters=[],
     }={}) {
         const typeParams = this.getVectorTypeParams({color})
         const misc = typeParams.misc
-        const filters = Object.fromEntries(Array(
-            'Polygon', 'LineString', 'Point'
-        ).map(i => [i, ["==", "$type", i]]))
-
 
         const layers = Array(
             {
@@ -546,15 +583,6 @@ class SourcesHandler {
         ).map(l => {
             const params = structuredClone(typeParams[l.type])
             
-            if ((l.geometryFilters ??= []).length) {
-                params.filter = [
-                    "all",
-                    ["any", ...(l.geometryFilters.map(i => filters[i]))],
-                    ...(l.filter?.length ? [l.filter]: []),
-                    ...(filter?.length ? [filter]: [])
-                ]
-            }
-
             Array('paint', 'layout').forEach(i => {
                 params[i] = {
                     ...Object.fromEntries(
@@ -564,16 +592,14 @@ class SourcesHandler {
                 }
             })
 
-            params.minzoom = Math.max(...([l.minzoom, minzoom].map(i => i ?? 0)))
-            params.maxzoom = Math.min(...([l.maxzoom, maxzoom].map(i => i ?? 24)))
-
             return {
                 typeId: generateRandomString(),
                 name: l.name,
-                geometryFilters: l.geometryFilters,
-                filter: l.filter,
-                minzoom: l.minzoom,
-                maxzoom: l.maxzoom,
+                minzoom: l.minzoom ?? 0,
+                maxzoom: l.maxzoom ?? 24,
+                geometryFilters: l.geometryFilters ?? Object.keys(this.config.geometryFilters),
+                propertyFilters: l.propertyFilters ?? [],
+                spatialFilters: l.spatialFilters ?? [],
                 params,
             } // group layer definition
         })
@@ -581,11 +607,13 @@ class SourcesHandler {
         return {
             groupId: generateRandomString(),
             title,
-            active,
             color,
+            visibility,
             minzoom,
             maxzoom,
-            filter,
+            geometryFilters,
+            propertyFilters,
+            spatialFilters,
             layers,
         } // group definition
     }
@@ -607,13 +635,26 @@ class SourcesHandler {
 
         style.forEach(group => {
             const groupId = group.groupId
-            if (!group.active) return
+            if (group.visibility === 'none') return
             group.layers.forEach(layer => {
-                const {type, paint, layout, minzoom, maxzoom, filter} = layer.params
+                const {type, paint, layout} = layer.params
                 if (layout.visibility === 'none') return
 
                 const typeId = layer.typeId
                 const id = Array(layerName, groupId, type, typeId).join('-')
+
+                const params = Array(metadata, group, layer)
+                const geometryFilters = Object.entries(this.config.geometryFilters).filter(([k,v]) => params.every(i => {
+                    return (i.geometryFilters ??= Object.keys(this.config.geometryFilters)).find(j => j === k)
+                })).map(([k,v]) => v)
+                const propertyFilters = params.filter(i => (i.propertyFilters ??= []).length).map(i => {
+                    return ["all", ...(i.propertyFilters.filter(j => j.properties.length).map(j => {
+                        return [j.combinator, ...(j.properties.filter(k => {
+                            return this.config.filterOperators.includes(k.operator) && k.property
+                        }).map(k => [k.operator, k.property, ...k.values]))]
+                    }))]
+                })
+                const spatialFilters = []
 
                 const layerParams = {
                     source: sourceId,
@@ -621,13 +662,13 @@ class SourcesHandler {
                     type,
                     paint,
                     layout,
-                    minzoom: Math.max(...[minzoom, properties.minzoom, group.minzoom].map(v => v ?? 0)),
-                    maxzoom: Math.min(...[maxzoom, properties.maxzoom, group.maxzoom].map(v => v ?? 24)),
+                    minzoom: Math.max(...params.map(i => i['minzoom'] ?? 0)),
+                    maxzoom: Math.min(...params.map(i => i['maxzoom'] ?? 0)),
                     filter: [
-                        "all", 
-                        ...(filter?.length ? [filter]: []),
-                        ...(group.filter?.length ? group.filter : []),
-                        ...(properties.filter?.length ? [properties.filter] : []),
+                        "all",
+                        ...(geometryFilters.length ? [["any", ...geometryFilters]] : []),
+                        ...(propertyFilters.length ? [["all", ...propertyFilters]] : []),
+                        ...(spatialFilters.length ? [["all", ...spatialFilters]] : []),
                     ],
                     metadata: {
                         ...source.metadata,

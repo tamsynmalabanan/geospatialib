@@ -300,7 +300,7 @@ class LegendControl {
 
         const source = this.map.getStyle().sources[layer.source]
         if (source.type === 'geojson') {
-            const geojson = source.data
+            const layerFeatures = this.map.sourcesHandler.filterFeatures(source.data.features, layer.metadata)
 
             const container = customCreateElement({
                 className: 'd-flex flex-column gap-2'
@@ -320,7 +320,7 @@ class LegendControl {
             const headerCount = customCreateElement({
                 parent: header,
                 className: 'fw-medium',
-                innerText: `(${geojson.features.length})`
+                innerText: `(${layerFeatures.length})`
             })
 
             const groupsContainer = customCreateElement({
@@ -328,18 +328,8 @@ class LegendControl {
                 className: 'd-flex flex-column gap-2'
             })
 
-            for (const [name, group] of Object.entries(style)) {
-                console.log(group)
-
-                const features = (
-                    group.filter?.length 
-                    ? geojson.features.filter(f => {
-                        // group.filter.
-
-                        return f
-                    }) 
-                    : geojson.features
-                )
+            for (const group of style) {
+                const groupFeatures = this.map.sourcesHandler.filterFeatures(layerFeatures, group)
 
                 const groupContainer = customCreateElement({
                     parent: groupsContainer,
@@ -358,7 +348,7 @@ class LegendControl {
 
                 const groupCount = customCreateElement({
                     parent: groupContainer,
-                    innerText: `(${features?.length ?? 0})`,
+                    innerText: `(${groupFeatures?.length ?? 0})`,
                 })
             }
             
