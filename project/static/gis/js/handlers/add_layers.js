@@ -409,27 +409,34 @@ class AddLayersHandler {
     normalizeXYZTilesURL(url) {
         url = decodeURIComponent(url)
 
-        if (Array("z", "x", "y").every(i => url.includes(`{${i}}`))) return url
-
-        const parts = url.split("{", 4)
-        let [href, z, x, y] = parts
-
-        const zParts = z.split("}", 2)
-        if (zParts[0] !== "z") {
-            z = Array("z", zParts[1]).join("}")
+        if (Array("z", "x", "y").every(i => url.includes(`{${i}}`))) {
+            return url
         }
-
-        const xParts = x.split("}", 2)
-        if (xParts[0] !== "x") {
-            x = Array("x", xParts[1]).join("}")
+        
+        try {
+            const parts = url.split("{", 4)
+            let [href, z, x, y] = parts
+    
+            const zParts = z.split("}", 2)
+            if (zParts[0] !== "z") {
+                z = Array("z", zParts[1]).join("}")
+            }
+    
+            const xParts = x.split("}", 2)
+            if (xParts[0] !== "x") {
+                x = Array("x", xParts[1]).join("}")
+            }
+    
+            const yParts = y.split("}", 2)
+            if (yParts[0] !== "y") {
+                y = Array("y", yParts[1]).join("}")
+            }
+    
+            return Array(href, z, x, y).join("{")
+        } catch {
+            return url
         }
-
-        const yParts = y.split("}", 2)
-        if (yParts[0] !== "y") {
-            y = Array("y", yParts[1]).join("}")
-        }
-
-        return Array(href, z, x, y).join("{")
+        
     }
 
     getWMSThumbnailURL(url, name, style, bbox) {
@@ -456,20 +463,18 @@ class AddLayersHandler {
             bbox = Array(
                 'LowerCorner', 
                 'UpperCorner'
-            ).map(i => {
+            ).flatMap(i => {
                 return (
                     geoBBox.querySelector(i)?.textContent
                     ?.split(' ').map(i => parseFloat(i))
                 )
-            }).flatMap(i => i)
+            })
         } else {
-            console.log('wfs has no bbox', layer)
+            console.log('wfs has no bbox attribute', layer)
         }
 
         return normalizeBbox(bbox)
     }
-
-
 
     async getWMSBbox(layer) {
         let bbox = [-180, -90, 180, 90]
@@ -483,13 +488,15 @@ class AddLayersHandler {
                 'northBoundLatitude'
             ).map(i => parseFloat(geoBBox.querySelector(i)?.textContent))
         } else {
-            const bboxes = layer.querySelectorAll("BoundingBox").forEach(box => {
+            const bboxes = layer.querySelectorAll("BoundingBox").map(box => {
                 return {
                     crs: box.getAttribute('CRS') || box.getAttribute('SRS'), 
                     bbox: Array('minx', 'miny', 'maxx', 'maxy').map(i => parseFloat(box.getAttribute(i)))
                 }
             })
+
             const bboxWGS84 = bboxes?.find(i => i.crs === "EPSG:4326")
+            
             if (bboxWGS84) {
                 bbox = bboxWGS84.bbox
             } else if (bboxes.length) {
@@ -500,6 +507,8 @@ class AddLayersHandler {
                     4326
                 )
                 bbox = turf.bbox(bboxPolygon)
+            } else {
+                console.log('wms has no bbox attribute', layer)
             }
         }
 
